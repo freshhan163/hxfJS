@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>hxf-project</title>
+    <script>
+        window.onload = function () {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                switch (xhr.readyState) {
+                    case 0: {
+                        console.log('未初始化：xhr.readyState=%s', xhr.readyState);
+                        break;
+                    }
+                    case 1: {
+                        console.log('初始化open()：xhr.readyState=%s', xhr.readyState);
+                        break;
+                    }
+                    case 2: {
+                        console.log('初始化send()：xhr.readyState=%s', xhr.readyState);
+                        break;
+                    }
+                    case 3: {
+                        console.log('接收部分数据：xhr.readyState=%s', xhr.readyState);
+                        break;
+                    }
+                    case 4: {
+                        console.log('接收全部数据：xhr.readyState=%s', xhr.readyState);
+                        break;
+                    }
+                    default: {
+                        console.log('error');
+                        break;
+                    }
+                }
+                if (xhr.status >= 200 && xhr.status < 300 || xhr.status === 304) {
+                    console.log('xhr.status = %s', xhr.status);
+                    console.log('xhr.statusText = %s', xhr.statusText);
+                    alert(xhr.responseText);
+                    var allHeaders = xhr.getAllResponseHeaders();
+                    console.log('AllResponseHeaders = %s', allHeaders);
+                    var testHeader = xhr.getResponseHeader('my');
+                    console.log('responseHeader = %s', testHeader);
+                }
+            }
+            xhr.open('get', './testXhr.php', true);
+            // xhr.setRequestHeader('myHeader', 'TestHeader');
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.send(null);
+            // var removeDuplicates = function(nums) {
+            //     var len = nums.length;
+            //     if (len <= 0) {
+            //         itemLen = 0;
+            //     }
+            //     var item = [];
+            //     for (var i=0; i< len; i++) {
+            //         var flag = true;
+            //         for (var j=0; j< item.length && flag; j++) {
+            //             if (nums[i] === item[j]) {
+            //                 flag = false;
+            //             }
+            //         }
+            //         if (flag === true) {
+            //             item[j] = nums[i];
+            //             console.log(item);
+            //         }
+            //     }
+            //     var itemLen = item.length;
+            //     return itemLen;
+            // };
+            var removeDuplicates = function(nums) {
+              if (nums.length == 0) return 0;
+              let pointer = 0;
+              for (let i = 1; i < nums.length; i++) {
+                if (nums[i] != nums[pointer]) {
+                  pointer++;
+                  nums[pointer] = nums[i];
+                }
+              }
+                  // console.log(nums);
+              return pointer + 1;
+            };
+            // console.log(removeDuplicates([1,1,2]));
+
+        }
+    </script>
+  </head>
+  <body>
+    <div class="app">
+
+    </div>
+    <!-- built files will be auto injected -->
+  </body>
+</html>
