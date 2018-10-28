@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>数组扁平化处理</title>
+            <style type="text/css"></style>
+            <script type="text/javascript">
+                var ex = [1, [2, 'child Array', 'childs', [3, 'grandChild', 'Array']], 'flattern', {
+                    tag: 'div',
+                    props: {
+                        class: 'parent'
+                    },
+                    children: [
+                        {
+                            tag: 'div',
+                            props: {
+                                class: 'parent'
+                            }
+                        }
+                    ]
+                }];
+                // 数组全部是数字的扁平化
+                var n = [1, 2, [3, [4, 5], [6, 7]]];
+                // var nArr = [];
+                // console.log(nArr.concat(n.toString().split(','))); //concat不改变数组
+                function flatNumber(arr) {
+                    return arr.toString().split(',').map(function(item) {
+                        return +item;
+                    });
+                }
+                console.log('数字数组的扁平化结果 = ', flatNumber(n));
+
+                // 循环递归扁平化
+                function flat(array) {
+                    let len = array.length;
+                    let result = [];
+                    if (len <= 0) return result;
+                    array.forEach(item => {
+                        if (Array.isArray(item)) {
+                            result = result.concat(flat(item)); // concat不改变原数组
+                        } else {
+                            result.push(item); // push改变原数组
+                        }
+                    });
+                    return result;
+                }
+                // console.log(flat(ex));
+
+                // reduce方案简化代码
+                function flatReduce(array) {
+                    return array.reduce(function(prev, item) {
+                        return prev.concat(Array.isArray(item) ? flatReduce(item) : item);
+                    }, []);
+                }
+                console.log(flatReduce(ex));
+
+                //ES6扩展运算符
+                function flatES(arr) {
+                    while(arr.some(item => Array.isArray(item))) {
+                        arr = [].concat(...arr);
+                        // arr = [].concat.apply([], arr); //和上面的等价
+                    }
+                    return arr;
+                }
+                var es = [1, [2, 'child Array', 'childs', [201, 'grandChild', [202, 'grandGrandChild']]], [3, 'flattern']];
+                console.log('ES6扩展运算符 扁平化运算 = ', flatES(es));
+            </script>
+        </head>
+        <body>
+            <h2>数组的扁平化处理</h2>
+            <ul>
+                <li>数组全部是数字</li>
+                <li>Array.forEach()--递归循环元素</li>
+                <li>>Array.reduce()</li>
+            </ul>
+        </body>
+    </html>

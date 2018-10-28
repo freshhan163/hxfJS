@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>ES6--阮一峰</title>
+            <style type="text/css"></style>
+            <script type="text/javascript">
+            function handleCallback(res) {
+                console.log(res);
+            }
+            var script = document.createElement('script');
+            script.src = 'url?callback=handleCallback';
+            document.body.insertBefore(script, document.body.firstChild);
+                window.onload = function () {
+                    var a = 1;
+                    console.log(a);
+                    var a;
+                    // let\const
+                    var funcs = [];
+                    // 闭包函数
+                    function show(i) {
+                        return function() {
+                            console.log(i);
+                        }
+                    }
+                    for (var i = 0; i < 10; i++) {
+                        // 输出10 个 10
+                        // funcs.push(function () {
+                        //     console.log(i);
+                        // });
+                        // 立即执行函数
+                        // funcs.push((function(value) {
+                        //     return function() {
+                        //         console.log(value);
+                        //     }
+                        // }(i)));
+                        // 闭包
+                        funcs.push(show(i));
+                    }
+                    funcs.forEach(function (func) {
+                        // func(); //输出十个10
+                    });
+
+                    // promise执行顺序
+                    // setTimeout(function () {
+                    //     console.log(1)
+                    // }, 0);
+                    // new Promise(function executor(resolve) {
+                    //     console.log(2);
+                    //     for (var i = 0; i < 10000; i++) {
+                    //         if (i == 999) {console.log(i);}
+                    //         i == 9999 && resolve();
+                    //     }
+                    //     console.log(3);
+                    // }).then(function () {
+                    //     console.log(4);
+                    // });
+                    // console.log(5);
+                    // promise练习
+                    // const promise1 = new Promise((resolve, reject) => {
+                    //     setTimeout(() => {
+                    //         resolve('success')
+                    //     }, 1000)
+                    // })
+                    // const promise2 = promise1.then(() => {
+                    //     console.log('promise2');
+                    //     throw new Error('error!!!')
+                    // })
+
+                    // console.log('promise1', promise1)
+                    // console.log('promise2', promise2)
+
+                    // setTimeout(() => {
+                    //     console.log('promise1', promise1)
+                    //     console.log('promise2', promise2)
+                    // }, 2000)
+                    // promise 执行时间
+                    // const promise = new Promise((resolve, reject) => {
+                    //     setTimeout(() => {
+                    //         console.log('once')
+                    //         resolve('success')
+                    //     }, 1000)
+                    // })
+
+                    // const start = Date.now()
+                    // promise.then((res) => {
+                    //     console.log(1);
+                    //     console.log(res, Date.now() - start)
+                    // })
+                    // promise.then((res) => {
+                    //     console.log(2);
+                    //     console.log(res, Date.now() - start)
+                    // })
+                }
+                // 箭头函数执行作用域
+                function foo() {
+                    // setTimeout(() => {
+                    //     console.log('id:', this.id); // 42
+                    // }, 100);
+                    console.log(this); // 指向对象
+                    setTimeout(function() {
+                        console.log(this); // 指向window
+                        console.log('id:', this.id); // undefined
+                    }, 100);
+                }
+                var arrow = 21;
+
+                foo.call({ id: 42 });
+            </script>
+        </head>
+        <body>
+            <!-- <div id="box"></div> -->
+            <div id="box">
+                <div id="dom1" dom-list="1">列表1</div>
+                <div id="dom2" dom-list="1">列表2</div>
+                <div id="dom3" dom-list="1">列表3</div>
+                <div id="dom4" dom-list="1">列表4</div>
+                <div id="dom5" dom-list="1">列表5</div>
+            </div>
+            <ul>
+                <li class="li-item">列表1</li>
+                <li class="li-item">列表2</li>
+                <li class="li-item">列表3</li>
+                <li class="li-item">列表4</li>
+            </ul>
+        </body>
+    </html>

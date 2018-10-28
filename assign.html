@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>对象的拷贝Object.assign</title>
+            <script type="text/javascript">
+                var obj_a = {a: 1};
+                var obj_b = {a: 'a', b: 1};
+                var obj_c = {a: 'a', b: 'b', c: 1, name: {first: 'Monica', last:'Galler'}};
+                var obj_d = {a: 'a', b: 'b', c: 1, d: 1, name: {first: 'Monica', other:{}}};
+                var obj = Object.assign(obj_a, obj_b);
+                console.log(obj);
+                obj_b.b = 3;
+                console.log(obj_a);
+
+                // 仅仅merge根属性
+                var obj_c_d = Object.assign({}, obj_c, obj_d);
+                var obj_c_d_2 = Object.assign({}, obj_c, obj_d);
+                console.log(obj_c_d);
+                // obj_c_d_2.name = 'aaa';
+                obj_c_d_2.name.first = 'aaa';
+                console.log('obj_c_d = ', obj_c_d);
+                console.log('obj_c_d_2 = ', obj_c_d_2);
+
+            </script>
+        </head>
+        <body>
+            <h2>对象的拷贝Object.assign</h2>
+        </body>
+    </html>
