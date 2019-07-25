@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>JS的onload和DOMContentLoaded</title>
+            <style>
+                body {
+                    /* display: flex; */
+                    overflow-y: scroll;
+                }
+                ::-webkit-scrollbar{
+                    width: 4px;
+                    height: 4px;
+                }
+                ::-webkit-scrollbar-thumb{
+                    border-radius: 1em;
+                    background-color: rgba(202, 23, 23, 0.3);
+                }
+                .container {
+                    /* flex: 1; */
+                    background: #ccc;
+                }
+                #box {
+                    width: 200px;
+                    height: 1400px;
+                    background: #999;
+                }
+                #sideNav {
+                    display: none;
+                    position: fixed;
+                    top: 200px;
+                    right: 0;
+                    width: 100px;
+                    height: 40px;
+                    font-size: 16px;
+                    background: #b6f3a6;
+                    color: white;
+                    cursor: pointer;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <h2>JS的onload和DOMContentLoaded</h2>
+                <div class="test-box" id="box"></div>
+                <button class="sideNav" id="sideNav">返回顶部按钮</button>
+            </div>
+            <script>
+                let mouseEvt = document.getElementById('box');
+                let bodyWrapper = document.getElementsByClassName('container');
+                bodyWrapper[0].style.height = '1000px';
+                window.onload = function () {
+                    console.log('onload完成！');
+                    // 自动填满屏幕
+
+                    // mouseEvt.onmousedown = function(e) {
+                    //     e = e || window.event;
+                    //     console.log('移动鼠标，获取位置');
+                    //     console.log('相对浏览器的坐标位置', 'clientX = ', e.clientX, 'client Y = ', e.clientY);
+                    //     console.log('相对浏览器的坐标位置--包含滚动', 'pageX = ', e.pageX, 'pageY Y = ', e.pageY);
+                    //     console.log('相对浏览器的坐标位置', 'clientX = ', e.clientX, 'client Y = ', e.clientY);
+                    //     console.log('相对浏览器的坐标位置', 'clientX = ', e.clientX, 'client Y = ', e.clientY);
+                    // }
+                };
+                // document.addEventListener('DOMContentLoaded', function() {
+                //     console.log('DOMContentLoaded');
+                // });
+                // 返回顶部按钮 1.何时出现 2.如何回到顶部
+                let nav = document.getElementById('sideNav');
+                let d = document.documentElement;
+                window.addEventListener('scroll', function(){
+                    let top;
+                    if (d) {
+                        top = d.scrollTop;
+                    } else {
+                        top = document.body.scrollTop;
+                    }
+                    if (top > 500) {
+                        nav.style.display = 'block';
+                    } else {
+                        nav.style.display = 'none';
+                    }
+                });
+                nav.onclick = function() {
+                    if (d) {
+                        d.scrollTop = 0;
+                    } else {
+                        document.body.scrollTop = 0;
+                    }
+                }
+            </script>
+        </body>
+    </html>

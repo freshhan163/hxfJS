@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>DOM操作详细解释</title>
+            <style type="text/css"></style>
+            <script type="text/javascript">
+                window.onload = function () {
+                    let id = document.getElementById('box');
+                    console.log(id);
+
+                    // getElementsByClassName返回一个NodeList对象，是类数组，但不是数组
+                    let names = document.getElementsByClassName('li-item');
+                    console.log(names);
+                    console.log(typeof names);
+                    console.log(names instanceof Array);
+                    let namesArr = Array.prototype.slice.call(names);
+                    console.log(namesArr);
+                    console.log(namesArr instanceof Array);
+
+                    let tagNames = document.getElementsByTagName('li');
+                    console.log('li标签名：', tagNames);
+                    console.log(tagNames instanceof Array);
+                    let tagNamesArr = Array.prototype.slice.call(tagNames);
+                    console.log(tagNamesArr);
+                    console.log(tagNamesArr instanceof Array);
+
+                    // reverse一个Dom系列，然后插入
+                    tagNamesArr.reverse();
+                    console.log('逆转Dom：', tagNamesArr);
+                    let domUl = document.getElementsByTagName('ul');
+                    console.log('ul节点系列', domUl);
+                    console.log('ul节点系列', domUl[0]);
+                    // for (var i = 0; i < tagNamesArr.length; i++) {
+                        // domUl[0].appendChild(tagNamesArr[i]);
+                    // }
+                    domUl[0].appendChild(tagNamesArr[0]);
+                    domUl[0].appendChild(tagNamesArr[1]);
+                    domUl[0].appendChild(tagNamesArr[2]);
+                    domUl[0].appendChild(tagNamesArr[3]);
+
+                    // querySelect()和querySelectALl()
+                    let queryDom = document.querySelector('li');
+                    console.log('querySelector = ', queryDom);
+                    let queryAllDom = document.querySelectorAll('li');
+                    console.log('querySelectorAll = ',queryAllDom);
+                }
+            </script>
+        </head>
+        <body>
+            <!-- <div id="box"></div> -->
+            <div id="box">
+                <div id="dom1" dom-list="1">列表1</div>
+                <div id="dom2" dom-list="1">列表2</div>
+                <div id="dom3" dom-list="1">列表3</div>
+                <div id="dom4" dom-list="1">列表4</div>
+                <div id="dom5" dom-list="1">列表5</div>
+            </div>
+            <ul>
+                <li class="li-item">列表1</li>
+                <li class="li-item">列表2</li>
+                <li class="li-item">列表3</li>
+                <li class="li-item">列表4</li>
+            </ul>
+        </body>
+    </html>

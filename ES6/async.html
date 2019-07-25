@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>ES6--async/await原理解析</title>
+    <script>
+        function timeout(ms) {
+            return new Promise((resolve) => {
+                console.log('ddd');
+                setTimeout(resolve, ms);
+            });
+        }
+
+        async function asyncPrint(value, ms) {
+            await timeout(ms);
+            console.log(value);
+        }
+        asyncPrint('hello world', 5000);
+    </script>
+  </head>
+  <body>
+    <h2>ES6--async/await原理解析</h2>
+    <!-- built files will be auto injected -->
+  </body>
+</html>

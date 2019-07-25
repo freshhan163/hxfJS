@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>post message</title>
+<meta name="description" content=" postmessage">
+<meta name="keywords" content="">
+</head>
+<body>
+hello
+<script>
+  //  与数据开发平台 互相传输 lang 中英文切换
+    document.domain = 'xiaojukeji.com'
+        window.addEventListener('message', function(event) {
+            var data = event.data;
+            if (data) {
+                if (data.type === 'getLanguage') {
+                    var language = localStorage.getItem('lang');
+                    window.postMessage({type: 'returnLanguage', language: language}, '*');
+                }
+                if (data.type === 'setLanguage') {
+                    if (data.language) {
+                        localStorage.setItem('lang', data.language);
+                    }  
+                }
+            }
+        })
+</script>
+</body>
+</html>

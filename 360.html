@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>DOM操作详细解释</title>
+            <style type="text/css">
+                div {
+                    box-sizing: border-box;
+                }
+                #box {
+                    width: 0;
+                    height: 0;
+                    border: 40px solid transparent;
+                    border-top: 20px solid red;
+                }
+            </style>
+            <script type="text/javascript">
+            console.log('0.1 + 0.2 == 0.3 is ', 0.1 + 0.2 == 0.3); // false
+            let s = (0.1 * 100 + 0.2 *100) / 100;
+            console.log(s == 0.3);
+            function input() {
+                var n = parseInt(gets(6).trim()); // 获取数量
+                if (n < 3) {
+                    return -1;
+                }
+                while (n >= 3) {
+                    input
+                }
+            }
+            function getNum(x) {
+                if (x < 0 || (x % 10 == 0 && x != 0) ) {
+                    return false;
+                }
+                let rx = 0;
+                while (x > rx) {
+                    rx = rx * 10 + x % 10;
+                    x = x / 10;
+                    console.log('x = ', x, 'rx = ', rx);
+                }
+                console.log('rx / 10 = ', rx / 10 * 10, 'x = ', x * 10);
+                console.log('rx / 10 == x', rx / 10 === x);
+                console.log('Math.abs(x - rx / 10) = ', Math.abs(x - rx / 10));
+                let result = Math.abs(x - rx / 10) < 10;
+                return x == rx || result;
+            }
+            getNum(1001);
+
+            // 字符串是否是异位数
+            var isAnagram = function(s, t) {
+                let sObj = {};
+                let tObj = {};
+                if (s.length !== t.length || (s === '' && j === '')) {
+                    return false;
+                }
+                for (let i = 0; i < s.length; i++) {
+                    let temp = 'sn' + (s.charCodeAt(i) - 97).toString();
+                    if (!sObj[temp]) {
+                        sObj[temp] = 1;
+                    } else {
+                        sObj[temp]++;
+                    }
+                }
+                console.log('sObj = ', sObj);
+                for (let j = 0; j < t.length; j++) {
+                    let temp = 'tn' + (t.charCodeAt(j) - 97).toString();
+                    if (!tObj[temp]) {
+                        tObj[temp] = 1;
+                    } else {
+                        tObj[temp]++;
+                    }
+                }
+                console.log('tObj = ', tObj);
+                for (let i = 0; i < 26; i++) {
+                    let sTemp = 'sn' + i.toString();
+                    let tTemp = 'tn' + i.toString();
+                    if (sObj[sTemp] !== tObj[tTemp]) {
+                        return false;
+                        console.log('false');
+                    }
+                }
+                return true;
+            };
+            isAnagram('anagram', 'nagaram');
+            console.log('**********************************');
+            var getJoin = function (nums1, nums2) {
+                var er = [];
+                for(var i = 0;i<nums1.length;i++){
+                    for(var j = 0;j<nums2.length;j++){
+                        if(nums1[i]==nums2[j]){
+                            er.push(nums1[i]);
+                        }
+                    }
+                }
+                var n = [];
+                for(var i = 0; i < er.length; i++){
+                    if (n.indexOf(er[i]) == -1){
+                        n.push(er[i]);
+                    }
+                }
+                return n;
+            }
+            getJoin([1, 2, 2, 1], [2, 2]);
+            var getJoin2 = function (nums1, nums2) {
+                let result = [];
+                nums1.sort(sortFunc);
+                nums2.sort(sortFunc);
+                for (let i = 0, j = 0; i < nums1.length && j < nums2.length;) {
+                    if (nums1[i] === nums2[j]) {
+                        result.push(nums1[i]);
+                        i++;
+                        j++;
+                    } else if (nums1[i] > nums2[j]) {
+                        j++;
+                    } else {
+                        i++;
+                    }
+                }
+                return result;
+            }
+            var sortFunc = function (a, b) {
+                return a - b;
+            }
+            getJoin2([1, 2, 2, 1], [2, 2]);
+            var isPalindrome = function(x) {
+                if (x < 0 || (x % 10 == 0 && x != 0) ) {
+                    return false;
+                }
+                let rx = 0;
+                while (x > rx) {
+                    rx = rx * 10 + x % 10;
+                    x = parseInt(x / 10);
+                    console.log('rx  = ', rx);
+                    console.log('x  = ', x);
+                }
+                console.log('rx - x = ', rx - x);
+                return x == rx || x == parseInt(rx /10);
+            };
+            isPalindrome(12321);
+            var sortNumber = function (a, b) {
+                return b - a;
+            };
+            var largestPerimeter = function(A) {
+                let len = A.length;
+                if (len <= 2) {
+                    return 0;
+                }
+                let B = A.sort(sortNumber);
+                console.log('A = ', A);
+                console.log('B = ', B);
+                let result = 0;
+                for (let i = 0; i < len; i++) {
+                    for (let j = i + 1; j < len - 1; j++) {
+                        if (B[j] + B[j+1] > B[i]) {
+                            result = B[j] + B[j+1] + B[i];
+                            return result;
+                        }
+                    }
+                }
+                return result;
+            };
+            largestPerimeter([3, 2, 3, 4]);
+            var removeDuplicates = function(nums) {
+                // let a = [...nums];
+                console.log('new Set(a) = ', [...new Set(nums)]);
+                // return new Set(a).length;
+            };
+            removeDuplicates([1,1,2]);
+            var removeElement = function(nums, val) {
+                let len = nums.length;
+                if (len <= 0) {
+                    return 0;
+                }
+                let ubiLen = 0;
+                let i = 0;
+                for (let j = len - 1; i < len && j > 0;) {
+                    // if (nums[i] !== val) {
+                    //     nums[ubiLen] =  nums[i];
+                    //     ubiLen++;
+                    // }
+                    console.log('j = ', j);
+                    console.log('i = ', i);
+                    if (nums[i] === val) {
+                        nums[i] = nums[j];
+                        --j;
+                    } else {
+                        i++;
+                    }
+                    console.log('nums = ', nums);
+                }
+                nums.length = i + 1;
+                return i + 1;
+            };
+            removeElement([3, 2, 2, 3], 3);
+            var searchInsert = function(nums, target) {
+                let len = nums.length;
+                let low = 0;
+                let high = len - 1;
+                let result = 0;
+                while (low <= high) {
+                    let mid = low + Math.ceil((high - low)/2);
+                    if (nums[mid] === target) {
+                        return mid;
+                    } else if (nums[mid] > target) {
+                        high = mid - 1;
+                        result = mid - 1;
+                    } else {
+                        low = mid + 1;
+                        result = mid + 1;
+                    }
+                    console.log('low = ', low, 'high = ', high);
+                    console.log('result = ', result, 'mid = ', mid);
+                }
+                return low;
+            };
+            searchInsert([1, 3, 4, 6], 5);
+            var maxSubArray = function(nums) {
+                return maxSubArrayPart(nums, 0, nums.length - 1);
+            };
+            var maxSubArrayPart = function(nums, left, right) {
+                if (left === right) {
+                    return nums[left];
+                }
+                // let mid = left + Math.ceil((right - left) / 2);
+                let mid =  Math.floor((right + left) / 2);
+                console.log('Math.max = ', Math.max(
+                        maxSubArrayPart(nums, mid + 1, right),
+                        maxSubArrayMerge(nums, left, mid, right)
+                    ));
+                return Math.max(
+                    maxSubArrayPart(nums, left, mid),
+                    Math.max(
+                        maxSubArrayPart(nums, mid + 1, right),
+                        maxSubArrayMerge(nums, left, mid, right)
+                    )
+                );
+            }
+            var maxSubArrayMerge = function(nums, left, mid, right) {
+                let leftSum = Number.MIN_SAFE_INTEGER;
+                let rightSum = Number.MIN_SAFE_INTEGER;
+                let sum = 0;
+                for (let i = mid; i >= left; --i) {
+                    sum += nums[i];
+                    if (sum > leftSum) {
+                        leftSum = sum;
+                    }
+                }
+                sum = 0;
+                for (let j = mid + 1; j <= right; ++j) {
+                    sum += nums[j];
+                    if (sum > rightSum) {
+                        rightSum = sum;
+                    }
+                }
+                console.log('rightSum == ', rightSum, 'leftSum = ', leftSum);
+                return leftSum + rightSum;
+            }
+            console.log(maxSubArray([-2,1,-3,4,-1,2,1,-5,4]));
+            var plusOne = function(digits) {
+                // let n = (Number(digits.join('')) + 1).toString().split('');
+                // console.log('Number(digits.join()) = ', Number(digits.join('')));
+                let len = digits.length;
+                let flag = false;
+                if (digits[len-1] === 9) {
+                    for (let i = digits.length - 1; i >= 0; --i) {
+                        if (digits[i] === 9) {
+                            digits[i] = 0;
+                            flag = true;
+                            if (i === 0 && flag) {
+                                digits.unshift(1);
+                            }
+                        } else if (flag) {
+                            digits[i] = digits[i] + 1;
+                            console.log('[digits] = ', digits);
+                            return digits;
+                        }
+                    }
+                } else {
+                    digits[len - 1] = digits[len - 1] + 1;
+                }
+                return digits;
+            };
+            plusOne([2,4,9,3,9]);
+            // plusOne([6,1,4,5,3,9,0,1,9,5,1,8,6,7,0,5,5,4,3]);
+
+            // 两个有序数组的合并
+            var merge = function(nums1, m, nums2, n) {
+                let len = nums1.len;
+                let result = [];
+                for (let i = 0; i < n; i++) {
+                    let min = nums2[i];
+                    for (let j = 0; j < m; j++) {
+                        if (nums1[j] < nums2[i]) {
+                            result.push(nums1[i]);
+                        } else {
+                            result.push(nums2[i]);
+                            break;
+                        }
+                    }
+                    console.log('result = ', result);
+                }
+            };
+            // 杨辉三角2
+            var getRow = function(rowIndex) {
+                if (rowIndex === 0) {
+                    return [1];
+                }
+                let lastRow = [1];
+                for (let i = 1; i <= rowIndex; i++) {
+                    let len = i + 1;
+                    let result = [];
+                    for (let j = 0; j < len; j++) {
+                        let firstNum = 0;
+                        let secNum = 0;
+                        if (j >= 1) {
+                            firstNum = lastRow[j - 1];
+                        }
+                        if (j < len - 1) {
+                            secNum = lastRow[j];
+                        }
+                        console.log('j = ', j, 'fristNum = ', firstNum, 'secNum = ', secNum);
+                        result[j] = firstNum + secNum;
+                        console.log('result = ', result);
+                    }
+                    lastRow = result;
+                }
+                return result;
+            };
+            getRow(3);
+            </script>
+        </head>
+        <body>
+            <div id="box"></div>
+        </body>
+    </html>

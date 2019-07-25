@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>冒泡排序</title>
+    <script>
+        function generateArray (len) {
+            let arr = Array(len);
+            for (let i = 0; i < len; i++) {
+                arr[i] = Math.random()*10;
+            }
+            return arr;
+        }
+        window.onload = function () {
+            var testArr = generateArray(8);
+            var testArr = [5, 7, 3, 4, 9, 2];
+            console.log(testArr);
+            function bubbleSort1 (arr) {
+                // i 表示轮回的次数
+                for (var i=0; i< arr.length; i++) {
+                    // j表示每次轮询时的长度
+                    for (var j=arr.length - 1; j > i; j--) {
+                        // 按照从小到大排列
+                        if (arr[j] > arr[j - 1]) {
+                            var temp = arr[j - 1];
+                            arr[j - 1] = arr[j];
+                            arr [j] = temp;
+                        }
+                    }
+                    console.log('n*n次', i);
+                }
+                return arr;
+            }
+            console.log(bubbleSort1(testArr));
+
+            var testArr2 = [5, 3, 2, 1, 7];
+            console.log(testArr2);
+            function bubbleSort2 (arr) {
+                // i 表示轮回的次数
+                var flag = false;
+                for (var i=0; i< arr.length; i++) {
+                    flag = false;
+                    // j表示每次轮询时的长度
+                    for (var j=arr.length - 1; j > i; j--) {
+                        // 按照从小到大排列
+                        if (arr[j] > arr[j - 1]) {
+                            var temp = arr[j - 1];
+                            arr[j - 1] = arr[j];
+                            arr [j] = temp;
+                            flag = true;
+                        }
+                    }
+                    console.log('n*logN次', i);
+                    if (flag == false) {
+                        return arr;
+                    }
+                }
+                return arr;
+            }
+            console.log(bubbleSort2(testArr2));
+        }
+    </script>
+  </head>
+  <body>
+    <div class="app">
+
+    </div>
+    <!-- built files will be auto injected -->
+  </body>
+</html>

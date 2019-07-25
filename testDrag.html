@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+            <meta charset="UTF-8">
+            <title></title>
+            <style type="text/css">
+                #box{position: absolute;top: 150px;left: 250px;width: 200px;height: 200px;background-color: red;border-bottom: 10px solid blue;}
+            </style>
+            <script type="text/javascript">
+                window.onload = function () {
+                    var oBox = document.getElementById('box');
+                    var isDrag = false;
+                    oBox.onmousemove = function (e) {
+                        var iEvent = e || window.event;
+                        if (iEvent.clientY <= oBox.offsetHeight + oBox.offsetTop && iEvent.clientY >= oBox.offsetHeight + oBox.offsetTop -10) {
+                            oBox.style.cursor = 's-resize';
+                            isDrag = true;
+                        } else {
+                            oBox.style.cursor = 'pointer';
+                        }
+                    }
+                    oBox.onmousedown = function (e) {
+                        var iEvent = e || window.event;                                
+                        var cx = iEvent.clientX; // 第一次单击时，存储x轴的坐标
+                        var cy = iEvent.clientY; // 第一次单击时，存储y轴的坐标
+                        var dw = oBox.offsetWidth; // 存储div的宽度
+                        var dh = oBox.offsetHeight; // 存储div的高度 
+                        var disTop = oBox.offsetHeight + oBox.offsetTop; // 底边距离顶部的高度
+                        document.onmousemove = function (e) {
+                            var iEvent = e || window.event;
+                            if (isDrag) {
+                                oBox.style.height = iEvent.clientY - cy + dh + 'px';
+                                if(oBox.offsetHeight <= 200){
+                                    oBox.style.height='200px';
+                                }
+                            }
+                        }
+                        document.onmouseup=function(){
+                            document.onmousedown=null;
+                            document.onmousemove=null;
+                        };
+                        return false;
+                    }
+                }
+            </script>
+        </head>
+        <body>
+            <div id="box"></div>
+        </body>
+    </html>

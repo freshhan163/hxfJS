@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>vue双向绑定原理实现</title>
+    <script>
+        function minNumberInRotateArray(rotateArray)
+        {
+            // write code here
+            let len = rotateArray.length;
+            if(len == 0) {
+                return 0;
+            }
+            var left = 0;
+            var right = len - 1;
+            var mid = 0;
+            while(rotateArray[left] >= rotateArray[right]) {
+                debugger
+                console.log('数组', left, right);
+                if (right - left == 1) {
+                    mid = right;
+                    break;
+                }
+                mid = left + Math.floor((right - left) / 2);
+                console.log(rotateArray[mid], rotateArray[left]);
+                if ((rotateArray[right] == rotateArray[left]) && (rotateArray[mid] == rotateArray[left])) {
+                    // return findMinNumber(rotateArray, left, right);
+                }
+
+                if (rotateArray[mid] >= rotateArray[left]) {
+                    debugger
+                    left = mid;
+                } else {
+                    right = mid;
+                }
+            }
+            console.log('输出结果', rotateArray[mid]);
+            return rotateArray[mid];
+        }
+        function findMinNumber(array, left, right) {
+            let min = array[left];
+            for (let i = left + 1; i < right; i++) {
+                if (min > array[i]) {
+                    min = array[i];
+                }
+            }
+            return min;
+        }
+        minNumberInRotateArray([6501,6828,6963,7036,7422,7674,8146,8468,8704,8717,9170,9359,9719,9895,9896,9913,9962,154,293,334,492,1323,1479,1539,1727,1870,1943,2383,2392,2996,3282,3812,3903,4465,4605,4665,4772,4828,5142,5437,5448,5668,5706,5725,6300,6335]);
+    </script>
+  </head>
+  <body>
+    <div class="app">
+
+    </div>
+    <!-- built files will be auto injected -->
+  </body>
+</html>

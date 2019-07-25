@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>ES6--Promise原理解析</title>
+    <script>
+        // Promise的雏形
+        function Promise(fn) {
+            let value = null,
+                callbacks = []; // 可能同时有多个回调函数
+            // 在Promise异步操作成功时执行的回调函数放入callbacks队列，注册回调函数
+            this.then = function (onFullfilled) {
+                callbacks.push(onFullfilled);
+                // 支持then链式调用
+                return this;
+            }
+            function resolve(val) {
+                callbacks.forEach(function (callback) {
+                    callback(val);
+                });
+            }
+            // 在then方法注册回到函数之前，resolve函数就执行了，比如Promise内部是同步函数
+            // 这是不允许的，Promise/A+规范 明确要求回调需要通过异步方式执行，保证一致可靠的执行顺序
+            // 需要保证在 resolve方法执行之前，then方法以及注册完所有回调函数
+            function resolve(val) {
+                // 利用setTimeout机制，将resolve中执行回调的逻辑放在JS任务队列末位
+                // 保证 在resolve执行时，thend方法的回到函数已经注册完成
+                setTimeout(function() {
+                    callbacks.forEach(function (callback) {
+                        callback(val)
+                    });
+                }, 0);
+            }
+            fn(resolve);
+        }
+        function getUserId(id) {
+            return new Promise(function (resolve) {
+                fetchInfo(id);
+            });
+        }
+        // Promise加入状态机制，保证在Promise的异步操作成功之后，调用的then注册的回调依然能够执行
+        function Promise(fn) {
+            var state = 'pending',
+                value = null,
+                callbacks = [];
+            this.then = function(onFullfilled) {
+                if (state === 'pending') {
+                    callbacks.push(onFullfilled);
+                    return this;
+                }
+                onFullfilled(value);
+                return this;
+            }
+            function resolve(newVal) {
+                value = newVal;
+                state = 'fullfilled';
+                setTimeout(function() {
+                    callbacks.forEach(function(callback) {
+                        callback(value);
+                    });
+                }, 0);
+            }
+            fn(resolve);
+        }
+        // 如果then方法里注册的仍然是一个Promise，如何衔接当前的Promise和后邻的Promise
+        // 解决方法：在then方法里return 一个 Promise即可
+        function Promise(fn) {
+            var state = 'pending',
+                value = null,
+                callbacks = [];
+            // 创建并返回新的Promise，这是t串行Promise的基础，支持链式调用
+            this.then = function (onFullfilled) {
+                return new Promise(function (resolve) {
+                    handle({
+                        onFullfilled: onFullfilled || null,
+                        resolve: resolve
+                    });
+                })
+            }
+            function handle(callback) {
+                if (state === 'pending') {
+                    callbacks.push(callback);
+                    return;
+                }
+                // 如果then中没有传递任何东西
+                if (!callback.onFullfilled) {
+                    callback.resolve(value);
+                    return;
+                }
+                var ret = callback.onFullfilled(value);
+                callback.resolve(Ret);
+            }
+            function resolve(newVal) {
+                if (newVal && (typeof newVal === 'object' || typeof newVal === 'function')) {
+                    var then = newVal.then;
+                    if (typeof then === 'function') {
+                        then.call(newVal, resolve);
+                        return;
+                    }
+                }
+                state = 'fullfilled';
+                value = newVal;
+                setTimeout(function() {
+                    callbacks.forEach(function (callback) {
+                        handle(callback);
+                    });
+                }, 0);
+            }
+            fn(resolve);
+        }
+        // 30min彻底明白Promise原理
+        function getUserId() {
+            return new Promise(function(resolve) {
+                // 异步请求
+                http.get(url, function(results){
+                    resolve(results.id);
+                });
+            });
+        }
+        function getUserJobById(id) {
+            return new Promise(function(resolve) {
+                // 异步请求
+                http.get(baseUrl + id, function(job){
+                    resolve(job);
+                });
+            });
+        }
+        // 通过then方法注册在promise异步操作成功时执行的回调
+        getUserId().then(function(id) {})
+        // 如果then函数里，注册的仍然是一个Promise，该如何解决？
+        // 链式Promise,当前Promise达到Fullfilled状态后，开始下一个Promise，如何衔接呢？
+        getUserId()
+        .then(function(id) {
+            getUserJobById(id);
+        }).then(function(job) {});
+
+        // 手动实现Promise.all
+        function promiseALl(promises) {
+            return new Promise(function(resolve, reject) {
+                if (!isArray(promises)) {
+                    return reject(new TypeError('arguments must be an array'));
+                }
+                var resolvedCounter = 0; // 已经resolved的promise
+                var promiseNum = promises.length; //总的Promise
+                var resolvedValues = new Array(promiseNum);
+                for (var i = 0; i < promiseNum; i++) {
+                    (function(i) {
+                        Promise.resolve(promises[i]).then(function(value) {
+                            resolvedCounter++;
+                            resolvedValues[i] = value;
+                            if (resolvedCounter === promiseNum) {
+                                return resolve(resolvedValues);
+                            }
+                        }, function(resason) {
+                            return reject(reason);
+                        })
+                    })(i);
+                }
+            });
+        }
+        // 手动实现Promise.race
+        Promise.race = function(promises) {
+            return new Promise(function(resolve, reject) {
+                for (var i = 0, len = promises.length; i < len; i++) {
+                    Promise.resolve(promises[i]).then(function(val) {
+                        return resolve(val);
+                    }, function(reason) {
+                        return reject(reason)
+                    });
+                }
+            })
+        }
+    </script>
+  </head>
+  <body>
+    <div class="app">
+        按照顺序完成异步操作
+    </div>
+    <!-- built files will be auto injected -->
+  </body>
+</html>

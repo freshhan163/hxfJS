@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>hxf-project</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+        }
+        html {
+            /* padding: 20px; */
+        }
+        div {
+            box-sizing: border-box;
+        }
+        .app {
+            background-color: cornflowerblue;
+            border: 10px solid blanchedalmond;
+            height: 120vh;
+            padding: 100px;
+        }
+        .dims {
+            width: 200px;
+            height: 200px;
+            /* margin: 1000px auto 0 auto; */
+            margin: 0 auto;
+            background-color: pink;
+            border: 10px solid white;
+            padding: 10px;
+            overflow-x: scroll;
+            overflow-y: scroll;
+        }
+    </style>
+    <script type="text/javascript">
+        let  doc = document;
+        // let db = doc.body.height;
+        let dd = doc.documentElement.clientHeight;
+        // console.log('doc.body.clientHeight = ', db);
+        console.log('doc.documentElement.clientHeight = ', dd);
+        window.onload = function() {
+            var dims = document.getElementsByClassName('app')[0];
+            var dimChild = document.getElementsByClassName('dims')[0];
+            console.log('dimChild.offsetHeight', dimChild.offsetHeight);
+            console.log('dimChild.offsetWidth', dimChild.offsetWidth);
+            console.log('dimChild.clientHeight', dimChild.clientHeight);
+            console.log('dimChild.clientWidth', dimChild.clientWidth);
+            console.log('dimChild.scrollHeight', dimChild.scrollHeight);
+            console.log('dimChild.scrollWidth = ', dimChild.scrollWidth);
+            // dims.addEventListener('mousemove', function(event) {
+            //     console.log('clientX = ', event.clientX, 'clientY = ', event.clientY,);
+            //     console.log('event.x = ', event.x, 'event.y = ', event.y,);
+            //     console.log('event.pageX = ', event.pageX, 'event.pageY = ', event.pageY,);
+            //     console.log('document.scrollTop = ', document.body.scrollTop);
+            //     console.log('document.scrollTop = ', document.body.scrollTop);
+            //     // console.log('event.scrollTop = ', event.scrollTop, 'event.scrollLeft = ', event.scrollLeft);
+            //     // console.log('event.scrollHeight = ', event.scrollHeight, 'event.scrollWidth = ', event.scrollWidth,);
+            // });
+            console.log('******************************************************');
+            var rects = dimChild.getBoundingClientRect();
+            console.log('getBoundingRect = ', rects);
+            console.log('scrollTop = ', document.documentElement.scrollTop);
+            console.log(dimChild.getClientRects());
+        }
+    </script>
+  </head>
+  <body>
+    <div class="app">
+        <div class="dims">
+            <p>这是高度</p>
+            <p>这是高度</p>
+            <p>这是高度</p>
+            <p>这是高度</p>
+            <p>这是高度</p>
+            <p>这是高度</p>
+            <p>这是高度</p>
+            <p>这是高度</p>
+            <p>这是高度</p>
+            <p>这是高度</p>
+            <p>这是高度</p>
+            <p>这是高度</p>
+        </div>
+    </div>
+  </body>
+</html>

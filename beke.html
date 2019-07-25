@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>DOM操作详细解释</title>
+            <style type="text/css"></style>
+            <script type="text/javascript">
+                var str = '027555-692-0xD32C';
+                function getRes(str) {
+                    let len = str.length;
+                    if(len <= 1) {
+                        return str;
+                    }
+                    let arr = [];
+                    let pre = '';
+                    let index = 0;
+                    // for(;len >= 1;) {
+                    // while (str.indexOf('-') >= 0) {
+                    if (str.length > 0) {
+                        index = str.search(/\+|\-/);
+                        if (index >= 0) {
+                            let temp = str.slice(0, index);
+                            arr.push(pre + temp);
+                            pre = str[index];
+                            str = str.replace(temp, '');
+                        } else {
+                            arr.push(pre + str);
+                        }
+                        console.log(str.length);
+                        console.log(str);
+                        console.log(arr);
+                    }
+                }
+                console.log('输出：', getRes(str));
+            </script>
+        </head>
+        <body>
+        </body>
+    </html>

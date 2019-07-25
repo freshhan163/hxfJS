@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+            <meta charset="UTF-8">
+            <title></title>
+            <style type="text/css">
+            </style>
+            <script>
+                (function() {
+                    var a = b = 3;
+                    var c = 3;
+                })();
+                console.log(b);
+                console.log(typeof b);
+                console.log(typeof a);
+                console.log(typeof c);
+                // console.log(c);
+                // console.log(a);
+                console.log('******对象监测*******');
+                var a = {
+                    key: 'a',
+                    value: '1'
+                };
+                var b = {
+                    key: 'a',
+                    value: '1'
+                };
+                console.log('a == b', a == b);
+                console.log('a === b', a === b);
+                var array1 = [2, 3, 4, 5];
+                var array2 = [2, 3, 4, 5];
+                console.log('array1 == array2', array1 == array2);
+                console.log('array1 === array2', array1 === array2);
+
+                // typeof判断方法
+                console.log('************* typeof **************');
+                var n1 = 123;
+                var u1;
+                var null1 = null;
+                var array3 = [];
+                var obj1 = {key: 1};
+                var obj2 = {};
+                var n2 = Number(123);
+                var s1 = String(123);
+                console.log('var n1 = 123', typeof n1);
+                console.log('var u1;', typeof u1);
+                console.log('u2', typeof u2);
+                console.log('var null1 = null', typeof null1);
+                console.log('var array3 = [];', typeof array3);
+                console.log('var obj2 = {};', typeof obj2);
+                console.log('var n2 = Number(123);', typeof n2);
+                console.log('var s1 = String(123);', typeof s1);
+
+                var person = {};//创建个控对象 --引用类型
+                person.name = 'jozo';
+                person.age = 22;
+                person.sayName = function(){console.log(person.name);}
+                person.sayName();// 'jozo'
+
+                delete person.name; //删除person对象的name属性
+                person.sayName(); // undefined
+                console.log(typeof person.sayName);
+                console.log(person.sayName instanceof Object);
+                console.log(person.sayName instanceof Function);
+                console.log(person.sayName instanceof Function);
+            </script>
+        </head>
+        <body>
+            <div id="box"></div>
+        </body>
+    </html>

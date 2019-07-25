@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>算法题</title>
+    <script>
+        window.onload = function () {
+            function ListNode(x){
+                this.val = x;
+                this.next = null;
+            }
+            let p1 = new ListNode(11);
+            let currentP1 = p1;
+            for (let i = 0; i<3; i++) {
+                let temp = new ListNode(i + 1);
+                p1.next = temp;
+                p1 = p1.next;
+            }
+            let p2 = new ListNode(22);
+            let currentP2 = p2;
+            for (let i = 9; i<15; i++) {
+                let temp = new ListNode(i + 1);
+                p2.next = temp;
+                p2 = p2.next;
+            }
+            console.log('p1 = ', currentP1);
+            console.log('p2 = ', currentP2);
+            function Merge(pHead1, pHead2)
+            {
+                // write code here
+                let temp = [];
+                while(pHead1 != null) {
+                    temp.push(pHead1.val);
+                    pHead1 = pHead1.next;
+                }
+                while(pHead2 != null) {
+                    temp.push(pHead2.val);
+                    pHead2 = pHead2.next;
+                }
+                temp.sort(sortNode);
+                let currentNode = new ListNode();
+                var head = currentNode;
+                while(temp.length > 0) {
+                    var node = new ListNode(temp.pop());
+                    currentNode.next = node;
+                    currentNode = currentNode.next;
+                }
+                return head;
+            }
+            function sortNode(a, b) {
+                if (a - b >= 0) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            }
+            let array = Merge(currentP1, currentP2);
+            console.log('输出结果：', Merge(currentP1, currentP2));
+
+            // 回字形打印数组
+            function printMatrix(matrix)
+            {
+                // write code here
+                if (matrix.length == 0 || matrix[0].length == 0) {
+                    return;
+                }
+                let rowHead = 0;
+                let rowTail = matrix.length - 1;
+                let colHead = 0;
+                let colTail = matrix[0].length - 1;
+                let rowLen = matrix.length;
+                let colLen = matrix[0].length;
+                let temp = [];
+                while (rowHead <= rowTail && colHead <= colTail) {
+                    if (rowHead <= rowTail) {
+                        for (let i=colHead; i < colTail + 1; i++) {
+                            temp.push(matrix[rowHead][i]);
+                        }
+                        rowHead++;
+                    }
+                    console.log('第一行：', temp);
+                    if (colHead <= colTail) {
+                        for (let j=rowHead; j < rowTail + 1; j++) {
+                            temp.push(matrix[j][colTail]);
+                        }
+                        colTail--;
+                    }
+                    console.log('最后一列：', temp);
+                    if (rowHead <= rowTail) {
+                        for (let i=colTail; i >= colHead; i--) {
+                            temp.push(matrix[rowTail][i]);
+                        }
+                        rowTail--;
+                    }
+                    console.log('最后一行：', temp);
+                    if (colHead <= colTail) {
+                        for (let j=rowTail; j >= rowHead; j--) {
+                            temp.push(matrix[j][colHead]);
+                        }
+                        colHead++;
+                    }
+                    console.log('第一列：', temp);
+                    console.log('rowHead = ', rowHead, 'rowTail = ', rowTail);
+                    console.log('colHead = ', colHead, 'colTail = ', colTail);
+                }
+                console.log('打印数组：', temp);
+                return temp;
+            }
+            printMatrix([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]]);
+            printMatrix([[1]]);
+        }
+    </script>
+  </head>
+  <body>
+    <div class="app">
+
+    </div>
+    <!-- built files will be auto injected -->
+  </body>
+</html>
