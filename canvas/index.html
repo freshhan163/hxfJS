@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>canvas系统学习</title>
+    <style>
+        .first {
+            /* width: 600px; */
+            /* height: 800px; */
+            background: #999;
+        }
+    </style>
+    <script>
+        window.onload = function() {
+            draw();
+            function draw() {
+                console.log('DOM加载完成,绘制图形！');
+                let d = document.getElementById('first');
+                d.width = 600;
+                d.height = 600;
+                let dtx = d.getContext('2d');
+
+                // 绘制长方形
+                // dtx.fillStyle = 'red';
+                // dtx.fillRect(0, 0, 150, 75);
+
+                // 绘制直线
+                // dtx.moveTo(0, 0);
+                // dtx.lineTo(100, 50);
+                // dtx.stroke();
+
+                //绘制圆形
+                // dtx.beginPath();
+                // dtx.arc(50, 50, 40,0,2*Math.PI);
+                // dtx.stroke();
+
+                // 绘制文字
+                // dtx.font = '30px Arial';
+                // dtx.fillText('Hello world!', 20, 100); // 实心文字
+                // dtx.strokeText('Hello world!', 20, 100); // 空心文字
+
+                // 创建渐变--线性渐变
+                // let grd = dtx.createLinearGradient(0, 0, 200, 0);
+                // grd.addColorStop(0, 'red');
+                // grd.addColorStop(0.5, 'white');
+                // // 填充渐变
+                // dtx.fillStyle = grd;
+                // dtx.fillRect(10, 10, 50, 100);
+
+                // 创建渐变--径向渐变
+                // let grd = dtx.createRadialGradient(75, 70, 5, 90, 60, 100);
+                // grd.addColorStop(0, 'red');
+                // grd.addColorStop(1, 'green');
+
+                // dtx.fillStyle = grd;
+                // dtx.fillRect(20, 30, 150, 100);
+
+                // 检测支持性
+                if (d.getContext) {
+                    let ctx = d.getContext('2d');
+                } else {
+                    console.log('不支持context方法');
+                }
+
+                // 绘制两个矩形
+                // dtx.fillStyle = 'rgb(200, 0, 0)';
+                // dtx.fillRect(50, 50, 100, 50);
+
+                // dtx.fillStyle = 'rgba(0, 200, 0, 0.5)';
+                // dtx.fillRect(100, 75, 100, 50);
+
+                // 绘制矩形的方法--3种
+                /*
+                * fillRect(x, y, width, height) 绘制一个实心矩形
+                * strokeRect(x, y, width, height) 空心矩形
+                * clearRect(x, y, width, height) 清除矩形区域
+                */
+
+                // dtx.fillStyle = 'rgb(100， 20， 0)';
+                // dtx.fillRect(50, 20, 50, 20);
+
+                // dtx.fillStyle = 'rgb(100， 20， 0)';
+                // dtx.strokeRect(50, 60, 50, 20);
+                // function remove(ms, w, h) {
+                //     setTimeout(() => {
+                //         dtx.clearRect(50, 30, w, h);
+                //     }, ms);
+                // }
+                // for (let i = 0; i < 30; i+=5) {
+                //     remove(100, i, i);
+                // }
+
+                // 路径绘制图形
+                // // 开始路径
+                // dtx.beginPath();
+                // // 起始点坐标
+                // dtx.moveTo(50, 40);
+                // dtx.lineTo(200, 100);
+                // // 关闭路径
+                // dtx.closePath();
+                // // 绘制路线--stroke/fill
+                // dtx.stroke();
+
+                // 路径绘制三角形
+                // dtx.beginPath();
+                // dtx.moveTo(50, 50);
+                // dtx.lineTo(100, 100);
+                // dtx.lineTo(100, 80);
+                // dtx.closePath(); // 闭合图形，会生成三角形
+                // dtx.fillStyle = 'pink';
+                // dtx.fill();
+
+                // 路径绘制圆形、弧形
+                // dtx.beginPath();
+                // dtx.arc(50, 50, 40, 0, Math.PI * 2, false);
+                // dtx.fillStyle = 'green';
+                // dtx.fill();
+                // dtx.stroke();
+                // 绘制圆形的4个实例
+                // dtx.arc(50, 50, 20, 0, Math.PI / 2, false);
+                // dtx.stroke();
+
+                // ??
+                // dtx.arc(120, 50, 20, 0, -Math.PI / 2, true);
+                // dtx.closePath();
+                // dtx.stroke();
+
+                // 绘制曲线
+                // dtx.moveTo(50, 50);
+                // // 控制点1坐标，控制点2坐标，参数5 控制圆弧半径
+                // dtx.arcTo(200, 50, 200, 200, 10);
+                // dtx.lineTo(200, 200);
+                // dtx.stroke();
+
+                // dtx.beginPath();
+                // dtx.rect(50, 50, 10, 10);
+                // dtx.rect(200, 50, 10, 10);
+                // dtx.rect(200, 100, 10, 10);
+                // dtx.fill();
+
+                // 贝塞尔曲线
+                // dtx.beginPath();
+                // dtx.moveTo(50, 50);
+                // // 控制点
+                // let cp1x = 120;
+                // let cp1y = 20;
+                // // 结束点
+                // let x = 150, y = 200;
+                // // 绘制二次贝塞尔曲线
+                // dtx.quadraticCurveTo(cp1x, cp1y, x, y);
+                // dtx.stroke();
+
+                // 三次贝塞尔曲线 bezierCurveTo
+                // dtx.beginPath();
+                // dtx.moveTo(50, 50);
+                // dtx.bezierCurveTo(80, 20, 100, 80, 150, 200);
+                // dtx.stroke();
+
+                // for(let i = 0; i < 6; i++) {
+                //     for(let j = 0; j < 6; j++) {
+                //         dtx.fillStyle = `rgb(${Math.floor(255 - 42.5 * i)},
+                //             ${Math.floor(255 - 42.5 * j)}, 0)`;
+                //         dtx.fillRect(j * 50, i * 50, 50, 50);
+                //     }
+                // }
+
+                // 线条样式： 线宽lineWidth 线条末尾样式 lineCap
+                // dtx.beginPath();
+                // dtx.moveTo(50, 50);
+                // dtx.lineTo(100, 100);
+                // dtx.lineWidth = 20;
+                // dtx.lineCap = 'round';
+                // dtx.strokeStyle = 'red';
+                // dtx.stroke();
+
+                // 线条连接处
+                // let lineJoin = ['bevel', 'round', 'bevel'];
+                // dtx.lineWidth = 10;
+                // for (let i = 0; i < lineJoin.length; i++) {
+                //     dtx.lineJoin = lineJoin[i];
+                //     dtx.beginPath();
+                //     dtx.moveTo(50, 50 + i * 50);
+                //     dtx.lineTo(100, 100 + i * 50);
+                //     dtx.lineTo(150, 50 + i * 50);
+                //     dtx.lineTo(200, 100 + i * 50);
+                //     dtx.lineTo(250, 50 + i * 50);
+                //     dtx.stroke();
+                // }
+
+                // 设置虚线 setLineDash([width, gap]) width:实现长度 gap: 间隙长度
+                dtx.setLineDash([200, 100]);
+                dtx.lineDashOffset = 30;
+                dtx.strokeRect(50, 50, 200, 100);
+
+                // 绘制文本
+                // dtx.font = '50px sans-serif';
+                // dtx.direction = 'rtl';
+                // dtx.strokeText('天若有情天亦老', 70, 170, 150);
+                // dtx.fillText('天若有情天亦老', 70, 70, 150);
+
+                // 载入图片，图片可以是new，也可以来源于 网页中的图片
+                // 缩放图片
+                // let img = document.querySelector('img');
+                // dtx.drawImage(img, 100, 0, 200, 200);
+                // 图片切片
+                // dtx.drawImage(img, 50, 50, 100, 100, 150, 150, 200, 200);
+                // let img = new Image();
+                // img.onload = () => {
+                //     dtx.drawImage(img, 300, 100);
+                // }
+                // img.src = 'https://www.runoob.com/wp-content/uploads/2018/12/2255709523-5b74dd8eb033e_articlex.png';
+
+                // 状态的保存和恢复
+                // dtx.setLineDash([50, 10]);
+                // dtx.strokeRect(50, 50, 200, 200);
+                // dtx.save(); // 保存此次状态
+
+                // dtx.filStyle = 'pink';
+                // dtx.fillRect(200, 300, 100, 50);
+                // dtx.save();
+
+                // dtx.filStyle = '#eee';
+                // dtx.fillRect(300, 400, 100, 50);
+                // dtx.restore();
+                // dtx.fillRect(500, 500, 80, 100);
+                // dtx.restore();
+                // dtx.fillRect(60, 60, 80, 100);
+
+                // 变形
+                
+            }
+            // document.querySelector('img').addEventListener('click', () => {
+            //     draw();
+            // });
+        };
+    </script>
+  </head>
+  <body>
+    <h2>canvas系统学习</h2>
+    <canvas id="first" class="first"></canvas>
+    <img src="./assets/tset.png" alt="测试图片" width="500" style="display: none;" />
+    <!-- built files will be auto injected -->
+  </body>
+</html>
