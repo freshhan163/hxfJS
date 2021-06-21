@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JS--对象</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+    <script>
+        window.onload = function() {
+            console.log('****************** new后 构造函数都做了什么 *****************');
+            var Animal = function (name) {
+                this.name = name;
+            }
+            Animal.prototype.eat = function () {
+                console.log(this.name + ' is eating Something');
+            };
+            // var tiger = new Animal('tiger');
+            // tiger.eat();
+
+            // 新建一个对象，修改对象的原型链指向构造函数的原型，修改对象的this指向构造函数，执行构造函数，返回对象
+            var tiger = {};
+            tiger.__proto__ = Animal.prototype;
+            Animal.call(tiger, 'tiger');
+            tiger.eat();
+
+            console.log('****************** ES5继承 *****************');
+            // //定一个Bird，继承自Animal
+            var Bird = function(name, type) {
+                Animal.call(this, name);
+                this.type = type;
+            };
+            Bird.prototype = new Animal();
+            // 需要改写constructor，否则指向的是父类的构造函数
+            // Bird.prototype.constructor = Bird;
+            Bird.prototype.fly = function () {
+                console.log(this.name + ' want to fly.');
+            }
+
+            console.log('Bird.prototype.constructor = ', Bird.prototype.constructor); // 返回Animal的构造函数
+            console.log('Bird.prototype.constructor === Animal ', Bird.prototype.constructor === Animal); // true
+            console.log('Bird instanceof Animal = ', Bird instanceof Animal); // false
+            var pigeon = new Bird('pigeon');
+            console.log('pigeon instanceof Animal = ', pigeon instanceof Animal); // true
+            pigeon.fly();
+            pigeon.eat();
+            pigeon.name = '修改名称--dddd';
+            pigeon.eat();
+            tiger.eat();
+
+            // console.log('******************组合式继承*****************');
+            // function Person(name, sex, age) {
+            //     this.name = name;
+            //     this.sex = sex;
+            //     this.age = age;
+            // }
+            // Person.prototype.getName = function() {
+            //     console.log('Person：', this.name + '\'s age = ' + this.age);
+            //     return this.name;
+            // }
+            // function Student(name, sex, age, cls, rank) {
+            //     Person.call(this, name, sex, age); // 构造函数继承，需要先定义超类型，再写自定义类型
+            //     this.cls = cls;
+            //     this.rank = rank;
+            // }
+            // Student.prototype = new Person(); // 原型链继承，由于重写了原型链，需要重新定义constructor？？？
+            // console.log(Student.prototype.constructor === Student);
+            // // Student.prototype.constructor = Student;
+
+            // Student.prototype.getName = function(){
+            //     console.log('***Student', this.name + '\'s age = ' + this.age);
+            //     return this.name;
+            // }
+            // Student.prototype.getAll = function() {
+            //     console.log('***Student', this.name + '\'s rank = ' + this.rank);
+            // }
+
+            // var s1 = new Student('Jane1', 'female', 12, '二年级', 1);
+            // s1.getName();
+            // s1.cls = '五年级';
+            // s1.getAll();
+            // var p1 = new Person('Monica', 'male', 9);
+            // p1.getName();
+            // console.log('s1.hasOwnProperty(\'getName\')', s1.hasOwnProperty('getName'));
+
+            // console.log('***************原型的动态性********************');
+            // function School(name, loc) {
+            //     this.name = name;
+            //     this.loc = loc;
+            // }
+            // var bjut = new School('北京工业大学', '北京市朝阳区');
+            // // bjut.getName(); // 报错，因为还未在原型链上定义
+            // School.prototype.getName = function() {
+            //     console.log('school is', this.name);
+            // }
+            // bjut.getName(); //正常引用
+
+            console.log('***************测试原型链********************');
+            function Father(name) {
+                this.name = name;
+            }
+            Father.prototype.getValue = function() {
+                return this.name;
+            };
+            console.log('Father.__proto__ ===  Function.prototype', Father.__proto__ ===  Function.prototype);
+            console.log('Father.__proto__ ===  Object.prototype', Father.__proto__ ===  Object.prototype);
+
+            // console.log('Father.prototype.__proto__ == Object.prototype', Father.prototype.__proto__ == Object.prototype);
+            // console.log('Father.prototype.__proto__ == Function.prototype', Father.prototype.__proto__ == Object.prototype);
+            // var f1 = new Father();
+            // console.log('f1.constructor === Father.prototype.constructor', f1.constructor === Father.prototype.constructor);
+
+            // function Son(){
+            //     this.value2 = false;
+            // }
+
+            // // 继承了 Father
+            // Son.prototype = new Father();
+            // Son.prototype.constructor = Son;
+            // Son.prototype.getValue2 = function (){
+            //     return this.value2;
+            // };
+            // console.log(Son.prototype.constructor == Son);
+
+            // var son = new Son();
+            // console.log(son.getValue());  // true
+
+        };
+        (function () {
+            // 原型链继承，利用prototype
+            // 缺点：修改其中一个引用类型的属性，会影响另外一个实例；子类在实例化时，不能给父类构造函数传参
+            console.log('**************** 原型链继承 ******************');
+            function Person() {
+                this.scores = [22, 33, 44];
+                this.sayName = function() {
+                    console.log('scores = ', this.scores);
+                }
+            }
+            function Girl() {}
+            Girl.prototype = new Person();
+
+            let s1 = new Girl();
+            // 修改引用类型--数组
+            s1.scores.push(99);
+
+            let s2 = new Girl();
+            console.log('s1 = ', s1.scores);
+            console.log('s2 = ', s2.scores);
+            console.log('Girl.prototype.consturctor = ', Girl.prototype.consturctor, Girl.prototype.consturctor === Girl, Girl.prototype.consturctor === Person);
+            console.log('s1.sayName ==== s2.sayName ', s1.sayName === s2.sayName);
+
+            // 构造函数继承
+            // 缺点，每个实例上都会重新创建一遍实例方法
+            console.log('**************** 构造函数继承 ******************');
+            function PersonConstructor(name, scores) {
+                this.name = name;
+                this.scores = scores;
+                this.sayName = function () {
+                    console.log('sayName name = ', this.name);
+                };
+            }
+
+            function GirlConstructor(name, scores, sex) {
+                PersonConstructor.call(this, name, scores);
+                this.sex = sex;
+            }
+            var s4 = new PersonConstructor('yangfan', [22, 23]);
+            var s3 = new GirlConstructor('hanxiaofang', [11, 12], '女性');
+            s3.sayName();
+            s4.sayName();
+            console.log('s3.sayName ==== s4.sayName ',  s3.sayName === s4.sayName);
+
+        })();
+        console.log('**************** 测试class的实例方法和原型方法 ***************************');
+        class A {
+            constructor(name) {
+                this.name = name;
+                // 在实例属性上
+                this.innerSay = function () {
+                    console.log('name = ', this.name);
+                };
+            }
+            // 在原型链上
+            outerSay() {
+                console.log('name = ', this.name);
+            }
+        }
+        let a = new A('测试实例方法和原型链方法');
+        console.log('a = ', a);
+        console.log('A = ', A.prototype);
+        a.innerSay();
+        a.outerSay();
+
+        class B extends A {
+            constructor(name, type) {
+                super(name);
+                this.type = type;
+            }
+        }
+        // 实例方法和原型方法都可以被继承
+        let b = new B('B的实例');
+        b.innerSay();
+        b.outerSay();
+
+        // Object.create(o)
+        console.log('**************** Object.create ***************************');
+        // 继承自{}和 null的区别
+        const originObj = {};
+        const o1 = Object.create(originObj);
+        const n1 = Object.create(null);
+        console.log('o1 = ', o1);
+        console.log('o1.__proto__ = ', o1.__proto__);
+        console.log('o1.__proto__ === Object.prototype', o1.__proto__ === Object.prototype); // false
+        console.log('o1.__proto__ === originObj', o1.__proto__ === originObj); // true
+        console.log('o1.__proto__.__proto__ === Object.prototype', o1.__proto__.__proto__ === Object.prototype); // true
+
+        console.log('n1 = ', n1); // {}
+        console.log('n1.__proto__ = ', n1.__proto__); // undefined
+        console.log('n1.__proto__ === null', n1.__proto__ === null); // false
+
+        // Object.create的源码：使用现有对象--参数，提供新创建对象的__proto__
+        // Object.prototype.create = function (o) {
+        //     function F() {}
+        //     F.prototype = o;
+        //     return new F();
+        // };
+
+        // 组合式继承
+        (function() {
+            console.log('**************** 多种继承方法 ***************************');
+            // 父类
+            function Person(name, age) {
+                this.name = name;
+                this.age = age;
+            }
+            Person.prototype.sayName = function () {
+                console.log('this.name = ', this.name, 'age = ', this.age);
+            };
+            const p1 = new Person('hanxiaofang', 27);
+            p1.sayName();
+
+            // 子类继承
+            function Student(name, age, classes, scores) {
+                Person.call(this, name, age);
+                this.classes = classes;
+                this.scores = scores;
+            }
+            Student.prototype = new Person();
+            Student.prototype.consturctor = Student;
+
+            // Student.prototype.sayName = function () {
+            //     console.log('this.name = ', this.name, this.age, 'classes = ', this.classes, this.scores);
+            // };
+
+            const s1 = new Student('yangfan', 222, '二年级', [100, 90]);
+            s1.sayName();
+
+            // 寄生组合式继承，利用Object.create方法
+            // 核心：通过寄生的方式，砍掉父类的属性；当在调用2次父类构造函数时，就不会初始化两次实例方法/属性，避免组合式继承的缺点
+            function StudentNew(name, age, classes, scores) {
+                Person.call(this, name, age);
+                this.classes = classes;
+                this.scores = scores;
+            }
+            (function() {
+                // 创建一个没有实例方法的类
+                var Super = function() {};
+                Super.prototype = Person.peototype;
+                StudentNew.prototype = new Super();
+            })();
+        })();
+        (function() {
+            console.log('**************** 对象遍历方法的排序顺序 ***************************');
+            const a = {
+                1: '属性1',
+                11: '属性1',
+                2: '属性2',
+                3: '属性3',
+                111: '属性111',
+                22: '属性22',
+                'test': '测试--test',
+                'a': '测试--a',
+                'www': '测试--www'
+            };
+            // Object.keys--自身可枚属性，和for..in一致
+            console.log('Object.keys = ', Object.keys(a));
+            console.log('Object.values = ', Object.values(a));
+            let forInArr = [];
+            for (let key in a) {
+                forInArr.push(key);
+            }
+            console.log('for..in遍历 = ', forInArr);
+        })();
+        (function() {
+            console.log('**************** 面试题--原型链相关 ***************************');
+            function Foo() {
+                this.a = 1;
+
+                // 由于返回一个对象，因此不再使用Foo.prototype作为原型链
+                return {
+                    a: 4,
+                    b: 5
+                };
+            }
+            Foo.prototype.a = 6;
+            Foo.prototype.b = 7;
+            Foo.prototype.c = 8;
+            Object.prototype.c = 9;
+
+            var o = new Foo();
+            console.log('o.__proto__ = Foo.prototype', o.__proto__ === Foo.prototype); // false
+            console.log('o.__proto__ = Object.prototype', o.__proto__ === Object.prototype); // true
+            console.log('o.a = ', o.a); // 4
+            console.log('o.b = ', o.b); // 5
+            console.log('o.c = ', o.c); // 9
+        })();
+        // 原型链相关
+        (function() {
+            console.log('**************** 面试题--原型链相关2 ***************************');
+            Function.prototype.a = () => console.log(1);
+            Object.prototype.b = () => console.log(2);
+            function A() {}
+            let a = new A();
+
+            console.log('a.__proto__ = A.prototype', a.__proto__ === A.prototype);
+            console.log('A.prototype.__proto__ === Object.prototype', A.prototype.__proto__ === Object.prototype);
+            console.log('A.__proto__ === Function.prototype', A.__proto__ === Function.prototype);
+
+            // a.a(); // 报错 Uncaught TypeError
+            a.b(); // undefined
+        })();
+        (function() {
+            console.log('**************** 面试题--instanceof相关 ***************************');
+            Function.prototype.a = 1;
+            Object.prototype.b = 2;
+
+            function A() {}
+            const a = new A();
+
+            console.log('a.a = ', a.a); // undefined
+            console.log('a.b = ', a.b);
+            console.log('a.c = ', a.c); // undefined
+
+            console.log(a instanceof Function); // false
+            console.log(a instanceof Object); // true
+            console.log(A instanceof Function); // true
+            console.log(A instanceof Object); // true
+        })();
+
+        // 手撕instanceof源码
+        (function() {
+            console.log('**************** 手撕instanceof源码 ***************************');
+            function myInstanceOf(leftObj, consturctor) {
+                // 左侧必须是一个对象
+                if (typeof leftObj !== 'Object' || leftObj === null) {
+                    return false;
+                }
+                // 右侧也必须是一个对象
+                let objPrototype = consturctor.prototype;
+                while(1) {
+                    if (leftObj === null) {
+                        return false;
+                    }
+                    if (leftObj === objPrototype) {
+                        return true;
+                    }
+                    objPrototype = objPrototype.__proto__;
+                }
+            }
+        })();
+    </script>
+</head>
+
+<body>
+    <h1>原型链与对象</h1>
+    <h2><a href="https://www.cnblogs.com/gwf93/p/10384352.html">多种继承类型</a></h2>
+</body>
+</html>

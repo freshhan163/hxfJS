@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <title>原型模式</title>
+            <script>
+            // 原型链--分析
+            // 创建一个Dog构造函数
+            function Dog(name, age) {
+                this.name = name;
+                this.age = age;
+            }
+            Dog.prototype.eat = function () {
+                console.log('肉骨头真好吃');
+            };
+            // 使用Dog构造函数创建dog实例
+            const dog = new Dog('旺财', 3);
+            console.log('dog.__proto__ = Dog.prototype', dog.__proto__ === Dog.prototype);
+            console.log('Dog.prototype.constructor === Dog ',  Dog === Dog.prototype.constructor);
+            console.log('Dog.__proto__ === Function.prototype ',  Dog.__proto__ === Function.prototype);
+            console.log('Dog.prototype.__proto__ === Object.prototype', Dog.prototype.__proto__ === Object.prototype);
+            console.log('Function.prototype.__proto__ === Object.prototype', Function.prototype.__proto__ === Object.prototype);
+
+            console.log('************Object.create************');
+            // Object.create(obj)：创建一个新对象，没有任何原型
+            const a = Object.create({name: 'hanxiaofang'});
+            const b = {name: '直接创建对象'};
+            console.log('a.__proto__', a.__proto__, a.__proto__.__proto__); // 返回对象自身
+            console.log('b.__proto__', b.__proto__); // 返回Object.prototype
+
+            console.log('a.prototype', a.prototype); // undefiend
+            console.log('b.prototype', b.prototype); // undefiend
+            console.log('a.__proto__ === Object.prototype', a.__proto__ === Object.prototype); // false
+            console.log('b.__proto__ === Object.prototype', b.__proto__ === Object.prototype); // true
+
+            let test = {};
+            let c = Object.create(test);
+            let d = Object.create(null);
+            console.log('b = ', d, typeof d, d.__proto__ === null); // 没有原型链
+            console.log('c = ', c, c.__proto__.__proto__ === Object.prototype, c.__proto__ === test); // 有原型链__proto__
+
+            console.log('************  深度克隆  ************');
+            // 基本类型、引用类型
+            let simpleObj = {
+                name: 'hanxiaofang',
+                age: 12,
+                score: {
+                    math: 20,
+                    english: 50,
+                    other: {
+                        computer: 20,
+                        politics: 40
+                    },
+                    children: [
+                        {
+                            name: 'children1',
+                            age: 20,
+                            children: [
+                                {
+                                    name: 'children1--111',
+                                    age: 20
+                                },
+                                {
+                                    name: 'children1--2222',
+                                    age: 20
+                                }
+                            ]
+                        }
+                    ],
+                    date: 1603605125364,
+                    originDate: new Date(1603605125364)
+                },
+                allscore: () => {
+                    console.log('这是函数');
+                },
+                reg: new RegExp(/\[a-Z0-9]/g)
+            };
+
+            // JSON.stringify()下，Date还正常；正则、函数都没有了，正则变成了{}，函数变成了null
+            // const copy1 = JSON.parse(JSON.stringify(simpleObj));
+            // console.log('copy1 = ', copy1);
+            // console.log('copy1.date = ', new Date(copy1.score.originDate).getTime());
+
+            // 深度拷贝
+            function deepClone(obj) {
+                // 针对基础类型的处理
+                if (typeof obj !== 'object' || obj === null) {
+                    return obj;
+                }
+                // 定义结果对象
+                let result = {};
+                // 如果是数组，则赋值为数组
+                if (obj.constructor === Array) {
+                    result = [];
+                }
+                for (let child in obj) {
+                    // 是自有属性，而不是原型链上的属性
+                    if (obj.hasOwnProperty(child)) {
+                        result[child] = deepClone(obj[child]);
+                    }
+                }
+                return result;
+            }
+
+            // 深度拷贝
+            const deepCopy = deepClone(simpleObj);
+            console.log('深度拷贝 deepCopy = ', deepCopy);
+
+            // Object.assign()浅拷贝--保留了函数、reg；第一层的name\score都没有被修改，但score.math被修改了
+            const copy2 = Object.assign({}, simpleObj);
+            console.log('assign拷贝 copy2 = ', copy2);
+
+            // 直接赋值
+            const onlyCopy = simpleObj;
+            console.log('简单赋值 onlyCopy = ', onlyCopy); // name | score都被修改
+
+            // 修改第一层属性
+            simpleObj.name = 'assign函数';
+            // 修改第二层属性
+            simpleObj.score.math = '修改了math';
+
+            function mockDeepClone2(target) {
+                let targetType = Object.prototype.toString.call(target);
+                let result;
+                if (targetType === '[object Object]') {
+                    result = {};
+                }
+                else if (targetType === '[object Array]') {
+                    result = [];
+                }
+                else {
+                    return target;
+                }
+                for (let key in target) {
+                    let value = target[key];
+                    if (targetType === '[object Object]' || targetType === '[object Array]') {
+                        result[key] = mockDeepClone(value);
+                    }
+                    else {
+                        result[key] = value;
+                    }
+                }
+                console.log('resutl = ', result, result === target);
+                return result;
+            }
+            </script>
+        </head>
+        <body>
+            <div id="box"原型模式></div>
+        </body>
+    </html>

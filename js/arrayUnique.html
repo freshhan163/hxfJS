@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>数组去重算法</title>
+            <style type="text/css"></style>
+            <script type="text/javascript">
+                var a = [1, 1, 0, 10, 12, 14, 1, 7, 6, 7];
+                function uniqueDouble(arr) {
+                    let len = arr.length;
+                    if (len <= 1) {
+                        return arr;
+                    }
+                    let result = [];
+                    for (let i = 0; i < len; i++) {
+                        for (var j = i+1; j < len && arr[i] !== arr[j]; j++);
+                        if(j == len) {
+                            result.push(arr[i]);
+                        }
+                    }
+                    return result;
+                }
+                // console.log(uniqueDouble(a));
+
+                //借助filter方法简写
+                function uniqueSort(arr) {
+                    if (arr.length <= 1) {
+                        return arr;
+                    }
+                    let result = arr.concat().sort(function(a, b) {
+                        return a - b;
+                    });
+                    console.log(result);
+                    let res = [];
+                    let len = result.length;
+                    for(let i=1; i < len; i++) {
+                        if(result[i - 1] !== result[i]) {
+                            res.push(result[i-1]);
+                        }
+                    }
+                    return res.concat(result[len-1]);
+                }
+                // console.log('先排序后去重：', uniqueSort(a));
+
+                //filter数组优化：先排序后去重
+                function uniqueSortFilter(arr) {
+                    let res = arr.concat().sort((a,b) => a-b);
+                    return res.filter((item, index, array) => {
+                        return !index || item !== array[index -1];
+                    });
+                }
+                // console.log('filter数组优化：先排序后去重--', uniqueSortFilter(a));
+
+                // filter + indexOf去重
+                function uniqueIndexFilter(arr) {
+                    return arr.filter((item, index, array) => {
+                        return index === arr.indexOf(item); // 多次出现时，只取第一次出现的值
+                    });
+                }
+                console.log('filter + indexOf去重--', uniqueIndexFilter(a));
+
+                //借助对象，去重
+                function uniqueObj(arr) {
+                    var obj = {};
+                    let len = arr.length;
+                    if (len <= 1) {
+                        return arr;
+                    }
+                    let result = [];
+                    for (let i=0; i<len; i++) {
+                        let str = typeof arr[i].toString() + '_' + arr[i];
+                        if(!obj[str]) {
+                            result.push(arr[i]);
+                            obj[str] = arr[i];
+                        }
+                    }
+                    return result;
+                }
+                console.log('借助对象，去重--', uniqueObj(a));
+
+                //对象+filter过滤
+                function uniqueObjFilter(arr) {
+                    var obj = {};
+                    return arr.filter((item, index, array) => {
+                        // return obj.hasOwnProperty(typeof item + item) ? false : (obj[typeof item + item] = true);
+                        return obj.hasOwnProperty(typeof item + JSON.stringify(item)) ? false : (obj[typeof item + JSON.stringify(item)] = true);
+                    });
+                }
+                console.log('借助对象 + filter，去重--', uniqueObjFilter([1, '1', 'a', {value: 1},'1', {value: 1}, 'a', {value: 2}]));
+
+            </script>
+        </head>
+        <body>
+            <h2>数组去重算法</h2>
+            <ul>
+                <li>双层循环</li>
+                <li>先排序后去重</li>
+                <li>借助Object去重</li>
+            </ul>
+        </body>
+        <script>
+            // 借助对象去重
+            let mockArr = [1, 11, 2, 2, 1, 3, 3, 3, 8, 3, 2, 7, {value: 1}, {value: 1}, {value: 2}];
+            function mockUniqueObj(arr) {
+                let len = arr.length;
+                if (len <= 1) {
+                    return arr;
+                }
+                let obj = {};
+                let result = [];
+                result = mockArr.filter(item => {
+                    // 下面方法存在 的问题，1和 '1'是不同的，为了正确区分数据，还需要再优化一下
+                    // if (!obj[item]) {
+                    //     obj[item] = 1;
+                    //     return item;
+                    // }
+                    let key = `${typeof item}_${JSON.stringify(item)}`;
+
+                    if (!obj[key]) {
+                        obj[key] = 1;
+                        return item;
+                    }
+                });
+                return result;
+            }
+            console.log('mockUniqueObj = ', mockUniqueObj(mockArr));
+
+            // 双层循环
+            function mockDoubleMap(arr) {
+                let len = arr.length;
+                if (len <= 1) {
+                    return arr;
+                }
+                var result = [];
+                for (let i = 0; i < len; i++) {
+                    var sameFlag = false;
+                    for (let j = 0; j < result.length; j++) {
+                        if (arr[i] === result[j]) {
+                            sameFlag = true;
+                            break;
+                        }
+                        else {
+                            continue;
+                        }
+                    }
+                    if (!sameFlag) {
+                        result.push(arr[i]);
+                    }
+                }
+                return result;
+            }
+            console.log('mockDoubleMap = ', mockDoubleMap(mockArr));
+
+            // indexOf去重
+            function mockIndexOf(arr) {
+                let len = arr.length;
+                if (len <= 1) {
+                    return arr;
+                }
+                var result = [];
+                for (let i = 0; i < len; i++) {
+                    if (result.indexOf(arr[i]) === -1) {
+                        result.push(arr[i]);
+                    }
+                }
+                return result;
+            }
+            console.log('mockIndexOf = ', mockIndexOf(mockArr));
+
+            function mockEs6(arr) {
+                // set方法
+                // return Array.from(new Set(arr));
+                // map方法
+                let result = new Map();
+                return arr.filter(item => !result.has(`${typeof item}_${JSON.stringify(item)}`) && result.set(`${typeof item}_${JSON.stringify(item)}`, 1));
+            }
+            console.log('mockEs6 = ', mockEs6(mockArr));
+
+            // 学习underscore的写法，考虑sorted、定制的Itterate
+            function mockUnderscore(arr, isSorted, isiterate) {
+                let len = arr.length;
+                if (len <= 1) {
+                    return arr;
+                }
+                let result = [];
+                for (let i = 0; i < len; i++) {
+                    let computed = isiterate ? typeof arr[i] === 'string' ? arr[i].toLowerCase() : arr[i] : arr[i];
+
+                    if (isSorted) {
+                        let len = result.length;
+                        if (!i || result[len - 1] !== computed) {
+                            result.push(computed);
+                        }
+                    }
+                    else {
+                        if (result.indexOf(computed) === -1) {
+                            result.push(computed);
+                        }
+                    }
+                }
+                return result;
+            }
+            let mockArr2 = [1, 1, 'a', 'A', 3, 2, 2, 3, 3];
+            console.log('mockUnderscore = ', mockUnderscore(mockArr2, false, true));
+
+        </script>
+    </html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <title>行为模式--观察者模式</title>
+            <script>
+            /**
+            * 基础--观察者模式
+            **/
+            // PM类--添加观察者、删除观察者、通知观察者
+            class PM {
+                constructor() {
+                    this.prdState = null;
+                    this.observers = [];
+                    console.log('创建了PM对象');
+                }
+                getState() {
+                    return this.prdState;
+                }
+                setState(state) {
+                    this.prdState = state;
+                    this.notify();
+                }
+                add(obj) {
+                    // 需要校验observer是否已经存在，如果存在，就不再添加
+                    console.log('添加观察者 obj = ', obj);
+                    this.observers.push(obj);
+                }
+                delete(obj) {
+                    let index = -1;
+                    this.observers.find((item, idx) => {
+                        if (item.id === obj.id) {
+                            index = idx;
+                        }
+                    });
+                    console.log('删除观察者 obj = ', obj, '位置 index = ', index);
+                    this.observers.splice(index, 1);
+                }
+                notify() {
+                    console.log('通知所有对象');
+                    const that = this;
+                    this.observers.forEach(observer => {
+                        observer.update(that);
+                    });
+                }
+            }
+            // RD类--通知的接口，统一更新自身状态
+            class RD {
+                constructor(id) {
+                    console.log('创建观察者--RD对象');
+                    this.state = {};
+                    this.id = id;
+                }
+                update(publisher) {
+                    console.log('观察者--更新自身');
+                    this.state = publisher.getState();
+                    this.work();
+                }
+                work() {
+                    const state = this.state;
+                    console.log('开始工作...state = ', this.id, state);
+                }
+            }
+            // 实例测试
+            const limei = new PM();
+            const hxf111 = new RD(111);
+            const hxf2222 = new RD(222);
+            const hxf333 = new RD(333);
+            // 添加订阅者
+            limei.add(hxf111);
+            limei.add(hxf2222);
+            limei.add(hxf333);
+            limei.setState('今天的需求是...');
+
+            limei.delete(hxf2222);
+            limei.setState('明天的需求是...');
+
+            // 发布订阅者--EventBus
+            class EventEmitter {
+                constructor() {
+                    // 所有订阅者
+                    this.handlers = {};
+                }
+                on(eventName, cb) {
+                    if (!this.handlers[eventName]) {
+                        // 可以对同一个事件，注册多个函数
+                        console.log('on 初始化事件列表');
+                        this.handlers[eventName] = [];
+                    }
+                    console.log('on push到数组中', eventName);
+                    this.handlers[eventName].push(cb);
+                }
+                // 触发时，注册过的所有函数都触发
+                emit(eventName, ...args) {
+                    if (!this.handlers[eventName]) {
+                        console.log('emit 当前函数不存在');
+                        return;
+                    }
+                    console.log('触发系列函数', eventName);
+                    this.handlers[eventName].forEach(cb => {
+                        cb(...args);
+                    });
+                }
+                // 卸载时，移除某个函数
+                off(eventName, cb) {
+                    if (!this.handlers[eventName]) {
+                        console.log('off 当前函数不存在');
+                        return;
+                    }
+                    const index = this.handlers[eventName].indexOf(cb);
+                    if (index !== -1) {
+                        this.handlers[eventName].splice(index, 1);
+                    }
+                }
+                // 为事件注册单次监听器，注册调用on，被调用后直接被移除，移除的逻辑写在once()中，用off
+                // once()中没有自己的逻辑，只是用on & off包裹了一下
+                once(eventName, cb) {
+                    // 如果once()的eventName已经存在怎么办？
+                    const wrapper = (...args) => {
+                        cb(...args);
+                        this.off(eventName, wrapper);
+                    };
+                    this.on(eventName, wrapper);
+                }
+            }
+            const evt = new EventEmitter();
+            function testCb1(arg) {
+                console.log('函数testCb1', arg);
+            }
+            function testCb2(arg) {
+                console.log('函数testCb22222', arg);
+            }
+            function testCb3(arg) {
+                console.log('函数testCb33333', arg);
+            }
+            evt.on('test', testCb1);
+            evt.on('test', testCb2);
+            evt.once('test', testCb3);
+
+            evt.emit('test', 333);
+            evt.emit('test', 2222);
+            </script>
+        </head>
+        <body>
+        </body>
+    </html>

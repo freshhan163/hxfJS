@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <title>行为模式--策略模式</title>
+            <script>
+            </script>
+            <style>
+            [class^='shadow'] {
+                width: 100px;
+                height: 100px;
+                background-color: pink;
+                border: 1px solid green;
+                border-radius: 50px;
+            }
+            .content-wrapper {
+                margin-bottom: 20px;
+                position: relative;
+            }
+            .shadow1 {
+                box-shadow: 10px 10px 20px -10px blue;
+            }
+            .shadow2 {
+                box-shadow: 10px 10px 20px blue;
+            }
+            .shadow3 {
+                box-shadow: 10px 10px 10px blue;
+            }
+            .shadow3-inset {
+                overflow: hidden;
+                width: 110px;
+                height: 110px;
+                position: relative;
+                background-color: #fff;
+                border:none;
+            }
+            .popover {
+                height: 60px;
+                width: 100px;
+                position: relative;
+            }
+            .popover-triangle {
+                position: absolute;
+                right: 10px;
+                top: -20px;
+                width: 0;
+                height: 0;
+                border-left: 10px solid transparent;
+                border-right: 10px solid transparent;
+                border-bottom: 20px solid #333;
+            }
+            p {
+                background-color: #333;
+                color: white;
+            }
+            </style>
+        </head>
+        <body>
+            <div class="content-wrapper">
+                <p>阴影：x：10 y：10 radius：20 spread：-10</p>
+                <div class="shadow1"></div>
+            </div>
+            <div class="content-wrapper">
+                <p>阴影：x：10 y：10 radius：20</p>
+                <div class="shadow2"></div>
+            </div>
+            <div class="content-wrapper">
+                <p>阴影：x：10 y：10 radius：20 - 10 = 10</p>
+                <div class="shadow3"></div>
+            </div>
+            <div class="popover">
+                <div class="popover-triangle"></div>
+                <p>这里是小气泡</p>
+            </div>
+        </body>
+    </html>

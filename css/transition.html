@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1; user-calable=no;" >
+        <title>transiton属性</title>
+        <script>
+        </script>
+        <style>
+        /* 进度条 */
+        .process-wrap {
+            background-color: #ebebeb;
+            border-radius: 2px;
+            margin: 0 auto;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            height: 10px;
+            /* 控制外层总宽 度*/
+            width: 70%;
+            /* 超出宽度后，隐藏，避免溢出 */
+            max-width: 100%;
+            overflow: hidden;
+        }
+        .process-bar {
+            background-image: -webkit-linear-gradient(45deg, #2989d8 32%, #7db9e8 33%,#7db9e8 66%, #2989d8 67%);
+            background-image: linear-gradient(45deg, #2989d8 32%,#7db9e8 33%,#7db9e8 66%,#2989d8 67%);
+            background: #6088f2;
+            background-size: 60px 10px;
+            border-radius: 3px;
+            height: 10px;
+            /* 进度条，用JS改变当前宽度 */
+            width: 0;
+            /* 控制动画 */
+            transition: width 1s ease-in;
+            -moz-transition: width 1s ease-in; /* Firefox 4 */
+            -webkit-transition: width 1s ease-in; /* Safari and Chrome */
+            -o-transition: width 1s ease-in; /* Opera */
+        }
+        .start-btn  {
+            display: inline-block;
+            height: 40px;
+            line-height: 40px;
+            border: 1px solid #DEDEDE;
+            text-align: center;
+            padding: 0 10px;
+        }
+        /* 实例2，多个属性一起联动 */
+        .multi-box {
+            display: block;
+            border: 1px solid #000;
+            width: 100px;
+            height: 100px;
+            background-color: #2989d8;
+            -webkit-transition: width 2s, height 4s, background-color 2s, -webkit-transform 2s;
+            transition: width 2s, height 4s, background-color 2s, transform 2s;
+        }
+        .multi-box:hover {
+            background-color: antiquewhite;
+            width: 200px;
+            height: 200px;
+            -webkit-transform: rotate(180deg);
+            transform: rotate(180deg);
+        }
+
+        /* 实例3--高亮菜单 */
+        .menuButton {
+            display: block;
+            margin-bottom: 10px;
+            height: 26px;
+            width: 100px;
+            text-align: center;
+            border: 1px solid black;
+            font-size: 20px;
+            text-decoration: none;
+            padding: 2px 4px;
+
+            /* 变化的属性：hover离开胡，恢复原来的状态动画 */
+            color: white;
+            background-color: grey;
+            transition: background-color 1s, color 1s;
+        }
+        .menuButton:hover {
+
+            /* 变化的属性：hover时的动画 */
+            color: black;
+            background-color: white;
+            transition: background-color 1s, color 1s;
+        }
+
+        /* 点击移动小球 */
+        #foo {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border-radius: 50px;
+            background:#c00;
+            top: 0;
+            left: 0;
+            -moz-transition: all 1s;
+            -webkit-transition: all 1s;
+            -ms-transition: all 1s;
+            -o-transition: all 1s;
+            transition: all 1s;
+        }
+        </style>
+    </head>
+    <body>
+        <h2>进度条变化</h2>
+        <p><span class="start-btn" id="start">点我看进度条变化</span></p>
+            <!-- // 外层控制进度条底色、进度条总宽度 -->
+        <div class="process-wrap">
+            <!-- // 内层和外层 高度保持一致，内层width = 0（体现进度条变化） -->
+            <div class="process-bar"></div>
+        </div>
+        <div class="multi-box"></div>
+        <div class="sidebar">
+            <p><a class="menuButton" href="home">Home</a></p>
+            <p><a class="menuButton" href="about">About</a></p>
+            <p><a class="menuButton" href="contact">Contact</a></p>
+            <p><a class="menuButton" href="links">Links</a></p>
+        </div>
+        <div id="foo"></div>
+        <script>
+        const btnDom = document.querySelector('#start');
+        const barDom = document.querySelector('.process-bar');
+        btnDom.addEventListener('click', () => {
+            console.log('点击');
+            barDom.style.width = '100%';
+        }, false);
+        barDom.addEventListener('transitionend', () => {
+            console.log('终于完成了');
+        }, false);
+
+        // 点击移动小球
+        const f = document.getElementById('foo');
+        document.addEventListener('click', function(ev) {
+            f.style.left = (ev.clientX - 25)+'px';
+            f.style.top = (ev.clientY - 25)+'px';
+        }, false);
+        </script>
+    </body>
+</html>

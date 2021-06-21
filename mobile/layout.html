@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>测试移动端的布局</title>
+        <meta name="content" content="布局">
+        <!-- <meta name="viewport" content="width=device-width,initial-scale=0.5,user-scalable=0,maximum-scale=2.0"> -->
+        <style>
+            html,
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+        </style>
+        <script>
+            // 根据dpr，自适应设置html的字体大小，1rem = 100px
+            const htmlWrapper = document.documentElement;
+            function onWindowResize() {
+                const htmlWidth = htmlWrapper.clientWidth;
+                const dpr = window.devicePixelRatio;
+                console.log('wrapper = ', htmlWidth, 'dpr = ', dpr);
+                htmlWrapper.style.fontSize = dpr * 50 + 'px';
+            }
+            window.addEventListener('resize', onWindowResize);
+            // onWindowResize();
+
+            // 让width = 物理像素，如iphone5下 device-width = 320px，但dpr = 2，因此让width = 640px;
+            const win = window;
+            function adjustMeta(normal, baseFontSize, fontscale) {
+                const _baseFontSize = baseFontSize || 100;
+                const _fontscale = fontscale || 1;
+
+                const doc = win.document;
+                const ua = navigator.userAgent;
+                const matches = ua.match(/Android[\S\s]+AppleWebkit\/(\d{3})/i);
+                const UCversion = ua.match(/U3\/((\d+|\.){5,})/i);
+                const isUCHd = UCversion && parseInt(UCversion[1].split('.').join(''), 10) >= 80;
+                const isIos = navigator.appVersion.match(/(iphone|ipad|ipod)/gi);
+                let dpr = win.devicePixelRatio || 1;
+                if (!isIos && !(matches && matches[1] > 534) && !isUCHd) {
+                    // 如果非iOS, 非Android4.3以上, 非UC内核, 就不执行高清, dpr设为1;
+                    dpr = 1;
+                }
+                const scale = normal ? 1 : 1 / dpr;
+
+                let metaEl = doc.querySelector('meta[name="viewport"]');
+                if (!metaEl) {
+                    metaEl = doc.createElement('meta');
+                    metaEl.setAttribute('name', 'viewport');
+                    doc.head.appendChild(metaEl);
+                }
+                metaEl.setAttribute('content', `width=device-width,user-scalable=no,initial-scale=${scale},maximum-scale=${scale},minimum-scale=${scale}`);
+                doc.documentElement.style.fontSize = normal ? '50px' : `${_baseFontSize / 2 * dpr * _fontscale}px`;
+                console.log('fontSize = ', doc.documentElement.style.fontSize);
+            }
+            // adjustMeta();
+            // 缩放布局视口，使布局视口和 物理像素相等；将屏幕十等分，font-size，根据deviceWidth不同而不同；保证显示一致
+            // 十等分后，用rem写元素宽度，保证的是尺寸比例，和dpr没有关系
+            (function () {
+                var dpr = window.devicePixelRatio;
+                var meta = document.createElement('meta');
+                var scale = 1 / dpr;
+                meta.setAttribute('name', 'viewport');
+                meta.setAttribute('content', 'width=device-width, user-scalable=no, initial-scale=' + scale +
+                ', maximum-scale=' + scale + ', minimum-scale=' + scale);
+                document.getElementsByTagName('head')[0].appendChild(meta);
+                // 动态设置的缩放大小会影响布局视口的尺寸
+                function resize() {
+                    var deviceWidth  = document.documentElement.clientWidth; // 网页的布局视口大小
+                    document.documentElement.style.fontSize = (deviceWidth / 10) +'px';
+                }
+                resize();
+                window.onresize = resize;
+            })();
+        </script>
+        <style>
+            .header {
+                height: 2rem;
+                line-height: 2rem;
+                background-color: #999;
+                /* width: 320px; */
+            }
+            .header h3 {
+                font-size: 0.4rem;
+                text-align: center;
+            }
+            .bodyer {
+                margin-bottom: 1em;
+            }
+            .banner,
+            .special {
+                display: flex;
+            }
+            .banner {
+                flex-wrap: wrap;
+                justify-content: flex-start;
+                padding: 0.25em;
+            }
+            .special {
+                flex-wrap: nowrap;
+                font-size: 0.3rem;
+            }
+            .banner-item {
+                width: 1.6rem;
+                height: 1.6rem;
+                border: 1px solid #333;
+                font-size: 0.2rem;
+                margin-right: 0.2em;
+                margin-bottom: 0.2em;
+            }
+            .banner-item:nth-of-type(4) {
+                margin-right: 0;
+            }
+            .middle {
+                flex: 1 0 auto;
+                background-color: dodgerblue;
+            }
+            .middle .f1 {
+                font-size: 0.3rem; /* 30px */
+            }
+            .middle .f2 {
+                font-size: 0.2rem; /* 20px */
+            }
+            .left {
+                width: 1.6rem;
+                height: 1.2rem;
+            }
+            .right {
+                width: 1rem;
+            }
+            .left,
+            .right {
+                background: pink;
+            }
+            .footer {
+                display: flex;
+                height: 0.4rem;
+                line-height: 0.4rem;
+                background-color: aqua;
+                border: 1px solid red;
+                font-size: 0.2rem;  /* 20px */
+            }
+            .base-icon {
+                width: 20%;
+                border-right: 1px solid #999;
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h3>布局</h3>
+            </div>
+            <div class="bodyer">
+                <div class="banner">
+                    <div class="banner-item">160*160</div>
+                    <div class="banner-item">160*160</div>
+                    <div class="banner-item">160*160</div>
+                    <div class="banner-item">160*160</div>
+                    <div class="banner-item">160*160</div>
+                    <div class="banner-item">160*160</div>
+                    <div class="banner-item">160*160</div>
+                </div>
+                <div class="special">
+                    <div class="left">图片160*120</div>
+                    <div class="middle">
+                        <p class="f1">年年有余</p>
+                        <p class="f2">美食|2.5km</p>
+                    </div>
+                    <div class="right">8折</div>
+                </div>
+            </div>
+            <div class="footer">
+                <div class="base-icon">首页</div>
+                <div class="base-icon">好店</div>
+                <div class="base-icon">简单</div>
+                <div class="base-icon">复杂</div>
+                <div class="base-icon">个人中心</div>
+            </div>
+        </div>
+    </body>
+</html>

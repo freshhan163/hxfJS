@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>事件冒泡</title>
+</head>
+<body>
+    <h1><a href="https://leetcode-cn.com/leetbook/read/top-interview-questions-easy/x2skh7/">数组</a></h1>
+</body>
+</html>
+<script type="text/javascript">
+// 删除排序数组中的重复项
+// 方法1：双指针法；left指针保留非重复项的下标
+var removeDuplicates = function (nums) {
+    let len = nums.length;
+    if (len <= 1) {
+        return nums;
+    }
+    let left = 0;
+    for (let i = 0; i < len; i++) {
+        if (nums[left] !== nums[i]) {
+            nums[left + 1] = nums[i];
+            ++left;
+        }
+    }
+    return left;
+};
+
+// 买卖股票的最佳时机I
+// 方法1：暴力方法O(n ^ 2)；双层for循环遍历，记录最大值--超出时间限制
+var maxProfit1 = function (prices) {
+    let len = prices.length;
+    if (len <= 1) {
+        return 0;
+    }
+
+    let maxProfit = 0;
+    for (let i = 0; i < len; i++) {
+        for (let j = i + 1; j < len; ++j) {
+            maxProfit = Math.max(prices[j] - prices[i], maxProfit);
+        }
+    }
+    return maxProfit;
+};
+
+// 方法2：单层循环，多一个暂存值
+var maxProfit12 = function (prices) {
+    let len = prices.length;
+    if (len <= 1) {
+        return 0;
+    }
+
+    let maxProfit = 0;
+    let minPrice = prices[0];
+    for (let i = 1; i < len; i++) {
+        minPrice = Math.min(minPrice, prices[i]);
+        maxProfit = Math.max(maxProfit, prices[i] - minPrice);
+    }
+    return maxProfit;
+};
+
+// 方法3：动态规划，区间的求差值，可以转回成最大连续子数组求和问题
+
+
+// 买卖股票的最佳时机 II
+// 方法1：双指针法/贪心算法，找到区间内的最小值和最大值；利润是累加的
+var maxProfit = function (prices) {
+    let len = prices.length;
+    if (len <= 1) {
+        return 0;
+    }
+    let maxProfit = 0;
+    let i = 0;
+    let low = 0;
+    let high = 0;
+    while (i < len - 1) {
+        while (i < len - 1 && prices[i] > prices[i + 1]) {
+            ++i;
+        }
+        low = i;
+        while (i < len - 1 && prices[i] <= prices[i + 1]) {
+            ++i;
+        }
+        high = i;
+        if (prices[high] > prices[low]) {
+            maxProfit = maxProfit + prices[high]  - prices[low];
+        }
+    }
+    return maxProfit;
+};
+
+// 旋转数组，三种方法，最优解要求空间复杂度为 O(1)
+// 新增数组
+var rotate = function (nums, k) {
+    let len = nums.length;
+    if (k === 0 || len <= 1) {
+        return nums;
+    }
+    let newArr = [];
+    for (let i = 0; i < len; i++) {
+        let newIndex = (i + k) % len;
+        newArr[newIndex] = nums[i];
+    }
+    for (let i = 0; i < len; i++) {
+        nums[i] = newArr[i];
+    }
+    return nums;
+};
+
+const gcd = (x, y) => y ? gcd(y, x % y) : x;
+
+// 方法2：将数组看成环状的，记录访问过的数组的次数
+var rotate2 = function (nums, k) {
+    let len = nums.length;
+    if (len <= 1 || k <= 0 || k % len === 0) {
+        return nums;
+    }
+    k = k % len; // 注意：当k > len时，如何处理
+
+    for (let i = 0; i < gcd(len, k); ++i) {
+        let current = i;
+        let prev = nums[i];
+        // console.log('current= ', current);
+        do {
+            let index = (current + k) % len;
+
+            // 交换第 i+ k个位置和 i
+            let temp = nums[index];
+            nums[index] = prev;
+            prev = temp;
+
+            current = index;
+            // console.log('nums= ', nums);
+        } while (i !== current);
+    }
+    // console.log('nums= ', nums);
+    return nums;
+};
+
+rotate2([1, 2, 3], 1);
+// rotate2([1, 2, 3, 4, 5, 6, 7], 3);
+
+// 方法3：O(1)方法，指针
+var rotate3 = function (nums, k) {
+    let len = nums.length;
+    if (len <= 1 || k <= 0) {
+        return nums;
+    }
+    k = k % len; // 注意：当k > len时，如何处理
+    // 翻转数组
+    nums.reverse();
+
+    // 翻转前k个
+    for (let i = 0; i < k / 2; i++) {
+        let prev = nums[i];
+        nums[i] = nums[k - i - 1];
+        nums[k - i - 1] = prev;
+    }
+
+    // 翻转后k个
+    for (let j = k; j < k + (len - k) / 2; j++) {
+        let last = len - 1 - (j - k);
+        let next = nums[j];
+        nums[j] = nums[last];
+        nums[last] = next;
+    }
+
+    console.log('nums = ', nums);
+    return nums;
+};
+// rotate3([1, 2], 1);
+// rotate3([1, 2, 3, 4, 5, 6, 7], 3);
+
+// 判断数组中是否有重复的值--去重呗
+// 方法1：新建一个对象，利用对象属性的唯一性
+var containsDuplicate = function (nums) {
+    let len = nums.length;
+    if (len <= 1) {
+        return false;
+    }
+
+    let obj = {};
+    for (let i = 0; i < len; i++) {
+        let value = nums[i];
+        if (!obj[value]) {
+            obj[value] = true;
+            continue;
+        }
+        return true;
+    }
+    return false;
+};
+// 方法2：先排序，排序后遍历数组
+var containsDuplicate = function (nums) {
+    let len = nums.length;
+    if (len <= 1) {
+        return false;
+    }
+
+    nums = nums.sort((a, b) => b - a);
+    for (let i = 1; i < len; i++) {
+        if (nums[i] === nums[i - 1]) {
+            return true;
+        }
+    }
+    return false;
+};
+// 方法3：利用set去重
+let containsDuplicate1 = function (nums) {
+    let len = nums.length;
+    if (len <= 1) {
+        return false;
+    }
+    // 创建set集合，set有add、delete、has、size属性
+    nums = new Set(nums);
+    let newLen = nums.size;
+
+    return len !== newLen;
+};
+
+console.log('*************找到只出现一次的元素********************');
+// 找到只出现一次的数字，其他元素都出现2次，最优解：线性复杂度，且不占用额外空间
+// 方法一：排序，对比去重
+var singleNumber1 = function (nums) {
+    let len = nums.length;
+    if (len === 0) {
+        return;
+    }
+    if (len === 1) {
+        return nums[0];
+    }
+    // 先排序
+    nums.sort((a, b) => a - b); // 升序排列
+    // for遍历
+    // nums[i] === nums[i + 1]，则i + 2，否则，返回该值
+    // 但+2，要考虑到 len是奇数的情况
+    for (let i = 1; i < len; i += 2) {
+        if (nums[i - 1] !== nums[i]) {
+            return nums[i - 1];
+        }
+        if (i + 2 >= len) {
+            return nums[len - 1];
+        }
+    }
+
+    return false;
+};
+singleNumber1([4, 1, 2, 1, 2]);
+
+// 方法二：对象，然后遍历对象，找到value = 1的属性
+// 缺点：占用内存太大
+var singleNumber2 = function (nums) {
+    let len = nums.length;
+    if (len === 0) {
+        return;
+    }
+    if (len === 1) {
+        return nums[0];
+    }
+
+    let obj = {};
+    for (let i = 0; i < len; i++) {
+        if (!obj[nums[i]]) {
+            obj[nums[i]] = 1;
+        } else {
+            obj[nums[i]] = 2;
+        }
+    }
+    for (let key in obj) {
+        if (obj[key] === 1) {
+            return key;
+        }
+    }
+    return false;
+};
+
+// 两个数组的交集 II
+// 方法一：暴力解法，时间和空间都是 O(n)
+var intersect1 = function (nums1, nums2) {
+    let len1 = nums1.length;
+    let len2  = nums2.length;
+    if (len1 === 0 || len2 === 0) {
+        return [];
+    }
+
+    let result = [];
+    for (let i = 0; i < len1; i++) {
+        const value = nums1[i];
+        const index = nums2.indexOf(value);
+        if (index > -1) {
+            result.push(nums1[i]);
+            nums2.splice(index, 1);
+        }
+    }
+    return result;
+};
+intersect1([1, 2, 2, 1], [2, 2]);
+
+// 方法2：哈希表，遍历nums1，记录次数，遍历nums2，有对应值时，添加到result中，并减去次数
+var intersect2 = function (nums1, nums2) {
+    let len1 = nums1.length;
+    let len2  = nums2.length;
+    if (len1 === 0 || len2 === 0) {
+        return [];
+    }
+
+    let result = [];
+    let obj = {};
+    for (let i = 0; i < len1; i++) {
+        if (!obj[nums1[i]]) {
+            obj[nums1[i]] = 1;
+        } else {
+            obj[nums1[i]] = obj[nums1[i]] + 1;
+        }
+    }
+    for (let j = 0; j < len2; j++) {
+        let key = nums2[j];
+        if (!obj[key]) {
+            continue;
+        }
+        result.push(nums2[j]);
+        obj[key] = obj[key] - 1;
+    }
+    return result;
+};
+
+// 方法3：先排序，然后双指针，first指向第一个数组，sec指向第二个数组
+// 当first < sec的时候，first向右移动；否则sec向左移动，遇到相等的，则push到数组中
+// 比较数组
+var compariseNums = function (nums1, nums2) {
+    // 双指针
+    let secPoint = 0;
+
+    let result = [];
+    let len = nums1.length;
+    for (let i = 0; i < len && secPoint < nums2.length;) {
+        if (nums1[i] === nums2[secPoint]) {
+            result.push(nums1[i]);
+            secPoint++;
+            i++;
+        } else if (nums1[i] < nums2[secPoint]) {
+            i++;
+        } else {
+            secPoint++;
+        }
+    }
+    return result;
+};
+
+var intersect3 = function (nums1, nums2) {
+    let len1 = nums1.length;
+    let len2  = nums2.length;
+    if (len1 === 0 || len2 === 0) {
+        return [];
+    }
+
+    // 排序--以下是升序
+    nums1.sort((a, b) => a - b);
+    nums2.sort((a, b) => a - b);
+
+    // 数组长度较小的在前面
+    let result =   [];
+    if (len1 > len2) {
+        result = compariseNums(nums2, nums1);
+    } else {
+        result = compariseNums(nums1, nums2);
+    }
+    return result;
+};
+
+// intersect3([1,2,2,1], [2, 2]);
+intersect3([1, 2], [1, 1]);
+
+// 加一
+// 方法1：确定length，找到最后一位数字，> 9 ? 修改最后一位和倒数第二位数字 ： 将最后一位数字加一
+// 针对 99，怎么办呢？从最后一位开始查找，直到 digits[i] !== 9，返回i；从i - 1开始修改digits的值
+// 方法一优化方法：找到数字是9的，就直接加一；如果i === 0时，也是9，则 头部插一位
+var plusOne = function (digits) {
+    // 方法2：转换为数字，+1，然后toString().split()：超过位数的数字不满足要求 (X)
+    // let number = parseInt(digits.join(''), 10);
+    // return number.split('');
+
+    let len = digits.length;
+    if (len <= 0) {
+        return digits;
+    }
+    let i = len - 1;
+    for (;i >= 0; i--) {
+        if (digits[i] !== 9) {
+            digits[i] = digits[i] + 1;
+            break;
+        } else {
+            digits[i] = 0;
+        }
+    }
+
+    // 所有位数都是9
+    if (i < 0) {
+        digits.unshift(1);
+    }
+
+    return digits;
+};
+plusOne([9]);
+plusOne([9, 9]);
+plusOne([1, 9, 9]);
+plusOne([2, 2, 2]);
+
+// 移动零
+// 方法一：两个指针，一个指向0，一个指向非0，当满足交换条件时，交换两个指针的位置
+var moveZeroes = function (nums) {
+    let len = nums.length;
+    if (len <= 1) {
+        return nums;
+    }
+
+    let notZero = 0;
+    for (let i = 0; i < len && notZero < len;) {
+        if (nums[i] === 0 && nums[notZero] !== 0) {
+            // 交换位置
+            if (notZero > i) {
+                let temp = nums[notZero];
+                nums[notZero] = nums[i];
+                nums[i] = temp;
+                i++;
+                notZero++;
+            } else {
+                notZero = i;
+            }
+        } else if (nums[i] !== 0) {
+            i++;
+        } else if (nums[notZero] === 0) {
+            notZero++;
+        }
+    }
+    console.log('nums = ', nums);
+    return nums;
+};
+// moveZeroes([1, 0]);
+// moveZeroes([1, 0, 1]);
+
+// moveZeroes([0, 1, 0, 3, 12]);
+
+// 方法2：左指针、右指针，右指针一直移动，当右指针是非0时，交换，且左指针右移
+var moveZeroes2 = function (nums) {
+    let len = nums.length;
+    if (len <= 1) {
+        return nums;
+    }
+
+    let left = 0;
+    for (let i = 0; i < len; i++) {
+        if (nums[i] !== 0) {
+            let temp = nums[left];
+            nums[left] = nums[i];
+            nums[i] = temp;
+            left++;
+        }
+    }
+    console.log('nums = ', nums);
+    return nums;
+};
+moveZeroes2([1, 0]);
+moveZeroes2([1, 0, 1]);
+
+moveZeroes2([0, 1, 0, 3, 12]);
+
+// 两数之和
+// 方法1：双层for循环遍历
+var twoSum = function (nums, target) {
+    let len = nums.length;
+    if (len <= 1) {
+        return false;
+    }
+
+    // 暴力解法
+    for (let i = 0; i < len; i++) {
+        let result = target - nums[i];
+        for (let j = 0; j < len; j++) {
+            if (nums[j] === result && j !== i) {
+                return [i, j];
+            }
+        }
+    }
+    return false;
+};
+
+// 方法2：哈希--对象，空间O(n)，时间复杂度O(n)
+var twoSum2 = function (nums, target) {
+    let len = nums.length;
+    if (len <= 1) {
+        return false;
+    }
+
+    let obj = {};
+    for (let i = 0; i < len; i++) {
+        let key = nums[i];
+        if (!obj[key]) {
+            obj[key] = [i];
+        } else {
+            obj[key].push(i);
+        }
+    }
+    console.log('obj =', obj);
+    for (let i = 0; i < len; i++) {
+        let result = target - nums[i];
+
+        // 删除当前key
+        if (obj[nums[i]]) {
+            obj[nums[i]].shift();
+        }
+        if (obj[nums[i]].length <=  0) {
+            delete obj[nums[i]];
+        }
+        if (obj[result]) {
+            return [i, obj[result][0]];
+        }
+    }
+    return false;
+};
+twoSum2([3, 3], 6);
+
+// 方法3：哈希优化
+var twoSum3 = function (nums, target) {
+    let len = nums.length;
+    if (len <= 1) {
+        return false;
+    }
+
+    let obj = {};
+    for (let i = 0; i < len; i++) {
+        let result = target - nums[i];
+        console.log('obj = ', obj);
+        if (!obj[result]) {
+            obj[nums[i]] = i + 1;
+        } else {
+            console.log('result =', [i, obj[result]] - 1);
+            return [i, obj[result] - 1];
+        }
+    }
+    return false;
+};
+// twoSum3([2,7,11,15], 9);
+
+
+// 求数组的全排列
+function solve(arr) {
+    let len = arr.length;
+    if (len <= 1) {
+        return 1;
+    }
+    if (len === 2) {
+        return 3;
+    }
+    let result  = 0;
+
+    // 分组，直到只有一个数，然后累计；递归
+    for (let i = 0; i < len - 1; i++) {
+        let newArr = arr.slice(i + 1);
+        result += solve(newArr);
+    }
+    console.log('result  = ', result + len);
+    return result + len;
+}
+// solve([1, 3, 5, 7]);
+
+// 合并两个有序数组（https://leetcode-cn.com/problems/merge-sorted-array/）
+// 双指针：逆向；且 nums1的总长度 = m + n - 1
+var merge = function (nums1, m, nums2, n) {
+    // 这里不要有处理，不然无法通过；
+    // if (m === 0) {
+    //     nums1 = nums2;
+    // }
+    // 保留其中一个数组，nums1，将2中的数都移动到1中
+    let i = m - 1;
+    let j = n - 1;
+    let len = m + n - 1; // 统计总长度
+
+    while (i >= 0 && j >= 0) {
+        if (nums1[i] > nums2[j]) {
+            nums1[len] = nums1[i];
+            --i;
+        } else {
+            nums1[len] = nums2[j];
+            --j;
+        }
+        --len;
+    }
+    console.log('nums1 = ', nums1, 'nums2 = ', nums2, 'j = ', j, 'len = ', len);
+    while (j >= 0) {
+        nums1[len] = nums2[j];
+        console.log('nums1 = ', nums1);
+        --j;
+        --len;
+    }
+    console.log('nums1 = ', nums1);
+    while (i >= 0) {
+        nums1[len] = nums1[i];
+        --i;
+        --len;
+    }
+    console.log('nums1 = ', nums1);
+};
+// merge([0], 0, [1], 1);
+
+// 二分查找
+function lookup(arr, target) {
+    let len = arr.length;
+    if (len === 0) {
+        return -1;
+    }
+    // arr是排序好的，查找target是否存在
+    // 二分查找：找到mid，
+    // 左指针low、右指针是high
+    let low = 0;
+    let high = len - 1;
+    // 注意1：low 一定要 <=
+    while (low <= high) {
+        // 注意2：这里一定要是floor；
+        let mid = low + Math.floor((high - low) / 2);
+        // console.log('mid = ', mid);
+        if (arr[mid] === target) {
+            console.log('result = ', mid);
+            return mid;
+        }
+        if (arr[mid] < target) {
+            // 注意3：mid + 1;
+            low = mid + 1;
+        } else {
+            // 注意4：mid;
+            high = mid;
+        }
+    }
+    console.log('result  =', -1);
+    return -1;
+}
+lookup([3, 4, 7, 20, 44, 50], 3);
+lookup([3, 4, 7, 20, 44, 50], 4);
+lookup([3, 4, 7, 20, 44, 50], 7);
+lookup([3, 4, 7, 20, 44, 50], 20);
+lookup([3, 4, 7, 20, 44, 50], 44);
+lookup([3, 4, 7, 20, 44, 50], 50);
+
+// 比如 18 = 2 * 3 *3；21 = 3 * 7; 找出给定值最小的拆解
+function mock(target) {
+    let result = [];
+    // 递归，
+    let i = 2;
+    while (i <= target) {
+        if (target % i === 0) {
+            target = target / i;
+            result.push(i);
+        } else {
+            ++i;
+        }
+    }
+    console.log('result = ', result);
+    return result;
+}
+mock(18);
+mock(21);
+mock(102);
+</script>

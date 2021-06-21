@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>数组各种算法</title>
+        <script>
+            let arr = [
+                {
+                    id: 1,
+                    name: '1',
+                    pid: 0,
+                },
+                {
+                    id: 2,
+                    name: '1-1',
+                    pid: 1,
+                },
+                {
+                    id: 3,
+                    name: '1-1-1',
+                    pid: 2,
+                },
+                {
+                    id: 4,
+                    name: '1-2',
+                    pid: 1,
+                },
+                {
+                    id: 5,
+                    name: '1-2-2',
+                    pid: 4,
+                },
+                {
+                    id: 6,
+                    name: '1-1-1-1',
+                    pid: 3,
+                },
+                {
+                    id: 7,
+                    name: '2',
+                    pid: 4
+                },
+            ];
+            const start = (new Date()).getTime();
+            function arrToTree(arr, parentId = 0) {
+                var treeArr = [];
+                const len = arr.length;
+                for (let i = 0; i < len; i++) {
+                    if (arr[i].pid === parentId) {
+                        const newNode = {
+                            ...arr[i],
+                            children: arrToTree(arr.slice(i), arr[i].id)
+                        };
+                        treeArr.push(newNode);
+                        if (i === len - 1) {
+                            const end = (new Date()).getTime();
+                            console.log('gap = ', end - start, 'start = ', start, 'end = ', end);
+                        }
+                    }
+                }
+                return treeArr;
+            }
+            console.log('~~~~~~~~~数组转换为树结构~~~~~~~~~~~');
+            console.log(arrToTree(arr));
+        </script>
+    </head>
+    <body>
+        <a href="https://juejin.im/post/6854818587820736526" target="_blank">JS数组的各种操作</a>
+    </body>
+</html>

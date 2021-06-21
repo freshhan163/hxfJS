@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>百度数字员工</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        window.onload = function () {
+            const parentDom = document.getElementById('form');
+            const domList = document.createDocumentFragment();
+            const fixSelect = document.createElement('select');
+            fixSelect.setAttribute('class', 'param-form-item')
+            fixSelect.setAttribute('name', 'fix-ref-select');
+            const fixSelectOptions = [
+                {
+                    fixParamName: '输入',
+                    fixParamValue: 'fix'
+                },
+                {
+                    fixParamName: '选择',
+                    fixParamValue: 'ref'
+                }
+            ];
+            let defaultSelectedFixIndex = 0;
+            let s = {
+                savedValue: 'fix'
+            };
+            fixSelectOptions.map((op,  index) => {
+                if (fixSelect.options) {
+                    fixSelect.options.add(new Option(op.fixParamName, op.fixParamValue, false, s.savedValue === op.fixParamValue)); // 兼容IE\firefox
+                } else {
+                    fixSelect.add(new Option(op.fixParamName, op.fixParamValue, false, s.savedValue === op.fixParamValue)); // 兼容IE
+                }
+                if (s.defaultValue === op.fixParamValue) {
+                    defaultSelectedIndex = index;
+                }
+            });
+            fixSelect.setAttribute('id', `param-item-select-fix`);
+            fixSelect.setAttribute('defaultValue', defaultSelectedFixIndex);
+
+            // 右侧包裹框
+            const fixWrap = document.createElement('div');
+            fixWrap.setAttribute('id', 'fix-wrap');
+
+            fixSelect.onchange = function (e) {
+                // 获取当前select的值
+                console.log('e = ', e.target.value);
+                s.savedValue = e.target.value;
+                createFixRefRight(s, fixWrap);
+            };
+            createFixRefRight(s, fixWrap);
+            // 增加确定按钮
+            const submitBtn = document.createElement('button');
+            submitBtn.innerHTML = '确定';
+            submitBtn.onclick = (e) => {
+                e.preventDefault();
+                const form = document.querySelectorAll('.param-form-item');
+                let formParams = {};
+                for (let i = 0; i < form.length; i++) {
+                    let name = form[i].name;
+                    let val = form[i].value;
+                    formParams[name] = val;
+                }
+                console.log('formParams = ', formParams);
+            };
+            domList.appendChild(fixSelect);
+            domList.appendChild(fixWrap);
+            domList.appendChild(submitBtn);
+            parentDom.appendChild(domList);
+
+            function createFixRefRight(s, fixWrap) {
+                if (s.savedValue === 'fix') {
+                    // 创建input
+                    fixWrap.innerHTML = '';
+                    const fixItemInput = document.createElement('input');
+                    fixItemInput.setAttribute('type', 'text');
+
+                    fixItemInput.setAttribute('class', 'param-form-item');
+                    fixItemInput.setAttribute('id', `param-item-select-fix-input`);
+                    fixItemInput.setAttribute('name', 'fix-ref-select-fix');
+                    fixItemInput.setAttribute('value', s.savedValue);
+                    fixItemInput.setAttribute('defaultValue', s.defaultValue);
+                    // if (isReadOnly) {
+                    //     fixItemInput.setAttribute('disabled', 'disabled');
+                    //     DOM.addClass(fixItemInput, 'not-allowed');
+                    // }
+                    fixWrap.appendChild(fixItemInput);
+                } else if (s.savedValue === 'ref') {
+                    fixWrap.innerHTML = '';
+                    const fixItemSelect = document.createElement('select');
+                    fixItemSelect.setAttribute('class', 'param-form-item');
+                    const fixSelectOptions = [
+                        {
+                            fixParamName: '第一项',
+                            fixParamValue: '1'
+                        },
+                        {
+                            fixParamName: '第二项',
+                            fixParamValue: '2'
+                        }
+                    ];
+                    let defaultSelectedFixIndex = 0;
+                    let s = {
+                        savedValue: '2',
+                        defaultValue: '1'
+                    };
+                    fixSelectOptions.map((op, index) => {
+                        if (fixItemSelect.options) {
+                            fixItemSelect.options.add(new Option(op.fixParamName, op.fixParamValue, false, s.savedValue === op.fixParamValue)); // 兼容IE\firefox
+                        } else {
+                            fixItemSelect.add(new Option(op.fixParamName, op.fixParamValue, false, s.savedValue === op.fixParamValue)); // 兼容IE
+                        }
+                        if (s.defaultValue === op.fixParamValue) {
+                            defaultSelectedFixIndex = index;
+                        }
+                    });
+                    fixItemSelect.setAttribute('id', `param-item-select-fix-select`);
+                    // fixSelect.setAttribute('name', s.paramName);
+                    fixItemSelect.setAttribute('name', 'fix-ref-select-ref');
+                    fixItemSelect.setAttribute('defaultValue', defaultSelectedFixIndex);
+                    fixWrap.appendChild(fixItemSelect);
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <div id="app">
+        <form id="form"></form>
+    </div>
+</body>
+</html>

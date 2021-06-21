@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>变量声明和变量提升</title>
+    <script>
+        console.log('********** 测试var变量 *********');
+        (function() {
+            console.log('temp =', temp); // undefined
+            var temp = 'abc';
+        })();
+
+        console.log('********** 测试var函数 *********');
+        (function() {
+            console.log('temp =', temp); // undefined
+            var temp = function () {
+                console.log('这是一个函数');
+            };
+        })();
+
+        console.log('********** 测试函数声明 *********');
+        (function() {
+            console.log('temp =', temp); // 输出函数
+            function temp() {
+                console.log('这是一个函数');
+            }
+        })();
+
+        console.log('********** 测试var + 函数声明 *********');
+        (function() {
+            console.log('temp =', temp); // 输出函数
+            var temp = 'abc';
+            console.log('temp =', temp); // 输出函数
+            function temp() {
+                console.log('这是一个函数');
+            }
+        })();
+
+        console.log('********** 测试var + 函数声明 *********');
+        (function() {
+            console.log('temp =', temp); // 输出函数222
+            var temp = 'abc';
+            console.log('temp =', temp); // 输出变量 abc
+            var temp = function () {
+                console.log('这是一个函数11111');
+            };
+            console.log('temp =', temp); // 输出函数1111
+            function temp() {
+                console.log('这是一个函数2222');
+            }
+            console.log('temp =', temp); // 输出函数1111
+        })();
+
+        console.log('********** let 临时性死区测试 *********');
+        (function() {
+            // console.log('temp =', temp); // Uncaught ReferenceError: Cannot access 'temp' before initialization
+            // let temp = 'temp';
+        })();
+
+        console.log('********** let + var 不能重复声明 *********');
+        (function() {
+            var temp;
+            // let temp = 'temp'; // 报错，因为temp已经声明
+        })();
+
+        console.log('********** var + let（块级作用域） *********');
+        (function() {
+            var temp;
+            // let temp = 'temp'; // 报错，因为temp已经声明
+        })();
+
+        (function() {
+            console.log('********** 考察题1 *********');
+            console.log('a = ', a); // undefined
+            var a = function() {}; // 变量没有提升
+
+            // window.b = 1;
+            // console.lоg('b =', b); // 报错！
+            // let b = function() {}; // 形成了暂时性死区
+
+            console.log('c = ', c); // undefined
+            function c() {}
+
+            window.d = 1;
+            console.log('d = ', d); // undefined
+        })();
+
+        (function() {
+            var x = 10;
+            function a(y) {
+                var x = 20;
+                return b(y);
+            }
+            function aTest(y) {
+                var x = 20;
+                return function() {
+                    return x + y;
+                }
+            }
+            function b(y) {
+                return x + y;
+            }
+            console.log('a(20) = ', a(20)); // 30
+            console.log('aTest(20) = ', aTest(20)()); // 40
+        })();
+        const array1 = [1, 4, 9, 16];
+
+        // pass a function to map
+        const map1 = array1.map(x => x * 2);
+        const map2 = array1.map(x => {
+            x = x * 2
+        });
+        console.log('map1 = ', map1, 'map2 = ', map2);
+    </script>
+</head>
+<body>
+    <div id="root">点击按钮</div>
+    <script>
+        const root = document.querySelector('#root');
+
+        // 考察  for中，var和 let的作用域
+        for (var i = 0; i < 3; i++) {
+            root.addEventListener('click', function () {
+                console.log(i); // 每次都输出3
+            }, false);
+        }
+        for (let i = 0; i < 3; i++) {
+            root.addEventListener('click', function () {
+                console.log('let i = ', i); // 输出0, 1, 2
+            }, false);
+        }
+        for (let i = 0; i < 3; i++) {
+            let i = 1;
+            root.addEventListener('click', function () {
+                console.log('let i = ', i); // 每次都输出1
+            }, false);
+        }
+
+        // 多次append，id值相同的div，最终会添加几个dom
+        function createDivElement(id) {
+            const div = document.createElement('div');
+            div.setAttribute('id', id);
+            div.innerHTML = `测试div，id = ${id}`;
+            return div;
+        }
+        root.appendChild(createDivElement('child1'));
+        root.appendChild(createDivElement('child1'));
+        root.appendChild(createDivElement('child1'));
+        root.appendChild(createDivElement('child2'));
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>函数防抖</title>
+        <style>
+            .text {
+                display: inline-block;
+                width: 300px;
+                height: 300px;
+                /* margin:0 auto; */
+                text-align: center;
+                background-color: #98CEED;
+                font-size: 40px;
+                color:white;
+                font-weight: 700;
+            }
+            .text span {
+            }
+        </style>
+    </head>
+    <body>
+        <p>防抖函数：</p>
+        <ul>
+            <li class="li-item"><a href="https://juejin.im/post/5b45fa596fb9a04fad3a0268#heading-1" target="_blank">虾扯蛋之函数防抖和节流</a></li>
+        </ul>
+        <div class="text">
+            <span></span>
+        </div>
+    </body>
+    <script>
+    var count = 1;
+    var t = document.querySelector('.text').firstElementChild;
+    const wrapper = document.querySelector('.text');
+    function add() {
+        t.innerHTML = count++;
+        console.log('执行add函数 '); // 只执行一次
+    }
+
+    // 不加防抖
+    // wrapper.addEventListener('mousemove', add);
+
+
+    // 实现在结束之后的1s内只执行一次
+    function debounce(func, wait) {
+        var timeout; // 计数器
+        console.log('debounce.this = ', this); //window
+        //返回一个匿名函数，形成闭包，闭包函数的this为执行时作用域
+        return function() {
+            // console.log('this = ', this); // wrapper
+            // console.log('arguments = ', arguments); // MouseEvent
+            // console.log('before Clear timeout = ', timeout); // timeout
+            var _this = this;
+            var _args = arguments;
+            clearTimeout(timeout); // 将事件内的连续动作删除，当用户不触发该事件了，setTimeout就会自动执行
+            // console.log('After Clear timeout = ', timeout); // timeout
+            var pre = new Date();
+            timeout = setTimeout(function() {
+                console.log('执行函数', new Date() - pre); // 只执行一次
+                func.apply(_this, _args);
+            }, wait);
+        };
+    }
+    // wrapper.addEventListener('mousemove', debounce(add, 1000));
+
+    //函数立即执行版本
+    function debounce2(func, wait, isImmediately) {
+        var timeout;
+        // console.log('debounce.this = ', this); //window
+        // console.log('debounce.arguments = ', arguments); // func, 1000
+        //返回一个匿名函数，形成闭包，闭包函数的this为执行时作用域
+        return function() {
+            // console.log('this = ', this); // wrapperDiv
+            // console.log('arguments = ', arguments); // MouseEvent
+            var _this = this;
+            var _args = arguments;
+            clearTimeout(timeout);
+            var pre = new Date();
+            console.log('是否立即执行 isImmediately = ', isImmediately);
+            if(isImmediately) {
+                console.log('是');
+                var isTrigger = !timeout;
+                timeout = setTimeout(function () {
+                    console.log('立即执行 timeout 内部函数', timeout);
+                    timeout = null; // 只执行一次就清除
+                }, wait);
+                console.log('isImmediately timeout = ', timeout, 'isTrigger = ', isTrigger);
+                isTrigger && func.apply(_this, _args); // 第一次立即执行
+            } else {
+                timeout = setTimeout(function() {
+                    console.log('最后执行一次函数', new Date() - pre); // 只执行一次
+                    func.apply(_this, _args);
+                }, wait);
+                console.log('timeout = ', timeout);
+            }
+        }
+    }
+    // wrapper.addEventListener('mousemove', debounce2(add, 1000, true));
+
+    // 变形：立即执行一次，后续是每n次执行一次，最后如果不足n次也需要执行一次
+    function mockDebounce491(fn, n, wait) {
+        // 立即执行
+        let cnt = 0;
+        let timeout = null;
+        let flag = true;
+        return function () {
+            const args = Array.from(arguments);
+            // 立即执行一次
+            if (flag) {
+                console.log('第一次 立即执行');
+                fn.apply(this, args);
+                flag = false;
+                return;
+            }
+            ++cnt;
+            // n次后执行一次；前n次，一直在清除setTimeout，第n次的setTimeout不清除；
+            if (cnt % n !== 0) {
+                clearTimeout(timeout);
+                timeout = null;
+                timeout = setTimeout(function () {
+                    console.log('最后一次执行 ', cnt);
+                    fn.apply(this, args);
+                    clearTimeout(timeout);
+                    timeout = null;
+                }, wait);
+            } else {
+                console.log('第n次直接执行 cnt = ', cnt);
+                fn.apply(this, args);
+            }
+        };
+    }
+    // let countFn = function() {
+    //     console.log('执行了');
+    // };
+
+    // for (let i = 0; i < 100; i++) {
+    //     mockDebounce491(countFn, 10, 1000)();
+    // }
+    // wrapper.addEventListener('mousemove', mockDebounce491(add, 10, 1000));
+
+
+    // 测试函数--5.20
+    // 停止后，过1000ms再执行
+    function mockDebounce520(fn, wait) {
+        let timeout = null;
+        return function () {
+            const context = this;
+            clearTimeout(timeout);
+            timeout = setTimeout(function () {
+                fn.apply(context);
+                timeout = null;
+            }, wait);
+        };
+    }
+
+    // 兼容立即执行版本
+    function mockDebounce520Immediately(fn, wait, isImmediately = false) {
+        let timeout;
+        return function () {
+            const context = this;
+            const args = Array.from(arguments);
+            clearTimeout(timeout);
+            if (isImmediately) {
+                console.log('立即执行版本');
+                let isTrigger = !timeout;
+                timeout = setTimeout(function () {
+                    timeout = null;
+                }, wait);
+                isTrigger && fn.apply(context, args);
+            } else {
+                console.log('最后执行版本');
+                timeout = setTimeout(function () {
+                    fn.apply(context, args);
+                    timeout = null;
+                }, wait);
+            }
+        };
+    }
+
+    // 第一次立即执行；后面每n次执行一次；最后不足n次还要再执行一次
+    function mockDebounceCnt(fn, wait, n) {
+        let timeout = null;
+        let cnt = 0; // 执行次数
+        let firstExcute = true; // 第一次是否执行
+        return function () {
+            const context = this;
+            const args = arguments;
+
+            if (firstExcute) {
+                console.log('第一次执行');
+                fn.apply(this, args);
+                firstExcute = false;
+            }
+            ++cnt;
+            if (cnt % n !== 0) {
+                // 最后一次执行
+                clearTimeout(timeout);
+                timeout = null;
+                timeout = setTimeout(function () {
+                    console.log('最后一次执行 cnt = ', cnt);
+                    fn.apply(this, args);
+                }, wait);
+            } else {
+                // 第n次立即执行
+                console.log('第n次执行');
+                fn.apply(this, args);
+            }
+        };
+    }
+    wrapper.addEventListener('mousemove', mockDebounceCnt(add, 500, 10));
+
+    </script>
+</html>

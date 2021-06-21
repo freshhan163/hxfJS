@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>for..in 和 for..of的区别</title>
+        <script>
+            let a = ['a', 'b', 'c'];
+            a.name = 'name属性';
+
+            for (let key in a) {
+                console.log('key = ', key, 'item = ', a[key]);
+            }
+            for (let key of a) {
+                if (key === 'b') {
+                    break;
+                }
+                console.log('key = ', key);
+            }
+
+
+            // 将对象，用iterator接口包装
+            function* entries(obj) {
+                for (let key of Object.keys(obj)) {
+                    yield [key, obj[key]];
+                }
+            }
+            const obj = {a: 1, b: 2, c: 3};
+            for (let [key, value] of entries(obj)) {
+                console.log('key =', key, 'value =', value);
+            }
+        </script>
+    </head>
+    <body>
+        <h2>ES6--for..in 和 for..of的区别</h2>
+    </body>
+</html>

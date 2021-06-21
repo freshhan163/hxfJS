@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>移动端布局--不缩放</title>
+        <meta name="content" content="布局">
+        <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=0,maximum-scale=1.0">
+        <script>
+            // 以750px为基准，设计页面布局，1rem = 100px;
+            function onWindowResize() {
+                const htmlWrapper = document.documentElement;
+                const htmlWidth = htmlWrapper.clientWidth;
+                let dpr = window.devicePixelRatio;
+                console.log('wrapper = ', htmlWidth, 'dpr = ', dpr);
+                if (dpr > 2) {
+                    dpr = 2;
+                }
+                htmlWrapper.style.fontSize = htmlWidth * dpr / 7.5 + 'px';
+            }
+            window.addEventListener('resize', onWindowResize);
+            onWindowResize();
+        </script>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+        </style>
+        <style>
+            .header {
+                height: 1rem;
+                line-height: 1rem;
+                background-color: #999;
+            }
+            .header h3 {
+                font-size: 40px;
+                text-align: center;
+            }
+            .bodyer {
+                margin-bottom: 1em;
+            }
+            .banner,
+            .special {
+                display: flex;
+            }
+            .banner {
+                flex-wrap: wrap;
+                justify-content: flex-start;
+                padding-bottom: 0.19rem;
+            }
+            .special {
+                flex-wrap: nowrap;
+            }
+            .banner-item {
+                width: 0.7rem;
+                height: 0.7rem;
+                margin-left: 0.19rem;
+                margin-top: 0.19rem;
+                border: 1px solid #333;
+                /* font-size: 0.2rem; */
+                font-size: 20px;
+            }
+            .middle {
+                flex: 1 0 auto;
+                background-color: dodgerblue;
+            }
+            .middle .f1 {
+                /* font-size: 0.3rem; 30px */
+                font-size: 30px;
+            }
+            .middle .f2 {
+                /* font-size: 0.2rem; 20px */
+                font-size: 20px;
+            }
+            .left {
+                width: 1.6rem;
+                height: 1.2rem;
+            }
+            .right {
+                width: 1rem;
+            }
+            .left,
+            .right {
+                background: pink;
+                /* font-size: 0.3rem; */
+                font-size: 30px;
+            }
+            .footer {
+                display: flex;
+                height: 0.4rem;
+                line-height: 0.4rem;
+                background-color: aqua;
+                border: 1px solid red;
+                /* font-size: 0.16rem;  20px */
+                font-size: 0.16rem;
+            }
+            .base-icon {
+                width: 20%;
+                border-right: 1px solid #999;
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h3>布局</h3>
+            </div>
+            <div class="bodyer">
+                <div class="banner">
+                    <div class="banner-item">rem</div>
+                    <div class="banner-item">rem</div>
+                    <div class="banner-item">rem</div>
+                    <div class="banner-item">rem</div>
+                    <div class="banner-item">rem</div>
+                    <div class="banner-item">rem</div>
+                    <div class="banner-item">rem</div>
+                </div>
+                <div class="special">
+                    <div class="left">图片160*120</div>
+                    <div class="middle">
+                        <p class="f1">年年有余</p>
+                        <p class="f2">美食|2.5km</p>
+                    </div>
+                    <div class="right">8折</div>
+                </div>
+            </div>
+            <div class="footer">
+                <div class="base-icon">首页</div>
+                <div class="base-icon">好店</div>
+                <div class="base-icon">简单</div>
+                <div class="base-icon">复杂</div>
+                <div class="base-icon">个人中心</div>
+            </div>
+        </div>
+    </body>
+</html>

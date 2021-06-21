@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>适配器模式</title>
+        <style>
+            div,
+            span {
+                padding: 0;
+                margin: 0;
+                box-sizing: border-box;
+            }
+        </style>
+        <script>
+            // fetch函数
+            // ajax函数
+            // 适配器函数
+            // 接口名不同、入参不同，用抹平差异的适配器模式
+            let colors = '[\'red\', \"blue\", \'pink\']';
+            console.log('colors = ', colors);
+            console.log('colorArr = ', parseColors(colors));
+
+            let colors1 = '[\"rgba(255, 255,0,0.2)\", \'rgb(255, 0,0,0.2)\',\'pink\']';
+            console.log('colors1 = ', colors1);
+            console.log('colors1Arr = ', parseColors(colors1));
+
+            function parseColors(color) {
+                let len = color.length;
+                let attr = color.substr(1, len - 2).replace(/"/g, '\'');
+                console.log('attr = ', attr);
+                let colorArr = [];
+                if (attr.indexOf('rgb') > -1) {
+                    colorArr = attr.replace(/"/g, '\'').split('\',').map(item => item.replace(/\'/g, ''));
+                } else {
+                    colorArr = attr.replace(/\'/g, '').split(',');
+                }
+                return colorArr;
+            }
+        </script>
+    </head>
+    <body>
+        <div style="background-color: pink;display:flex;flex-direction:row;justify-content:space-between;">
+            <div style="">
+                <span style="max-width: 100px;white-space:nowrap; overflow: hidden;text-overflow: ellipsis;display:inline-block;">
+                    测试
+                </span>
+                <span>的内容</span>
+            </div>
+            <div style="color: black;" >关闭按钮</div>
+        </div>
+        <!-- <div style="padding: 0 20px;display:flex;flex-direction:row;">
+            <span style="width:23px;display: inline-block;overflow: hidden;text-overflow: ellipsis;">
+                测试显示的title
+            </span>
+            <span>的内容</span>
+        </div> -->
+    </body>
+</html>

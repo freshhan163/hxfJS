@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>算法系列--回溯算法</title>
+</head>
+<body>
+    <h1><a href="https://leetcode-cn.com/leetbook/read/top-interview-questions-easy/x2skh7/">回溯算法</a></h1>
+    <script type="text/javascript">
+    // 求数组的全排列
+    var permute = function (nums) {
+        let len = nums.length;
+        if (len === 0) {
+            return [];
+        }
+        let result = [];
+        let used = {};
+        let backTracking = function (path) {
+            if (path.length === len) {
+                result.push(path.slice());
+                return;
+            }
+            for (let i = 0; i < len; i++) {
+                if (used[i]) {
+                    continue;
+                }
+                used[i] = true;
+                path.push(nums[i]);
+                backTracking(path);
+                used[i] = false;
+                path.pop();
+            }
+        };
+        backTracking([]);
+        return result;
+    };
+    permute([1, 2, 3]);
+
+    // 组合问题：给定两个整数 n 和 k，返回 1 ... n 中所有可能的 k 个数的组合（https://leetcode-cn.com/problems/combinations/）
+    var combine = function (n, k) {
+        if (k === 0) {
+            return 0;
+        }
+        if (k === 1) {
+            return n;
+        }
+        // 二维数组：结果集
+        let result = [];
+        // 参数：存放组合，用数组path
+        let backTracking = function (start, path) {
+            console.log('path = ', path);
+            if (path.length === k) {
+                result.push(path.slice());
+                return;
+            }
+            // 约束条件：当前i的值，不满足k个时，可以剪掉
+            for (let i = start; i <= n - (k - path.length) + 1; i++) {
+                path.push(i);
+                backTracking(i + 1, path);
+                path.pop();
+            }
+        };
+        backTracking(1, []);
+        console.log('result = ', result);
+        return result;
+    };
+    // combine(2, 2);
+    combine(4, 2);
+    // combine(3, 2);
+    </script>
+</body>
+</html>

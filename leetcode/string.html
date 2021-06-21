@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>事件冒泡</title>
+</head>
+<body>
+    <h1><a href="https://leetcode-cn.com/leetbook/read/top-interview-questions-easy/x2skh7/">字符串</a></h1>
+</body>
+</html>
+<script type="text/javascript">
+// 反转字符串，要求：O(1)，原地反转
+// 方法1：直接reverse
+var reverseString = function (s) {
+    let len = s.length;
+    if(len <= 1) {
+        return s;
+    }
+
+    return s.reverse();
+};
+
+// 方法2：双指针法，和数组类似
+var reverseString2 = function (s) {
+    let len = s.length;
+    if (len <= 1) {
+        return s;
+    }
+    let last = len - 1;
+    for (let i = 0; i < len / 2; i++, last--) {
+        let temp = s[i];
+        s[i] = s[last];
+        s[last] = temp;
+    }
+    return s;
+};
+
+// 整数反转
+// 方法1：暴力法
+var reverseInt = function (x) {
+    let result = Math.abs(x).toString().split('');
+    result = result.reverse();
+    result = result.join('');
+    result = parseInt(result, 10);
+
+    if (x > 0) {
+        return result > Math.pow(2, 31) - 1 ? 0 : result;
+    }
+    return result > Math.pow(2, 31) ? 0 : -result;
+};
+// reverseInt(1534236469);
+
+// 方法2：栈法：逆转用栈，入栈的同时要判断，输出的数字是否超出最大值
+var reverseInt2 = function (x) {
+    let maxNumber = x > 0 ? Math.pow(2, 31) - 1 : Math.pow(2, 31);
+
+    let reversedNumber = 0;
+    let value = Math.abs(x);
+    while (value > 0) {
+        reversedNumber = value % 10 + (10 * reversedNumber);
+
+        if (reversedNumber > maxNumber) {
+            return 0;
+        }
+        value = parseInt(value / 10, 10);
+    }
+    return x > 0 ? reversedNumber : -reversedNumber;
+};
+// console.log(reverseInt2(123));
+// console.log(reverseInt2(1534236469));
+
+// 字符串中的第一个唯一字符
+// 方法1：双层for循环——O(n ^ 2)
+var firstUniqChar = function (s) {
+    let len = s.length;
+    if (len <= 0) {
+        return -1;
+    }
+
+    for (let i = 0; i < len; i++) {
+        let flag = true;
+        for (let j = 0; j < len; j++) {
+            if (s[i] === s[j] && i !== j) {
+                flag = false;
+                break;
+            }
+        }
+        if (flag) {
+            return i;
+        }
+    }
+    return -1;
+};
+// firstUniqChar('loveleetcode');
+// firstUniqChar('test');
+// firstUniqChar('cc');
+
+// 方法2：哈希算法 || 双指针
+var firstUniqChar2 = function (s) {
+    let len = s.length;
+    if (len <= 0) {
+        return -1;
+    }
+    let obj = {};
+    for (let i = 0; i < len; i++) {
+        if (!obj[s[i]]) {
+            obj[s[i]] = [i];
+        } else {
+            obj[s[i]].push(i);
+        }
+    }
+
+    let resultIndex = len; // 寻找最小的index
+    for (let key in obj) {
+        let value = obj[key];
+        // 用index寻找最小的下标
+        if (value.length === 1 && resultIndex > value[0]) {
+            resultIndex = value[0];
+        }
+    }
+    console.log('s = ', s, 'resultIndex = ', resultIndex);
+    return resultIndex >= len ? -1 : resultIndex;
+};
+firstUniqChar2("leetcode");
+// firstUniqChar2('test');
+// firstUniqChar2('cc');
+
+// 方法3：哈希对象+ 队列（先进先出）
+var firstUniqChar3 = function (s) {
+    let len = s.length;
+    if (len <= 0) {
+        return -1;
+    }
+
+    let obj = {};
+    let stack = [];
+    for (let i = 0; i < len; i++) {
+        if (!obj[s[i]]) {
+            obj[s[i]] = i + 1;
+            stack.push(s[i]);
+        } else {
+            obj[s[i]] = -1;
+            console.log(s[i], 'stack = ', stack);
+            while (stack.length > 0 && stack[0] === s[i]) {
+                stack.shift();
+            }
+        }
+    }
+    console.log('s = ', s, 'stack  = ', stack);
+    if (stack.length > 0 && stack[0]) {
+        console.log('s = ', s, obj[stack[0]] - 1);
+        return obj[stack[0]] - 1;
+    }
+    return -1;
+};
+firstUniqChar3("dbddaadbb");
+// firstUniqChar3('test');
+// firstUniqChar3('cc');
+
+
+// 有效的字母异位词
+// 方法1：哈希算法
+var isAnagram = function (s, t) {
+    let len1 = s.length;
+    let len2 = t.length;
+
+    if (len1 <= 0 && len2 <= 0) {
+        return true;
+    }
+    if (len1 !== len2) {
+        return false;
+    }
+
+    let obj1 = {};
+    let obj2 = {};
+    for (let i = 0; i < len1; i++) {
+        if (!obj1[s[i]]) {
+            obj1[s[i]] = 1;
+        } else {
+            ++obj1[s[i]];
+        }
+    }
+
+    for (let i = 0; i < len1; i++) {
+        if (!obj2[s[i]]) {
+            obj2[s[i]] = 1;
+        } else {
+            ++obj2[s[i]];
+        }
+    }
+    console.log('obj2 = ', obj2);
+    for (let key of obj1) {
+        if (obj1[key] !== obj2[key]) {
+            return false;
+        }
+    }
+    return true;
+};
+// 65\75
+// 方法2：先排序，排序后再for循环对比
+var isAnagram2 = function (s, t) {
+    let len1 = s.length;
+    let len2 = t.length;
+
+    if (len1 <= 0 && len2 <= 0) {
+        return true;
+    }
+    if (len1 !== len2) {
+        return false;
+    }
+
+    s.split('').sort(); // 针对字符串的排序，如果是对数字的排序才需要用 (a, b) => a - b
+    t.split('').sort();
+    for (let i = 0; i < len1; i++) {
+        if (s[i] !== t[i]) {
+            return false;
+        }
+    }
+    return true;
+};
+isAnagram2('anagram', 'nagaram');
+
+// 验证回文串
+// 方法1：双指针法
+var isPalindrome = function (s) {
+    let len = s.length;
+    if (len <= 0) {
+        return true;
+    }
+    let last = len - 1;
+    let reg = new RegExp(/[0-9a-zA-Z]/);
+    s = s.toLowerCase();
+    for (let i = 0; i < len && i <= last;) {
+        let prevFlag = reg.test(s[i]);
+        if (!prevFlag) {
+            ++i;
+            continue;
+        }
+        let lastFlag = reg.test(s[last]);
+        if (!lastFlag) {
+            --last;
+            continue;
+        }
+        if (s[i] !== s[last]) {
+            return false;
+        }
+        ++i;
+        --last;
+    }
+    return true;
+};
+isPalindrome('A man, a plan, a canal: Panama');
+// isPalindrome('A man, a plan, a canal: Panama');
+
+let reg = new RegExp(/[0-9a-zA-Z]/);
+console.log('第一次正则  ss1 =', reg.test('s'), reg.test('s'));
+
+// 实现 strStr()
+// 方法1：双指针，result保存第一个下标；当两个值不等的时候，记得要重置指针
+var strStr = function (haystack, needle) {
+    let len1 = haystack.length;
+    let len2 = needle.length;
+    if (len1 < len2) {
+        return -1;
+    }
+    if (len1 === 0 || len2 === 0) {
+        return 0;
+    }
+    let j = 0;
+    let result = len1;
+    for (let i = 0; i < len1 && j < len2; i++) {
+        if (haystack[i] === needle[j]) {
+            result = Math.min(result, i);
+            ++j;
+        } else if (j !== 0) {
+            j = 0;
+            i = result;
+            result = len1;
+        }
+    }
+    if (j >= len2) {
+        return result;
+    }
+    return -1;
+};
+strStr("mississippi", "issip");
+
+
+// 最长公共前缀
+// 方法1：暴力解法，先查找前2个字符串的公共前缀，然后再用该前缀继续查找
+var longestCommonPrefix = function (strs) {
+    let len = strs.length;
+    if (len <= 0) {
+        return '';
+    }
+    let result = strs[0];
+    for (let i = 1; i < len; i++) {
+        let prev = 0;
+        let next = 0;
+        while (prev < result.length && next < strs[i].length) {
+            if (result[prev] === strs[i][next]) {
+                ++prev;
+                ++next;
+            } else {
+                break;
+            }
+        }
+        let str = strs[i] || '';
+        result = str.substring(0, next); // 记录当前的公共前缀
+
+        // 当公共前缀已经是空的时候，后面的没必要再遍历
+        if (result === '') {
+            break;
+        }
+    }
+    console.log('result = ', result);
+    return result;
+};
+longestCommonPrefix(["flower", "flow", "flight"]);
+
+// 方法2：纵向扫描
+// 方法3：分治法
+// 方法4：二分查找
+
+// 字符串转换整数
+// 方法1：一次for循环，双指针，指向开始的第一个，结束的最后一个，截取字符串，转换为数字
+var myAtoi = function (s) {
+    let len = s.length;
+    if (len <= 0 || s.replace(' ', '').length  === 0) {
+        return 0;
+    }
+    for (let i = 0; i < len; i++) {
+        // if (s[i] === )
+    }
+};
+// 方法2：用正则找出匹配的值，然后做判断
+var myAtoi2 = function (s) {
+    let len = s.length;
+    if (len <= 0 || s.replace(' ', '').length  === 0) {
+        return 0;
+    }
+    let intReg = new RegExp(/[\d]/);
+    let strReg = new RegExp(/[\w]/);
+    let result = 0;
+    let prev = ''; // 记录前一个值
+    let flag = 1; // 记录是正数还是负数
+    for (let i = 0; i < len; i++) {
+        if (result === 0 && !prev) {
+            // 判断是负数还是正数
+            flag = s[i] === '-' ? -1 : 1;
+            if (s[i] === ' ' || s[i] === '-' || s[i] === '+') {
+                prev = s[i].replace(/[\s\d]/, '');
+                continue;
+            }
+        }
+        // 前一个字符是字符串，或当期值是字符串，则停止
+        if (prev || !intReg.test(s[i])) {
+            break;
+        }
+        // 数字则保留
+        if (intReg.test(s[i])) {
+            result += s[i];
+        }
+        // 记录前一个字符
+        // console.log('s[i] = ', s[i], 'reuslt = ', result, 'prev = ', prev);
+        prev = s[i].replace(/[\s\d]/, '');
+        // console.log('s[i] = ', s[i], 'reuslt = ', result, 'prev = ', prev);
+    }
+    result = parseInt(result, 10) * flag;
+    if (flag < 0) {
+        result = Math.max(-Math.pow(2, 31), result);
+    } else {
+        result = Math.min(Math.pow(2, 31) - 1, result);
+    }
+    console.log('s = ', s, 'reuslt = ', result);
+    return result;
+};
+// myAtoi('-ww f203');
+// myAtoi('-ww f-203');
+
+// myAtoi('words and 987');
+// myAtoi('42');
+// myAtoi(' -42');
+// myAtoi(' -+42');
+
+// myAtoi('-----');
+// 方法3：一次for遍历，先去除左侧空格，根据确定的规则，获取子字符串，69，98--最优
+var myAtoi3 = function (s) {
+    const len = s.length;
+    if (len <= 0) {
+        return 0;
+    }
+    let i = 0;
+    // 去除左侧多余空格
+    for (; i < len; i++) {
+        if (s[i] !== ' ') {
+            break;
+        }
+    }
+    s = s.substring(i, len);
+    let arr = s.match(/^[\+\-]?\d+/);
+    if (!arr || arr.length <= 0) {
+        return 0;
+    }
+
+    let result = parseInt(arr[0], 10);
+    if (result < 0) {
+        result = Math.max(-Math.pow(2, 31), result);
+    } else {
+        result = Math.min(Math.pow(2, 31) - 1, result);
+    }
+    return result;
+};
+myAtoi3('  42');
+// myAtoi3("   42");
+// myAtoi3(' -+42');
+
+// 颠倒给定的二进制位
+var reverseBits = function (n) {
+    console.log('n = ', n);
+    // 二进制转换为字符串；字符串分解为数组；将数组倒置；再将字符串-->二进制
+    let newStr = n.toString().split('').reverse().join('');
+    console.log('newStr = ', newStr);
+    const result = parseInt(newStr, 2);
+    console.log('result = ', result);
+    return result;
+};
+// reverseBits(00000010100101000001111010011100);
+
+console.log('*************回文子串********************');
+// 647：回文子串
+// 方法1：暴力解法（先判断是否是 回文字符串，然后循环递归）
+var isStr = function (s, start = 0, end = s.length - 1) {
+    if (start > end) {
+        return 0;
+    }
+    if (start === end) {
+        return 1;
+    }
+    if (end - start === 1) {
+        return s[start] === s[end] ? 1 : 0;
+    }
+    while (start <= end && s[start] === s[end]) {
+        ++start;
+        --end;
+    }
+    return end > start ? 0 : 1;
+};
+var countSubstrings = function (s) {
+    let len = s.length;
+    if (len <= 1) {
+        return len;
+    }
+    let cnt = 0;
+    for (let i = 0; i < len; i++) {
+        for (let j = i; j < len; j++) {
+            let result = isStr(s, i, j);
+            cnt += result;
+        }
+    }
+    return cnt;
+};
+countSubstrings('abc'); // 3
+countSubstrings('aba'); // 3
+
+// 方法2：动态规划
+// DP(n) = DP(n - 1) + D(i)(j)；D(i)(j)：在i和j之间是否是一个回文
+// 状态转移方程？
+var countSubstrings2 = function (s) {
+    let len = s.length;
+    if (len <= 1) {
+        return len;
+    }
+    let dp = new Array(len);
+    let dpItem = new Array(len);
+    for (let i = 0; i < len; i++) {
+        dp[i] = [];
+        dp.push(...dpItem);
+    }
+    console.log('dp = ', dp);
+
+    let cnt = 0;
+    for (let i = 0; i < len; i++) {
+        for (let j = 0; j <= i; j++) {
+            if (s[i] === s[j] && (i - j < 2 || dp[j + 1][i - 1])) {
+                dp[j][i] = true;
+                ++cnt;
+            }
+        }
+    }
+    console.log('cnt = ', cnt);
+    return cnt;
+};
+countSubstrings2('abc'); // 3
+// countSubstrings2('aba'); // 3
+
+// 方法3：中心扩展法；中心点的数量 = len * 2 - 1
+var countSubstrings3 = function (s) {
+    let len = s.length;
+    if (len <= 1) {
+        return len;
+    }
+    let cnt = 0;
+    let centerLen = 2 * len - 1;
+    for (let i = 0; i < centerLen; i++) {
+        let left = Math.floor(i / 2);
+        let right = left + i % 2;
+        while (left >= 0 && right < len && s[left] === s[right]) {
+            console.log('s = ', s, 'left = ', left, 'right = ', right);
+            ++cnt;
+            --left;
+            ++right;
+        }
+    }
+    console.log('reuslt = ', cnt);
+    return cnt;
+};
+countSubstrings3('abc'); // 3
+</script>

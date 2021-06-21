@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <title>行为模式--状态模式</title>
+            <script>
+            // if--else
+            function produceIf(mode) {
+                switch (mode) {
+                    case 'onlyBlack':
+                        console.log('只生产黑咖啡');
+                        break;
+                    case 'blackAndSuger':
+                        console.log('黑咖啡 + 糖');
+                        break;
+                    case 'blackAndMilk':
+                        console.log('黑咖啡 + 牛奶');
+                        break;
+                    case 'blackAndMilkAndSuger':
+                        console.log('黑咖啡 + 牛奶 + 糖');
+                        break;
+                    default:
+                        break;
+                }
+            }
+            produceIf('blackAndSuger');
+
+            // 用单一职责优化
+            class ProduceCafe {
+                constructor() {
+                    this.mode = '';
+                }
+                produceProduct(mode) {
+                    this.mode = mode;
+                    switch (mode) {
+                        case 'onlyBlack':
+                            this.produceBlack();
+                            break;
+                        case 'blackAndSuger':
+                            this.produceBlack();
+                            this.addSugar();
+                            break;
+                        case 'blackAndMilk':
+                            this.produceBlack();
+                            this.addMilk();
+                            break;
+                        case 'blackAndMilkAndSuger':
+                            this.produceBlack();
+                            this.addMilk();
+                            this.addSugar();
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                produceBlack() {
+                    console.log('黑咖啡');
+                }
+                addSugar() {
+                    console.log('加糖');
+                }
+                addMilk() {
+                    console.log('加奶');
+                }
+            }
+            const cafe1 = new ProduceCafe();
+            cafe1.produceProduct('blackAndMilkAndSuger');
+
+            // 用策略模式：对象映射解决 多个条件判断
+            const mapProcedure = {
+                produceBlack() {
+                    console.log('黑咖啡');
+                },
+                produceBlackAndSugar() {
+                    this.produceBlack();
+                    console.log('加糖');
+                },
+                produceBlackAndSugarAndMilk() {
+                    this.produceBlackAndSugar();
+                    console.log('加奶');
+                }
+            };
+            class CoffeeMaker {
+                constructor() {
+                    this.mode = '';
+                }
+                produceCoffee(mode) {
+                    this.mode = mode;
+                    if (!mapProcedure[mode]) {
+                        return;
+                    }
+                    mapProcedure[mode]();
+                }
+            }
+            // 函数需要拿到主体的相关信息--即感知到咖啡机的内部情况，比如咖啡豆是否剩余，牛奶是否还有
+            // 需要用到状态模式，将外层对象，转移到类的内部，作为类的一个属性，该类内部包含多个函数
+            class CoffeeMakerState {
+                constructor() {
+                    this.mode = '';
+                    this.leftMilk = '500';
+                }
+                mapStateProcedure = {
+                    that: this,
+                    produceBlack() {
+                        console.log('黑咖啡');
+                    },
+                    produceBlackAndSugar() {
+                        this.produceBlack();
+                        console.log('加糖');
+                    },
+                    produceBlackAndSugarAndMilk() {
+                        this.produceBlackAndSugar();
+                        if (this.that.leftMilk > 50) {
+                            console.log('加奶');
+                        }
+                        else {
+                            console.log('当前牛奶储量不足');
+                        }
+                    }
+                }
+                produceCoffee(mode) {
+                    this.mode = mode;
+                    if (!this.mapStateProcedure[mode]) {
+                        return;
+                    }
+                    this.mapStateProcedure[mode]();
+                }
+            }
+            </script>
+        </head>
+        <body>
+        </body>
+    </html>

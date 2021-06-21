@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>函数节流</title>
+            <style type="text/css"></style>
+            <style>
+                .text {
+                    display: inline-block;
+                    width: 300px;
+                    height: 300px;
+                    /* margin:0 auto; */
+                    text-align: center;
+                    background-color: #98CEED;
+                    font-size: 40px;
+                    color:white;
+                    font-weight: 700;
+                }
+                .text span {
+                }
+            </style>
+        </head>
+        <body>
+            <p>节流函数：中间每隔一段时间执行一次</p>
+            <ul>
+                <li>setTiemout实现：开始wait时间后再执行</li>
+                <li>时间戳版本实现：开始时立即执行一次，结束时不再执行</li>
+                <li>要求：开始时立即执行一次，结束时执行一次</li>
+            </ul>
+            <div class="text">
+                <span></span>
+            </div>
+        </body>
+        <script>
+        var count = 1;
+        const warapper = document.querySelector('.text');
+        var t = document.querySelector('.text').firstElementChild;
+
+        function add(arg1 = '', arg2 = '') {
+            console.log('执行add函数 参数 =', arg1, arg2); // 要求在100ms内 只执行一次
+            t.innerHTML = count++;
+        }
+        // 当需要传递参数的时候，需要将add再包裹一层
+        function addWrapper() {
+            const args = Array.from(arguments);
+            return function () {
+                add(args);
+            };
+        }
+        // warapper.addEventListener('mousemove', add);
+
+        // setTimeout实现：不立即执行，最后会执行一次
+        function throttle(func, wait) {
+            var timeout;
+            return function () {
+                var _this = this;
+                var _args = arguments;
+                console.log('return func timeout = ', timeout);
+                if (!timeout) {
+                    console.log('timeout = ', timeout);
+                    timeout = setTimeout(function () {
+                        timeout = null;
+                        console.log('执行timeout内部函数');
+                        func.apply(_this, _args);
+                    }, wait);
+                }
+            };
+        }
+        // warapper.addEventListener('mousemove', throttle(add, 500));
+
+        // 时间戳实现，开始时立即执行一次
+        function throttleStamp(func, wait) {
+            var initTime = 0; // 立即执行的根本原因
+            console.log('******************throttleStamp********************************');
+            return function() {
+                var _this = this;
+                var _args = arguments;
+                var now = +new Date(); // 将new Date转换为时间戳
+                console.log('now - initTime = ', now - initTime);
+                if (now - initTime > wait) {
+                    func.apply(_this, _args);
+                    initTime = now;
+                }
+            }
+        }
+        // document.body.addEventListener('mousemove', throttleStamp(add, 2000));
+
+        // 开始时立即执行一次，结束时执行一次，中间每隔一段时间执行一次
+        function throttleAll(func, wait) {
+            var timeout, _this, _args
+                pre = 0;
+
+            // 每隔一段时间执行一次
+            var later = function(){
+                console.log('later函数')
+                pre = +new Date();
+                timeout = null;
+                func.apply(_this, _args);
+            };
+            var throttled = function() {
+                var now = +new Date(),
+                    remaining = wait - (now - pre);
+                _this = this;
+                _args = arguments;
+                if (remaining <= 0) {
+                    console.log('remaing---立即执行');
+                    if (timeout) {
+                        // console.log('timeout内部', timeout);
+                        clearTimeout(timeout);
+                        timeout = null;
+                    }
+                    pre = now;
+                    func.apply(_this, _args);
+                } else if(!timeout) {
+                    // 立即执行
+                    console.log('setTimeout 间隔执行');
+                    timeout = setTimeout(later, remaining);
+                }
+            };
+            return throttled;
+        }
+        // warapper.addEventListener('mousemove', throttleAll(add, 1000));
+
+
+        // 4.1学习
+        // 节流：连续触发很多次，但每个间隔时间内，只执行一次
+        function mockThrottle41(fn, wait) {
+            let timeout = null;
+            return function () {
+                const self = this;
+                const args = Array.prototype.slice.call(arguments);
+
+                if (!timeout) {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => {
+                        timeout = null; // 注意：一定要手动设置为null，clearTimeout后，timeout仍然是 1
+                        fn.apply(self, args);
+                    }, wait);
+                }
+            };
+        }
+        // warapper.addEventListener('mousemove', mockThrottle41(add, 1000));
+
+        // 节流时间戳版本，最后一次时间间隔内不再执行
+        function mockThrottle41Stamp(fn, wait) {
+            let time = 0;
+            console.log('~~~~ 外部函数');
+            return function () {
+                const self = this;
+                const args = Array.prototype.slice.apply(arguments);
+                let currentTime = Date.now();
+                console.log('currentTime =', currentTime, 'time = ', time, currentTime - time);
+                if (currentTime - time > wait) {
+                    fn.apply(self, args);
+                    time = currentTime;
+                }
+            };
+        }
+        // warapper.addEventListener('mousemove', mockThrottle41Stamp(add, 10000));
+
+        // 时间戳版本是立即执行的，以后都只执行setTimeout
+        function mockThrottle41All(fn, wait) {
+            let timeout = null;
+            let time = 0;
+            return function () {
+                let context = this;
+                // 此处不要用call，不起作用，要用apply
+                const args = Array.prototype.slice.apply(arguments);
+                // const args = Array.from(arguments);
+
+                let currentTime = Date.now();
+                let remaining = wait - (currentTime - time);
+                // console.log('remaining = ', remaining, timeout, args);
+
+                if (remaining <= 0) {
+                    console.log('立即执行 时间戳版本');
+                    // 注意：执行的时候，请先清除之前的
+                    clearTimeout(timeout);
+                    timeout = null;
+
+                    time = currentTime;
+                    fn.apply(context, args);
+                } else if (!timeout) {
+                    console.log('timeout不存在 time = ', new Date());
+                    timeout = setTimeout(() => {
+                        timeout = null;
+                        // 注意，要重新赋值time
+                        time = Date.now();
+                        console.log('执行setTimeout');
+                        fn.apply(context, args);
+                    }, remaining);
+                }
+            };
+        }
+        // 此时会直接执行add函数，而不走mockThrottle的逻辑
+        // for (let i = 0; i < 1000; i++) {
+            // mockThrottle41All(add('111', '2222'), 1000);
+        // }
+        // 此时想要传递参数，需要将add再包裹一层
+        // warapper.addEventListener('mousemove', mockThrottle41All(addWrapper('3333', '4444'), 2000));
+
+        // 这种情况，add接收到的参数是 MouseEvent
+        // warapper.addEventListener('mousemove', mockThrottle41All(add, 1000));
+
+        // 立即执行 + 后续每次都执行
+        function mockThrottleAll61(fn, wait) {
+            let timeout = null;
+            let time = 0;
+            console.log('绑定函数');
+            return function (...args) {
+                const context = this;
+                let currentTime = Date.now();
+                let remaining = wait - (currentTime - time);
+                // let args = Array.prototype.slice.apply(arguments);
+                if (remaining <= 0) {
+                    console.log('立即执行');
+                    clearTimeout(timeout);
+                    timeout = null;
+                    time = currentTime;
+                    fn.apply(context, args);
+                } else if (!timeout) {
+                    console.log('timeout不存在 time = ', new Date());
+                    timeout = setTimeout(function () {
+                        timeout = null;
+                        time = Date.now();
+                        console.log('执行setTimeout');
+                        fn.apply(context, args);
+                    }, remaining);
+                }
+            };
+        }
+        let funcTest = mockThrottleAll61(add, 1000);
+        warapper.addEventListener('mousemove', mockThrottleAll61(add, 1000));
+        // for (let i = 0; i < 2000; i++) {
+        //     funcTest(123);
+        // }
+
+        </script>
+    </html>

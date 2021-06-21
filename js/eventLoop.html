@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>事件循环EventLoop</title>
+</head>
+<body>
+    <h1><a href="http://www.ruanyifeng.com/blog/2018/02/node-event-loop.html">EventLoop事件循环</a></h1>
+</body>
+</html>
+<script type="text/javascript">
+// 测试
+setTimeout(() => console.log(1));
+// setImmediate(() => console.log(2));
+// process.nextTick(() => console.log(3));
+Promise.resolve().then(() => console.log(4));
+(() => console.log(5))();
+new Promise((resolve, reject) => {
+    console.log(6);
+    resolve(1);
+    console.log(7);
+}).then((res, err) => {
+    console.log(8);
+});
+</script>

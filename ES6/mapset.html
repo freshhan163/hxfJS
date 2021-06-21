@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>ES6--Map和Set</title>
+    <script>
+        // Set：两个对象总是不相等的
+        let s1 = new Set();
+        s1.add({});
+        s1.add({});
+        s1.add('测试');
+        console.log('s.size = ', s1.size, s1);
+
+        // 遍历需要用key | values | entries
+        let allData = s1.values();
+        let allKey = s1.keys();
+        console.log('key = ', allKey, allData, s1.entries());
+
+        // 由于keys、values，都是SetIterator，不是数组，所以无法直接读取下标
+        for (let i = 0; i < s1.size; i++) {
+            console.log(allKey[i], allData[i]); // undefined
+        }
+
+        // 遍历方法如下
+        // set的键值就是键名
+        s1.forEach((value, key) => console.log('key = ', key, 'value = ', value));
+
+
+        // weakSet
+        console.log('************** weakSet 和 set *****************');
+        const a = [[1, 2], [3, 4]];
+        const ws = new WeakSet(a); // WeakSet {[1, 2], [3, 4]}
+        const s2 = new Set(a);
+        console.log('ws = ', ws, 's = ', s2);
+
+
+        const b = [1, 2, 3, 4];
+        // const ws1 = new WeakSet(b);
+        const s3 = new Set(b);
+        console.log('ws = ', ws, 's = ', s3);
+
+        // Map的顺序
+        const map = new Map([
+            ['F', 'no'],
+            ['T',  'yes'],
+            ['A', '测试A']
+        ]);
+        map.set('b', '测试');
+        for (let key of map.keys()) {
+            console.log(key);
+        }
+
+    </script>
+  </head>
+  <body>
+    <h2>ES6--Map和 Set</h2>
+    <!-- built files will be auto injected -->
+  </body>
+</html>

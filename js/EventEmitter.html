@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1; user-calable=no;" >
+            <title>事件管理</title>
+            <script>
+                // 实现事件的链式调用、用对象存储
+                function Eventes() {
+                    this.MaxEventNum = this.MaxEventNum || undefined;
+                    this.defaultMaxEventNum = 10;
+
+                    if (!this.eventList) {
+                        this.eventList = {};
+                    }
+                }
+                Eventes.prototype.on = function(type, listener) {
+                    // 保证存在实例属性
+                    // if (!this.eventList) {
+                    //     this.eventList = Object.create(null);
+                    // }
+                    if (this.eventList[type]) {
+                        this.eventList[type].push(listener);
+                    }
+                    else {
+                        this.eventList[type] = [listener];
+                    }
+                    return this;
+                };
+                Eventes.prototype.off = function(type) {
+                    if (this.eventList[type]) {
+                        this.eventList[type].pop();
+                    }
+                    else {
+                        throw new Error('off type is not exist');
+                    }
+                    if (this.eventList[type].length === 0) {
+                        delete this.eventList[type];
+                    }
+                    return this;
+                };
+
+                // 将要执行的cb，再包裹一层，执行完成后立即移除
+                Eventes.prototype.once = function(type, listener) {
+                    let _this = this;
+                    function wrapper() {
+                        listener();
+                        _this.off(type);
+                    }
+                    // origin 保存原回调的引用，用于off
+                    wrapper.origin = listener;
+                    this.on(type, wrapper);
+                    return this;
+                };
+                Eventes.prototype.emit = function(type, ...args) {
+                    if (this.eventList[type]) {
+                        this.eventList[type].map(fn => fn.call(this, ...args));
+                    }
+                    else {
+                        throw new Error('type is not exist');
+                    }
+                    return this;
+                };
+                let test1 = new Eventes();
+                test1.on('test', function(...args) {
+                    const _args = Array.from(arguments);
+                    console.log('test _args =', _args);
+                }).on('test', function() {
+                    console.log('test2');
+                }).emit('test', '参数 1', '参数 2');
+                test1.emit('test').off('test').emit('test').off('test'); // 全部取出
+                // 测试once方法
+                test1.on('testOnce', function(...args) {
+                    const _args = Array.from(arguments);
+                    console.log('testOnce _args =', _args);
+                }).emit('testOnce', 'once-参数 1', 'once-参数 2');
+                (function() {
+                    // 自定义实现事件--发布订阅模式
+                    class EventEmitter {
+                        constructor() {
+                            this.eventObj = {};
+                        }
+                        on(type, func) {
+                            if (!this.eventObj[type]) {
+                                this.eventObj[type] = [];
+                            }
+                            this.eventObj[type].push(func);
+                        }
+                        off(type, func) {
+                            if (!type) {
+                                throw new Error('Event type is not existed!');
+                            }
+                            const index = this.eventObj[type].indexOf(func);
+                            if (index !== -1) {
+                                this.eventObj[type].splice(index, 1);
+                            }
+                        }
+                        emit(type, ...args) {
+                            // 需要考虑执行参数；emit触发一个则所有的都会被触发
+                            if (!type) {
+                                throw new Error('Event type is not existed!');
+                            }
+                            const currentFuncArrs = this.eventObj[type];
+                            if (currentFuncArrs.length <= 0) {
+                                throw new Error('Event type is offed!');
+                            }
+                            currentFuncArrs.forEach(func => {
+                                func(...args);
+                            });
+                        }
+                        once(type, func) {
+                            const that = this;
+                            // once是指 emit后，就立即被移除了
+                            const wrapper = function (...args) {
+                                func(...args);
+                                that.off(type, wrapper);
+                            };
+                            this.on(type, wrapper);
+                        }
+                    }
+                    const newEventEmitter = new EventEmitter();
+                    newEventEmitter.on('test1', function (...args) {
+                        const _args = Array.from(arguments);
+                        console.log('test111111 args = ', _args);
+                    });
+                    newEventEmitter.on('test2', function () {
+                        console.log('test222222');
+                    });
+                    newEventEmitter.on('test1', function (...args) {
+                        const _args = Array.from(arguments);
+                        console.log('test1---333333 args =',  _args);
+                    });
+                    newEventEmitter.emit('test1', '测试参数1', '测试参数2', '测试参数3');
+
+                    console.log('**********************');
+                    newEventEmitter.once('test1', function (...args) {
+                        const _args = Array.from(arguments);
+                        console.log('testonce函数 args =', _args);
+                    });
+                    newEventEmitter.emit('test1', '测试参数1', '测试参数2');
+
+                    console.log('**********************');
+                    newEventEmitter.emit('test1', '测试参数1', '测试参数2');
+                });
+            </script>
+        </head>
+        <body>
+            <h2>实现事件管理on\off\once</h2>
+        </body>
+    </html>

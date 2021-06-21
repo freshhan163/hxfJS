@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>apply \ call \ bind 用法详解</title>
+    <script>
+        let y = 'window-bind';
+        window.onload = function () {
+            // 测试call/apply的方法
+            function Fruits() {}
+            Fruits.prototype = {
+                color: 'red',
+                say: function () {
+                    console.log('My color is: ' + this.color);
+                    let args = Array.prototype.slice.call(arguments);
+                    args.map(item => console.log('item = ', item));
+                }
+            };
+            var apple = new Fruits();
+            apple.say();
+
+            var banana = {
+                color: 'banana'
+            };
+            // apple.say.call(banana);
+            // apple.say.apply(banana);
+
+            // 数组之间的追加应用
+            var arr1 = ['Jane', '222', 3333, 'blue'];
+            var arr2 = ['Jack', '333', 444, 'red'];
+            var arr22 = ['Jack', '333', 444, 'red'];
+            var arr3 = ['panda', 123, ['array', 'Mac', 'bag', ['又是新数组', '1']]];
+            console.log(arr1.concat(arr2));
+            console.log(arr1.concat(arr2, arr22)); // 数组都会被展开
+            console.log(arr1); // concat不会改变原数组
+            console.log(arr1.concat(arr3)); // arr3内部的数组，不会被展开，此时可以用apply
+            console.log(Array.prototype.concat.apply(arr1, arr3)); // apply只能展开一层数组，内部又嵌套的无法展开
+
+            var callArr = Array.prototype.push.apply(arr1, arr2);
+            console.log('call方法push数组：');
+            console.log(arr1);
+
+            // // 求数组的最大值
+            // var maxArr = [33, 23, -9, 55, 0, 89];
+            // console.log('[33, 23, -9, 55, 0, 89]的最大值是', Math.max(33, 23, -9, 55, 0, 89));
+            // console.log(Math.max(maxArr)); // 输出NaN
+            // console.log('apply应用：[33, 23, -9, 55, 0, 89]的最大值是', Math.max.apply(null, maxArr));
+
+            // // 验证是否是数组
+            // console.log('typeof 验证是否是数组：', typeof maxArr);
+            // console.log('instanceof 验证是否是数组：', maxArr instanceof Array);
+            // console.log('toString.call 验证是否是数组：', Object.prototype.toString.call(maxArr) === '[Object Array]');
+
+            // // 伪数组使用方法
+            // var domArr = document.querySelectorAll('[dom-list="1"]');
+            // console.log('NodeList数组:', domArr);
+            // // console.log('逆置NodeList伪数组:', domArr.reverse()); // 报错
+            // var applyDomArr = Array.prototype.slice.call(domArr);
+            // console.log('Apply方法修改数组', applyDomArr.reverse());
+            // var appDom = document.getElementById('app');
+            // applyDomArr.forEach(ele => {
+            //     appDom.appendChild(ele);
+            // });
+
+            // console.log('__________apply____________call应用实例____________');
+            // function log(msg) {
+            //     console.log(msg);
+            // }
+            // log(1); // 1
+            // log(1, 2); // 1
+            // function advancedLog() {
+            //     console.log.apply(null, arguments);
+            // }
+            // advancedLog(1); // 1
+            // advancedLog(1, 2); // 1 2
+            // function reAdvancedLog() {
+            //     var args = Array.prototype.slice.call(arguments);
+            //     args.unshift('(app)');
+            //     console.log.apply(null, args);
+            // }
+            // reAdvancedLog('Jane'); // (app) Jane
+            // reAdvancedLog('Jane', 'Jack'); // (app) Jane Jack
+
+            // console.log('__________bind________________________');
+            // var foo = {
+            //     age: 12,
+            //     name: 'Jane'
+            // };
+            // var foo1 = {
+            //     age: 13,
+            //     name: 'Jack'
+            // };
+            // var foo2 = {
+            //     age: 14,
+            //     name: 'Maria'
+            // };
+            // var bar = function () {
+            //     console.log(this);
+            //     console.log(this.age);
+            // }
+            // bar();
+            // var func = bar.bind(foo);
+            // func();
+            // // bind只在第一次时起作用
+            // var func = bar.bind(foo).bind(foo1);
+            // func();
+            // var func = bar.bind(foo2).bind(foo1).bind(foo);
+            // func();
+
+            // console.log('__________typeof____________instanceof_____________');
+            // var testFunc = function () {};
+            // function funcs() {};
+            // console.log('typeof 验证函数是否是对象：', typeof testFunc);
+            // console.log('typeof 验证函数是否是对象：', typeof funcs);
+            // console.log('typeof 验证 null 是否是对象：', typeof null);
+            // console.log('instanceof 验证函数是否是对象：', testFunc instanceof Object);
+            // console.log('instanceof 验证函数是否是对象：', funcs instanceof Object);
+            // console.log('instanceof 验证函数是否是函数：', funcs instanceof Function);
+            // console.log('instanceof 验证 null 是否是对象：', null instanceof Object);
+
+            // console.log('__________arguments_____________');
+            // function add (a, b) {
+            //     var len = arguments.length;
+            //     console.log('arguments length：', len);
+            //     var addLen = add.length;
+            //     console.log('函数接受的参数 length：', addLen);
+            //     if (len == addLen) {
+            //         console.log('实参和形参个数一致');
+            //     } else {
+            //         console.log('实参和形参个数不一致');
+            //     }
+            // }
+            // add(3, 4, 7, 9);
+
+            // // 实现递归
+            // function sum(n) {
+            //     if (n == 1) {
+            //         return 1;
+            //     } else {
+            //         // return n + sum(n - 1);
+            //         return n + arguments.callee(n - 1);
+            //     }
+            // }
+            // console.log('sum(5) = ', sum(5));
+
+            // function advancedAdd () {
+            //     var length = arguments.length;
+            //     var sum = 0;
+            //     for (var i=0; i < length; i++) {
+            //         sum += arguments[i];
+            //     }
+            //     return sum;
+            // }
+            // console.log(advancedAdd(3, 5, 2, 7, 9, 6));
+
+            // function reAdvancedAdd () {
+            //     // var length = arguments.length;
+            //     // var sum = 0;
+            //     // for (var i=0; i < length; i++) {
+            //     //     sum += arguments[i];
+            //     // }
+            //     return Array.prototype.reduce.call(arguments, function(n1, n2) {
+            //         return n1 + n2;
+            //     });
+            //     // return sum;
+            // }
+            // console.log(reAdvancedAdd(3, 5, 2, 7, 9, 6));
+
+            console.log('**************重新 call/apply/bind 函数 *****************');
+            // 重写call
+            Function.prototype.mockCall = function (context) {
+                context = context || window;
+                context.fn = this;
+
+                // 修改args
+                let args = Array.prototype.slice.call(arguments, 1);
+                console.log('call args = ', args);
+
+                let result = context.fn(...args);
+                delete context.fn;
+                return result;
+            };
+            apple.say.mockCall(banana, '测试mockCall', '测试1');
+
+            function mockCall(context) {
+                context = context || window;
+                context.fn = this;
+
+                let args = Array.from(arguments);
+                args = args.slice(1);
+
+                let result = context.fn(...args);
+                delete context.fn;
+                return result;
+            }
+
+            // 重写apply
+            Function.prototype.mockApply = function (context) {
+                context = context || window;
+                // context.fn = this;
+                // 保证属性的唯一性，注意symbol属性是公开属性，在类外也可以访问，但是不能被for..of和for..in遍历
+                // 只能通过Object.getPropertyName
+                const fn = Symbol();
+                context[fn] = this;
+
+                let applyArgs = [];
+                let result;
+                if (arguments[1]) {
+                    // 原来的参数是数组，应该被打散为一个个数
+                    applyArgs = arguments[1];
+
+                    // ES5的方法，用eval
+                    let fnStr = 'context.fn(';
+                    for (let i = 0; i < applyArgs.length; i++) {
+                        fnStr += i === applyArgs.length - 1 ? applyArgs[i] : applyArgs[i] + ',';
+                    }
+                    fnStr += ')';//得到"context.fn(arg1,arg2,arg3...)"这个字符串在，最后用eval执行
+                    eval(fnStr); //还是eval强大
+
+                    // ES6的方法，数组展开式
+                    // result = context.fn(...applyArgs);
+                } else {
+                    result = context.fn();
+                }
+
+                delete context.fn;
+                return result;
+            };
+            // apple.say.mockApply(banana, ['测试mockApply', '测试test']);
+
+            // 手写bind--返回一个函数，改变当前函数的指向
+            // 返回一个新函数；返回的函数体和原函数相同；返回的函数，this指向第一个参数
+            Function.prototype.mockBind = function (context) {
+                // 处理外层参数
+                let outerArgs = Array.prototype.slice.apply(arguments, 1);
+                context = context || window;
+                const that = this; // 获取函数
+
+                return function () {
+                    let innerArgs = Array.prototype.slice.apply(arguments);
+                    let args = outerArgs.concat(innerArgs);
+                    return that.apply(context, args);
+                };
+            };
+
+            // bind测试
+            function testBind(obj, z, k) {
+                // obj是函数将要指向的对象
+                console.log('测试bind', 'obj =', obj, 'z = ', z, 'k = ', k, 'this.y = ', this.y);
+            }
+
+            // 测试用例
+            console.log('************ 原bind函数 *************');
+            testBind.bind({y: 'foo'}, {z: 1}, {k: 1})(); //  undefined "foo"
+            testBind.bind()(); // undefined undefined
+            testBind.bind({y: 'bar'}, 'foo')(); // "foo" "bar"
+
+            console.log('************ mockBind函数 *************');
+            testBind.mockBind({y: 'foo'}, {z: 1}, {k: 1})('test1', 'test1-1'); //  undefined "foo"
+            testBind.mockBind()('test2'); // obj = 'test2' undefined undefined
+            testBind.mockBind({y: 'bar'}, 'foo')('test3'); // "foo" "bar"
+
+            // 确认caller和callee归属
+            function testCaller() {
+                // arguments.caller 是 undefinned
+                console.log('arguments.callee = ', arguments.callee);
+                console.log('arguments.caller = ', arguments.caller);
+                console.log('testCaller.caller = ', testCaller.caller);
+
+            }
+            testCaller('测试');
+
+            let callerObj = {y: '修改call'};
+            testCaller.apply(callerObj); // 修改obj，并不影响caller和callee；
+
+
+            // function mockCall
+            function mockCall63(context) {
+                context = context || window;
+                let args = Array.from(arguments);
+                args = args.slice(1);
+
+                context.fn = this;
+                // 执行函数
+                let result = context.fn(...args);
+                delete context.fn;
+                return result;
+            }
+
+            function mockApply63(context) {
+                context = context || window;
+                context.fn = this;
+                let args = arguments[1];
+                let result;
+
+                let fnStr = 'eval(context.fn(';
+
+                if (args) {
+                    let newArgs = [];
+                    let fnStr = 'context.fn(';
+                    for (let i = 0; i < applyArgs.length; i++) {
+                        fnStr += i === applyArgs.length - 1 ? applyArgs[i] : applyArgs[i] + ',';
+                    }
+                    fnStr += ')';//得到"context.fn(arg1,arg2,arg3...)"这个字符串在，最后用eval执行
+                    eval(fnStr); //还是eval强大
+
+                    for (var i = 0; i < args.length; i++) {
+                        fnStr += i === args.length - 1 ? args[i] : args[i] + ',';
+                        // newArgs.push(args[i]);
+                    }
+                    fnStr += ')';
+                    result = context.fn(...args);
+                } else {
+                    result = context.fn();
+                }
+                delete context.fn;
+                return result;
+            }
+        };
+    </script>
+    </head>
+    <body>
+        <div id="app">
+            <div id="dom1" dom-list="1">列表1</div>
+            <div id="dom2" dom-list="1">列表2</div>
+            <div id="dom3" dom-list="1">列表3</div>
+            <div id="dom4" dom-list="1">列表4</div>
+            <div id="dom5" dom-list="1">列表5</div>
+        </div>
+        <!-- built files will be auto injected -->
+    </body>
+    <script>
+    </script>
+</html>

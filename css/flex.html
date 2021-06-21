@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1; user-calable=no;" >
+        <title>flex布局</title>
+        <script>
+        </script>
+        <style>
+            /* 测试当子children的width，超过父元素时，如何处理 */
+            .parent {
+                display: flex;
+                flex-direction: row;
+                justify-content: flex-start;
+                width: 500px;
+                height: 500px;
+                border: 2px solid blue;
+                flex-wrap: wrap;
+                align-content: space-around;
+            }
+            .child {
+                width: 200px;
+                height: 100px;
+                background-color: pink;
+                border: 2px solid red;
+                flex-shrink: 0;
+            }
+            /* 测试等比tab布局  */
+            .box {
+                display: flex;
+                align-items: center;
+                padding: 40px 20px;
+                color: white;
+                background-color: black;
+            }
+            .item {
+                flex-grow: 1;
+                width: 60px; /* 测试没有width时，没有flex-grow时的属性 */
+                height: 60px;
+                line-height: 60px;
+                text-align: center;
+                border: 1px solid white;
+                background-color: palevioletred;
+            }
+
+            .main {
+                display: flex;
+            }
+            .logo {
+                width: 100px;
+                height: 100px;
+                margin: 10px;
+            }
+            .content {
+                flex: 1;
+            }
+            .notice {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        </style>
+        <script>
+        </script>
+    </head>
+    <body>
+        <h2>flex布局</h2>
+        <div class="parent">
+            <div class="child child1">第一个孩子</div>
+            <div class="child child2">第二个</div>
+            <div class="child child3">333</div>
+            <div class="child child4">4444</div>
+        </div>
+        <h2>测试flex-grow 等比tab布局</h2>
+        <div class="box">
+            <span class="item">我是第一个元素我是第一个元素我是第一个元素我是第一个元素</span>
+            <span class="item">元素</span>
+            <span class="item">元素</span>
+            <span class="item">元素</span>
+            <div class="item">元素</div>
+            <div class="item">元素</div>
+        </div>
+        <h2>测试flex布局 对 省略号的影响</h2>
+        <div class="main">
+            <img alt="" class="logo" src="pic.jpg">
+            <div class="content">
+                <h4 class="name">content设置为flex: 1；会导致下面的省略号不生效</h4>
+                <p class="info">将content的width: 0 ；省略号就会生效了，取消flex: 1，也不生效</p>
+                <p class="info">为content的设置overflow: hidden；省略号就会生效了，此时不用取消flex: 1；</p>
+                <p class="notice">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <title>装饰器模式</title>
+            <style>
+                #newmodal,
+                #closemodal {
+                    width: 100px;
+                    height: 60px;
+                    border-radius: 30px;
+                    background-color: #2d52dc;
+                    text-align: center;
+                    color: #fff;
+                    border: none;
+                }
+                #closemodal {
+                    background-color: #9b9c9e;
+                }
+                #modal {
+                    position: absolute;
+                    top: 200;
+                    left: 200;
+                    width: 400px;
+                    height: 400px;
+                    background-color: rgba(0, 0, 0, .4);
+                    padding: 20px;
+                }
+            </style>
+            <script>
+                // 用单例模式，创建新Modal
+            </script>
+        </head>
+        <body>
+            <button id="newmodal" type="button">展示modal</button>
+            <button id="closemodal" type="button">关闭modal</button>
+            <script>
+            // 用单例模式，创建新Modal
+            const CreateModal = (function () {
+                let instance = null;
+                return function () {
+                    if (!instance) {
+                        const modalDom = document.createElement('div');
+                        modalDom.setAttribute('id', 'modal');
+                        modalDom.innerHTML = '新打开了一个modal';
+                        modalDom.style.display = 'block';
+                        instance = modalDom;
+                        document.body.appendChild(instance);
+                    }
+                    return instance;
+                };
+            })();
+
+            const newmodal = document.getElementById('newmodal');
+            const closemodal = document.getElementById('closemodal');
+            // newmodal.addEventListener('click', () => {
+            //     openModal();
+            // });
+            // closemodal.addEventListener('click', () => {
+            //     closeModal();
+            //     afterClose();
+            // });
+            // function openModal() {
+            //     const modalDom = new CreateModal();
+            //     modalDom.style.display = 'block';
+            // }
+            // function closeModal() {
+            //     const modalDom = new CreateModal();
+            //     modalDom.style.display = 'none';
+            // }
+            // // 新增功能--按钮置灰、按钮文案修改
+            // function afterClose() {
+            //     changeText();
+            //     disableBtn();
+            // }
+            // function changeText() {
+            //     closemodal.innerHTML = '快去登录';
+            // }
+            // function disableBtn() {
+            //     closemodal.setAttribute('disabled', true);
+            // }
+            // 用装饰器模式重写上面的逻辑
+            // 打开按钮
+            class OpenBtn {
+                onClick() {
+                    const modalDom = new CreateModal();
+                    modalDom.style.display = 'block';
+                }
+                getBtn() {
+                    return newmodal;
+                }
+            }
+            class CloseBtn {
+                onClick() {
+                    const modalDom = new CreateModal();
+                    modalDom.style.display = 'none';
+                }
+                getBtn() {
+                    return closemodal;
+                }
+            }
+            // 装饰类
+            class DecoratorModalClass {
+                constructor(btn) {
+                    this.btn = btn;
+                }
+                onClick() {
+                    this.btn.onClick();
+                    // 添加新逻辑
+                    this.afterClose();
+                }
+                closeBtn() {
+
+                }
+                afterClose() {
+                    this.changeText();
+                    this.disableBtn();
+                }
+                changeText() {
+                    this.btn.getBtn().innerHTML = '快去登录';
+                }
+                disableBtn() {
+                    this.btn.getBtn().setAttribute('disabled', true);
+                }
+            }
+            // 装饰openBtn
+            const openButton = new OpenBtn();
+            const openDecorator = new DecoratorModalClass(openButton);
+            newmodal.addEventListener('click', () => {
+                openDecorator.onClick();
+            });
+            // 装饰closeBtn
+            const closeButton = new CloseBtn();
+            const closeDecorator = new DecoratorModalClass(closeButton);
+            closemodal.addEventListener('click', () => {
+                closeDecorator.onClick();
+            });
+
+            // 装饰器语法
+            // // 针对类的装饰器
+            // function classDecorator(target) {
+            //     target.hasDecorator = true; // 针对类的装饰器，target就是类本身
+            //     return target;
+            // }
+            // // 针对类的方法的装饰器
+            // // target是类的 原型对象，因为类的方法，始终依附于类存在
+            // function funcDecorator(target, name, descriptor) {
+            //     console.log('target = ', target, 'name = ', name, 'descriptor = ', descriptor);
+            //     let originFunc = descriptor.value;
+
+            //     descriptor.value = function () {
+            //         console.log('我是函数装饰器');
+            //         return originFunc.apply(this, ...arguments);
+            //     };
+            //     return descriptor;
+            // }
+            // class Button {
+            //     // 装饰器函数的调用时机：Button实例是运行时生成的，但装饰器函数在编译阶段执行，因此装饰器函数只能拿到类层面上的对象
+            //     @funcDecorator
+            //     onClick () {
+            //         console.log('我是原来的func');
+            //     }
+            // }
+            </script>
+            <script src="./babel_test.js"></script>
+        </body>
+    </html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1; user-calable=no;" >
+    <title>css选择器的优先级</title>
+    <script>
+    </script>
+    <style>
+        /* 相同重要性时，选择哪一个取决于CSS中的 source order */
+        .color1 {
+            color: red;
+        }
+        .color2 {
+            color: blue;
+        }
+
+        /* 测试!important和 style的优先级 */
+        .color3 {
+            color: green !important;
+        }
+
+        /* 测试!important优先级：即使声明!important的优先级较低，仍然是 !important起作用 */
+        .border1 {
+            border: 1px solid blue !important;
+            color: gray;
+        }
+        #border1 {
+            border: 1px solid red;
+            color: red;
+        }
+
+    </style>
+    <script>
+    </script>
+</head>
+    <body>
+        <h2>css选择器的优先级</h2>
+        <div class="parent">
+            <p class="color2 color1">测试相同类时，最终属性--css中后面的属性会覆盖前面的</p>
+            <p class="color3" style="color: blue;">测试!important和style的优先级--important优先</p>
+            <p class="color3" style="color: blue!important;">测试!important和style的优先级--style和class中都有Important时，style优先</p>
+            <p class="border1">测试!important的优先级</p>
+            <p class="border1" id="border1">测试!important的优先级</p>
+        </div>
+    </body>
+</html>

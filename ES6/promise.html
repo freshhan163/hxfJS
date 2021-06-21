@@ -101,6 +101,46 @@
         Promise.all([pr3, pr2, pr1]).then((data) => {
             console.log('promise.all = ', data);
         });
+
+        // Promise.all变形题
+        function mockPromiseAll(list, n) {
+            return new Promise((resolve, reject) => {
+                // 控制最大并发数n
+                for (let i = 0; i < n; i++) {
+                    addFn();
+                }
+
+                function addFn() {
+                    let index = 0;
+                    let result = []; // 最终结果
+                    let len = list.length;
+
+                    // 控制最终执行条件
+                    if (index >= len) {
+                        return;
+                    }
+                    // 立即执行
+                    const p = Promise.resolve(list[index]());
+                    index++;
+
+                    p.then(
+                        res => {
+                            // 下标index
+                            result[index] = res;
+                            if (result.length >= len) {
+                                resolve(result);
+                            } else {
+                                // 执行完成后，再塞入
+                                addFn();
+                            }
+                        },
+                        err => {
+                            reject(err);
+                        },
+                    );
+                }
+            });
+        }
     </script>
   </head>
   <body>

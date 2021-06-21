@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>闭包</title>
+    <script>
+        console.log('****************** 阮一峰闭包测试函数 *****************');
+        var name = "The Window";
+        var obj = {
+            name : "My Object",
+            getNameFunc : function() { // 函数保存在堆中，getNameFunc保存的是一个指针
+                return function() {
+                    return this.name;
+                };
+            }
+        };
+        console.log('name = ', obj.getNameFunc()());
+        var copyFunc = obj.getNameFunc();
+        console.log('copyFunc name =', copyFunc());
+
+        // 修改为指向obj
+        var newObj = {
+            name : "My Object",
+            getNameFunc : function() {
+                var that = this;
+                return function() {
+                    return that.name;
+                };
+            }
+        };
+        console.log('newObj name = ', newObj.getNameFunc()());
+
+        console.log('****************** 阮一峰闭包测试函数 *****************');
+        var fn;
+        var a = 'window';
+        function foo1() {
+            var a = 2;
+            function baz1() {
+                console.log('this = ', this);
+                console.log('this.a ', this.a); // 2
+                console.log('baz1()-- a = ', a); // 2
+            }
+            fn = baz1;
+        }
+        function bar1() {
+            fn();
+        }
+        console.log('a = ', a);
+        foo1(); // fn = baz1
+        console.log('a = ', a);
+        bar1(); // a = 2，保持对原词法作用域的引用；this = window，指向它的执行上下文
+
+        // 匿名函数
+        console.log('****************** 匿名自执行函数 *****************');
+        var test = 2;
+        (function(){
+            console.log('test = ', test);
+        })();
+
+        console.log('****************** 匿名自执行函数2--前一个function要添加分号 *****************');
+        var closureTest2 = function () {
+            return '添加了分号';
+        }; // 记得添加分号；否则即使换行了也不好使
+
+        (function () {
+            console.log('undefiend??? = ', closureTest2());
+            // Uncaught TypeError,因为没有添加分号;
+        }());
+
+        console.log('****************** 自执行函数实现var的for循环 *****************');
+        // 将setTimeout，用闭包的方法，改为 顺序输出0，1, 2, 3, 4
+        function tryClosure() {
+            for (var i = 0; i < 5; i++) {
+                // setTimeout(() => {
+                //     console.log('i = ', i); // 只输出5
+                // }, 0);
+                var a = function (i) {
+                    var value = i; // 记录此次i的值
+                    setTimeout(() => {
+                        console.log('value = ', value);
+                    }, 0);
+                };
+                a(i);
+            }
+        }
+        tryClosure();
+
+        console.log('**************** this指针相关 ***************************');
+        var count = 'window';
+        function thisA() {
+            console.log('函数a this = ', this);
+            console.log('函数a this.count = ', this.count);
+            console.log('函数a count = ', count);
+        }
+        function thisB() {
+            var count = 'b内部变量';
+            thisA(); // 函数声明提升，所以运行thisA时，count还没有被重新赋值
+            return function() {
+                console.log('函数b闭包 this = ', this);
+                console.log('函数b闭包 this.count = ', this.count);
+                console.log('函数b闭包 count = ', count);
+            };
+        }
+        thisB()();
+
+
+        (function() {
+            console.log('**************** 函数中的全局变量 ***************************');
+            function changeVar () {
+                a = 2;
+            }
+            changeVar();
+            console.log(a);
+            var a = 1;
+            console.log(a);
+        })();
+        console.log('**************** 面试题--闭包相关 ***************************');
+        // 面试题
+        function Foo() {
+            getName = function () {
+                console.log('1 = ', 1);
+                return 1;
+            };
+            return this;
+        }
+
+        Foo.getName = function() {
+            console.log('2 = ', 2);
+            return 2;
+        };
+        Foo.prototype.getName = function() {
+            console.log('3 = ', 3);
+            return 3;
+        };
+
+        var getName = function() {
+            console.log('4 = ', 4);
+            return 4;
+        };
+        function getName() {
+            console.log('5 = ', 5);
+            return 5;
+        }
+        console.log('window = ', this);
+        console.log('Foo.getName() = ', Foo.getName());
+        console.log('Foo().getName() =', Foo().getName());
+        console.log('getName() =', getName());
+        console.log('window = ', this);
+        let f1 = new Foo();
+        console.log('f1 =', f1);
+        console.log('new Foo.getName() =', new Foo.getName());
+        // 执行后，重新赋值了
+        Foo();
+        console.log('getName() =', getName());
+        // 查找原型链
+        console.log('new Foo().getName() = ', new Foo().getName());
+    </script>
+</head>
+<body>
+</body>
+</html>

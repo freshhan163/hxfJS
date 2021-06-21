@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <title>代理模式</title>
+            <script>
+            // ES6--proxy
+            const preset = {
+                type: '巧克力',
+                value: 100
+            };
+            const girl = {
+                name: 'hanxiaofang',
+                age: 26,
+                sex: '女',
+                phone: '18810678487',
+                lastPresent: {
+                    type: '手表',
+                    value: 18000
+                }, // 最近一次收到的礼物
+                presets: [], // 收到的礼物列表
+                bottomValue: 50 // 拒收50元以下的礼物
+            };
+            const baseInfo = ['name', 'age'];
+            const privateInfo = ['sex', 'phone'];
+
+            // 用户信息
+            const user = {
+                isVIP: false,
+                isValidated: true
+            };
+
+            // 婚介所--代理模式
+            // 语法：const proxy1 = new Proxy(obj, handler)
+            // obj是要拦截的对象，handler是代理函数
+            const MarriageProxy = new Proxy(girl, {
+                get: function (girl, key) {
+                    if (baseInfo.indexOf(key) !== -1 && !user.isValidated) {
+                        console.log('您还没有完成认证，无法查看基本信息');
+                        return;
+                    }
+                    if (user.isValidated && privateInfo.indexOf(key) !== -1 && !user.isVIP) {
+                        console.log('只有VIP才能查看该信息');
+                        return;
+                    }
+                    console.log('girl[key] = ', girl[key]);
+                    return girl[key];
+                },
+                // set层面做拦截，看user是否可以给girl送礼物
+                set: function (girl, key, val) {
+                    if (key === 'lastPresent') {
+                        if (val.value < girl.bottomValue) {
+                            console.log(`sorry,您的礼物---${val.type}---被拒收了`);
+                            return;
+                        }
+                        girl.lastPresent = val;
+                        girl.presets = [...girl.presets, val];
+                        console.log(`^_^，已经收到您的礼物---${val.type}`);
+                    }
+                }
+            });
+            // 调用代理，访问girl
+            console.log('name = ', MarriageProxy.name);
+            console.log('phone = ', MarriageProxy.phone);
+
+            // const proxy = new Proxy(obj, handler);
+            // 给girl送礼物
+            MarriageProxy.lastPresent = {type: '扇子', value: 30};
+            MarriageProxy.lastPresent = {type: '手机', value: 3000};
+            </script>
+        </head>
+        <body>
+            <image id="prelooad1" src="" width="400" height="400"></image>
+            <image id="prelooad2" src="" width="400" height="400"></image>
+            <script>
+            // 代理模式实践--预加载
+            class PreloadImg {
+                // 占位图片的url
+                static LOADING_URL = 'https://s1.ax1x.com/2020/03/12/8elGS1.png';
+                constructor(imgNode) {
+                    this.imgNode = imgNode;
+                }
+                setSrc(targetUrl) {
+                    // 先用占位图片，占据img
+                    this.imgNode.src = PreloadImg.LOADING_URL;
+
+                    const img = new Image();
+                    img.onload = () => {
+                        this.imgNode.src = targetUrl;
+                    };
+                    img.src = targetUrl;
+                }
+            }
+            const imgDom = document.getElementById('prelooad1');
+            const newDom = new PreloadImg(imgDom);
+            newDom.setSrc('http://bj.bcebos.com/ibox-thumbnail98/ee3cfcfe2dbddbb3b2f74d4162875899?authorization=bce-auth-v1%2Ffbe74140929444858491fbf2b6bc0935%2F2020-11-04T11%3A32%3A18Z%2F1800%2F%2F24e7d094fad3f00d11d1e04d0272e52fc15b01e8a4c94553bce3b09df73612a9');
+
+
+            // 优化--用单一原则
+            // 只给真实的node，赋值url
+            class PreloadBaseImg {
+                constructor(imgNode) {
+                    this.imgNode = imgNode;
+                }
+                setSrc(targetUrl) {
+                    this.imgNode.src = targetUrl;
+                }
+            }
+            // 实现对真实节点的间接访问
+            class ProxyPreloadImg {
+                static LOADING_URL = 'http://image.leehaoze.com/uPic/9Opcy1.png';
+                constructor(targetImg) {
+                    this.targetImg = targetImg;
+                }
+                setSrc(targetUrl) {
+                    this.targetImg.setSrc(ProxyPreloadImg.LOADING_URL);
+                    const img = new Image();
+                    img.onload = () => {
+                        this.targetImg.setSrc(targetUrl);
+                    };
+                    img.src = targetUrl;
+                }
+            }
+            const imgDom2 = document.getElementById('prelooad2');
+            const newDom2 = new PreloadBaseImg(imgDom2);
+            // 用代理class，实现链接访问
+            const proxyNewDom = new ProxyPreloadImg(newDom2);
+            proxyNewDom.setSrc('http://bj.bcebos.com/ibox-thumbnail98/ee3cfcfe2dbddbb3b2f74d4162875899?authorization=bce-auth-v1%2Ffbe74140929444858491fbf2b6bc0935%2F2020-11-04T11%3A32%3A18Z%2F1800%2F%2F24e7d094fad3f00d11d1e04d0272e52fc15b01e8a4c94553bce3b09df73612a9');
+
+            // 缓存代理
+            function addAll() {
+                let result = 0;
+                const len = arguments.length;
+                for (let i = 0; i < len; i++) {
+                    result += arguments[i];
+                }
+                console.log('进行了1次运算', result);
+                return result;
+            }
+            const proxyAddAll = (function () {
+                let resultArr = [];
+                return function() {
+                    const args = Array.prototype.slice.call(arguments, ',');
+                    if (args in resultArr) {
+                        return resultArr[args];
+                    }
+                    return resultArr[args] = addAll(...args);
+                };
+            })();
+            // 函数会运行3次
+            // addAll(1, 2, 3, 4, 5, 6);
+            // addAll(1, 2, 3, 4, 5, 6);
+            // addAll(1, 2, 3, 4, 5, 6);
+
+            // 运用代理，多次运算结果，仅计算一次
+            proxyAddAll(1, 2, 3, 4, 5, 6);
+            proxyAddAll(1, 2, 3, 4, 5, 6);
+            proxyAddAll(1, 2, 3, 4, 5, 6);
+            </script>
+        </body>
+    </html>

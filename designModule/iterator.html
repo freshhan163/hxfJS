@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <title>行为模式--迭代器模式</title>
+            <script>
+            // ES6中，for..of原理
+            const arr1 = ['hxf', '测试', '韩旭', '杨帆'];
+            for (let value of arr1) {
+                console.log('value = ', value, 'arr = ', arr1[value]);
+            }
+            // for..of是拿到了数组中的迭代器 Symbol.iterator属性
+            const iterator = arr1[Symbol.iterator]();
+            console.log('iterator1 = ', iterator.next());
+            console.log('iterator2 = ', iterator.next());
+            console.log('iterator3 = ', iterator.next());
+
+            // Generator应用的实例，在chrome浏览器中能直接运行，但是放在html中，chrome输出为空
+            function *iteratorGenerator() {
+                yield '1号选手';
+                yield '2号选手';
+                yield '3号选手';
+            }
+            const iterator2 = iteratorGenerator();
+            console.log(iterator2.next());
+            console.log(iterator2.next());
+            console.log(iterator2.next());
+            console.log(iterator2.next());  // 从这里开始没有响应，因为iterator已经走完
+
+            console.log('*****************自定义Generator**********************');
+            // 实现一个迭代器生成函数--Generator，包含next()方法，返回值中有value\done属性，当next超出长度时，done为true
+            function customGenerator(list) {
+                const len = list.length;
+                let idx = 0;
+                let done = false;
+                return {
+                    next: function () {
+                        done = idx > len - 1;
+                        let value = done ? undefined : list[idx++];
+                        return {
+                            value,
+                            done
+                        };
+                    }
+                };
+            }
+            const iterator3 = customGenerator(['测试11', 'hxf2222', 'yf3333']);
+            console.log(iterator3.next());
+            console.log(iterator3.next());
+            console.log(iterator3.next());
+            console.log(iterator3.next());
+            console.log(iterator3.next());
+            console.log(iterator3.next());
+
+            </script>
+        </head>
+        <body>
+            <div>1111</div>
+            <div>1111</div>
+            <div>1111</div>
+            <div>1111</div>
+            <script>
+            console.log('***************************************');
+            // 类数组对象：querySelectorAll返回NodeList，不是数组，是 ArrayLike Object
+            // NodeList和Array没有关系，但是有length喝forEach方法，且有几个特殊的方法entries | values | item
+            const queryList = document.querySelectorAll('div');
+            console.log('queryList = ', queryList instanceof Array, queryList[0]);
+            queryList.forEach(item => {
+                console.log('querySelectorAll 遍历数组', item.innerHTML);
+            });
+
+            // getElementsByTagName，返回 HTMLCollectrion，不是数组
+            // 也是继承自Object，但只有length和item方法，没有forEach属性
+            // HTMLCollection中的元素，只包HTML元素，不包含 text node和 注释
+            // getElementsByClassName 返回的也是 HTMLCollection
+            const tagList = document.getElementsByTagName('div');
+            console.log('tagList = ', tagList instanceof Array, tagList);
+            // tagList.forEach(item => {
+            //     console.log('getElementsByTagName 遍历数组', item.innerHTML);
+            // });
+            </script>
+        </body>
+    </html>

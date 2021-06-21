@@ -1,0 +1,21 @@
+{
+  "name": "designmodule",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "babel": "babel decorator.js --out-file babel_test.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-plugin-transform-decorators-legacy": "^1.3.5",
+    "babel-preset-env": "^1.7.0"
+  },
+  "dependencies": {
+    "@super-fe/bdrainhn-bigimage-live-sbox": "^4.0.40",
+    "@super-fe/bdrainhn-dynamic": "^4.4.70-alpha.2",
+    "axios": "^0.21.0"
+  }
+}

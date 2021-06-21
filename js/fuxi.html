@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>事件冒泡</title>
+</head>
+<body>
+    <h1><a href="https://juejin.cn/post/6934500357091360781">JS基础</a></h1>
+    <div>
+        <p id="parEle">我是父元素
+            <span id="sonEle">我是子元素</span>
+        </p>
+    </div>
+    <div id="id3" onclick="testOnClick(this)">测试onCLick</div> // 指向当前元素，只有外层代码是这样的
+    <div id="id3" onclick="testClick()">测试函数</div>
+</body>
+</html>
+<script type="text/javascript">
+const sonEle = document.getElementById('sonEle');
+const parEle = document.getElementById('parEle');
+
+// 测试冒泡、捕获行为
+parEle.addEventListener('click', function (e) {
+    console.log('父级 冒泡');
+    console.log('currentTarget = ', e.currentTarget);
+    console.log('target = ', e.target);
+}, false);
+parEle.addEventListener('click', function () {
+    console.log('父级 捕获');
+}, true);
+
+sonEle.addEventListener('click', function () {
+    console.log('子级冒泡');
+}, false);
+sonEle.addEventListener('click', function () {
+    console.log('子级捕获');
+}, true);
+
+// 测试 DOM0级
+function testOnClick(e) {
+    console.log('e = ', e, this); // 指向自身
+}
+function testClick() {
+    console.log('this = ', this); // 指向window
+}
+
+</script>

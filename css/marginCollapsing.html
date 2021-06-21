@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1; user-calable=no;" >
+    <title>Margin折叠</title>
+    <script>
+    </script>
+    <style>
+        div {
+            box-sizing: border-box;
+        }
+        .a {
+            width: 300px;
+            height: 100px;
+            margin: 10px;
+            background-color: pink;
+            border: 1px solid red;
+            padding: 20px;
+        }
+
+        .b {
+            border: 1px solid red;
+            padding: 20px;
+            width: 300px;
+            height: 100px;
+            margin: 10px;
+            background-color: greenyellow;
+        }
+
+        #parent {
+            width:300px;
+            height:150px;
+            margin-top: 20px;
+            background:teal;
+        }
+        #box1 {
+            width:100px;
+            height:100px;
+            background:aqua;
+            margin:100px 0;
+            border:
+        }
+    </style>
+</head>
+    <body>
+        <h2>Margin折叠</h2>
+        <p>同层级Margin折叠</p>
+        <div class="a">margin:10px</div>
+        <div class="b">margin:10px;</div>
+        <p>父子层级Margin折叠</p>
+        <div id="parent">
+            <div id="box1">我是box1</div>
+            我是
+        </div>
+    </body>
+</html>

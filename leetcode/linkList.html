@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>链表</title>
+</head>
+<body>
+    <h1><a href="https://leetcode-cn.com/leetbook/read/top-interview-questions-easy/x2skh7/">链表</a></h1>
+</body>
+</html>
+<script type="text/javascript">
+class ListNode {
+    constructor(val) {
+        this.val = val;
+        this.next = null;
+    }
+}
+// 创建一个新的链表
+class LinkList {
+    constructor() {
+        this.head = null;
+    }
+    add(val) {
+        // 尾插法插入节点
+        const temp = new ListNode(val);
+        if (!this.head) {
+            this.head = temp;
+            return this.head;
+        }
+        let faster = this.head;
+        while (faster.next) {
+            faster = faster.next;
+        }
+        faster.next = temp;
+    }
+}
+// 给定一个数组，创建一个链表
+function createLinkList(arr) {
+    let len = arr.length;
+    if (len === 0) {
+        return null;
+    }
+    let list = new LinkList();
+    for (let i = 0; i < len; i++) {
+        list.add(arr[i]);
+    }
+    return list.head;
+}
+console.log(createLinkList([1, 1, 1, 2, 2, 3, 4, 4]));
+// 逆转链表
+// 88题--https://leetcode-cn.com/problems/remove-duplicates-from-sorted-list/
+// 删除排序链表中的重复元素
+// 方法1：新增链表
+var deleteDuplicates = function (head) {
+    if (head === null || head.next === null) {
+        return head;
+    }
+    let prev = head;
+    let reserveHead = prev; // 要保存头部
+    while (head !== null) {
+        if (prev.val !== head.val) {
+            prev.next = head;
+            prev = head;
+        }
+        head = head.next;
+    }
+    prev.next = null; // 针对[1, 1, 2, 3, 3]这种情况，最后要讲prev.next设置为Null
+    console.log('reserveHead =', reserveHead);
+    return reserveHead;
+};
+
+// 方法2：遍历过程找中删除
+var deleteDuplicates2 = function (head) {
+    if (head === null || head.next === null) {
+        return head;
+    }
+
+    let cur = head;
+    while (cur.next) {
+        if (cur.val === cur.next.val) {
+            cur.next = cur.next.next;
+        } else {
+            cur = cur.next;
+        }
+    }
+    return head;
+};
+
+// 删除链表中的节点
+// 返回值：不要返回任何值；链表中所有节点的值都是唯一的;
+// 题目意思：node表示要删除节点之后的链表；且无法访问要删除节点前的链表
+var deleteNode = function (node) {
+    // 替换要删除节点node，和node.next的值
+    node.val = node.next.val;
+
+    // 删除node.next
+    node.next = node.next.next;
+};
+
+// 删除链表的倒数第N个节点，并返回链表的头节点
+//方法一： 删除节点：头节点（找不到前面的节点）、中间节点（找到前一个节点）、尾节点、只有一个节点的情况
+// 删除头节点，要求断开连接
+var removeNthFromEnd = function (head, n) {
+    // 保留头节点
+    // 一次遍历，获取链表长度
+    // 二次遍历，删除对应节点；删除时需注意是否是最后一个节点 | 是否是第一个节点
+    let result = head;
+    let len = 0;
+    while (head) {
+        ++len;
+        head = head.next;
+    }
+    // 超出的情况下，不删除
+    if (n > len) {
+        return result;
+    }
+    head = result;
+    let cntFront = len - n + 1; // 下标默认从1开始
+
+    // 找到要删除节点的前一个节点
+    while (cntFront > 2) {
+        head = head.next;
+        --cntFront;
+    }
+    if (cntFront === 2) {
+        head.next = head.next ? head.next.next : null;
+    } else if (cntFront === 1) {
+        // 删除头节点
+        result = head.next;
+        head.next = null;
+    }
+    return result;
+};
+
+// 进阶：一次扫描
+// 方法二：新增一个头节点的冗余节点，双指针；相差n；当比较快的那个指针到null的时候，慢指针刚好到 倒数第n个
+var removeNthFromEnd2 = function (head, n) {
+    let result = new ListNode(0, head); // 找到当前节点的前一个节点
+    let cnt = 0;
+    let slow = result;
+
+    while (cnt < n) {
+        head = head.next;
+        ++cnt;
+    }
+    while (head) {
+        slow = slow.next;
+        head = head.next;
+    }
+
+    // 删除节点
+    slow.next = slow.next.next;
+
+    // 重置头节点
+    result = result.next;
+    return result;
+};
+
+
+
+
+// 逆转链表
+// 头部法、尾部法
+// 方法1：新建一个
+var reverseLink = function (head) {
+    if (head === null) {
+        return head;
+    }
+    // 创建头节点，使用头插法；不停的将节点从该节点的前面，插入
+    let result = head;
+
+    head = head.next;
+    let prev = head; // 指向head
+    result.next = null; // 断开链接，指向头节点
+
+    while (head) {
+        head = head.next;
+
+        // 断开该节点，拼接到头部
+        prev.next = result;
+        result = prev;
+
+        // 继续遍历head
+        prev = head;
+    }
+    return result;
+};
+
+// 方法2：双指针，实现局部反转；cur较慢，later较快，；每次让later的next指针，指向cur
+var reverseLink2 = function (head) {
+    if (head === null) {
+        return head;
+    }
+    let cur = null;
+    let later = head;
+    while (later) {
+        let temp = later.next;
+
+        // 反转later，让later->next 指向cur
+        later.next = cur;
+
+        // 修改cur、later
+        cur = later;
+        later = temp;
+    }
+    return cur;
+};
+
+// 合并两个有序链表
+// 方法一：双指针；保留l1；
+var mergeTwoLists = function (l1, l2) {
+    if (l1 === null || l2 === null) {
+        return l1 || l2;
+    }
+
+    // 找到要插入地方的前一个值，然后开始插入
+    let prev = null;
+    if (l1.val > l2.val) {
+        prev = l2;
+        l1 = l1.next;
+    } else {
+        prev = l2;
+        l2 = l2.next;
+    }
+
+    let prevHead = prev; // 新链表的头节点
+    prev.next = null; // 新链表的最后节点位置
+
+    while (l1 && l2) {
+        if (l1.val < l2.val) {
+            prev.next = l1;
+            l1 = l1.next;
+        }
+        else {
+            prev.next = l2;
+            l2 = l2.next;
+        }
+        prev = prev.next;
+        prev.next = null;
+    }
+    prev.next = l1 ? l1 : l2;
+    return prevHead;
+};
+
+// 方法二：递归算法，拆分子问题
+var mergeTwoLists2 = function (l1, l2) {
+    if (l1 === null || l2 === null) {
+        return l1 || l2;
+    }
+    if (l1.val < l2.val) {
+        l1.next = mergeTwoLists2(l1.next, l2);
+        return l1;
+    }
+    else {
+        l2.next = mergeTwoLists2(l1, l2.next);
+        return l2;
+    }
+};
+
+var mergeTwoLists3 = function (l1, l2) {
+    // 递归算法
+    if (!l1 || !l2) {
+        return l2 || l1;
+    }
+    // if (l1.val <= l2.val) {
+    //     l1.next = mergeTwoLists(l1.next, l2);
+    //     return l1;
+    // } else {
+    //     l2.next = mergeTwoLists(l1, l2.next);
+    //     return l2;
+    // }
+
+    // 双指针链表拼接
+    let prev = new ListNode(0, null);
+    let preserveHead = prev;
+
+    while (l1 && l2) {
+        if (l1.val <= l2.val) {
+            prev.next = l1;
+            l1 = l1.next;
+        } else {
+            prev.next = l2;
+            l2 = l2.next;
+        }
+        prev = prev.next;
+    }
+
+    return preserveHead.next;
+};
+
+// 回文链表
+// 方法1：双指针；fast = 2slow；找到中间节点，逆转后半截；然后对比；
+var isPalindrome = function (head) {
+    if (head === null || head.next === null) {
+        return true;
+    }
+
+    let prev = head; // 保留头节点
+
+    // 找到中间节点
+    let later = head;
+    while (later) {
+        head = head.next;
+        later = later.next ? later.next.next : null;
+    }
+
+    // 逆转后半截链表（保留头结点；获取头结点，并将头结点-->next = null；遍历链表）
+    let laterHead = head;
+    head = head.next;
+    laterHead.next = null;
+
+    while (head) {
+        let temp = head.next;
+        head.next = laterHead;
+        laterHead = head;
+        head = temp;
+    }
+
+    // 从head开始，对比head和prev
+    while (laterHead) {
+        if (laterHead.val !== prev.val) {
+            return false;
+        }
+        laterHead = laterHead.next;
+        prev = prev.next;
+    }
+    return true;
+};
+
+var isPalindrome2 = function (head) {
+    if (!head || !head.next) {
+        return true;
+    }
+    let reserveHead = head;
+
+    // 查找到中间节点的前一个节点
+    let middle = head;
+    while (head.next) {
+        middle = middle.next;
+        head = head.next ? head.next.next : null;
+    }
+
+    // 逆转后半部分节点
+    let reverseMiddle = middle.next;
+    let curMiddle = null; // 后半部分的头节点
+    middle.next = null; // 断开后半部分
+    middle = reverseMiddle;
+    while (middle) {
+        let temp = middle.next;
+        middle.next = curMiddle;
+
+        curMiddle = middle;
+        middle = temp;
+    }
+    // 开始对比reserveHead 和 curMiddle.next
+    curMiddle = curMiddle.next;
+    while (head && curMiddle) {
+        if (head.val !== curMiddle.val) {
+            return false;
+        }
+    }
+    return true;
+};
+
+</script>

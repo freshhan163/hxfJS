@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <title>DOM操作详细解释</title>
+            <script>
+                // 构造器模式--构造器即构造函数，解决创建对象的问题
+                function CreateUser(name, age, sex, work, career) {
+                    this.name = name;
+                    this.age = age;
+                    this.sex = sex;
+                    this.work = work;
+                    this.career = career;
+                }
+                const xiaoming = new CreateUser('xiaoming', 12, '女');
+                console.log('xiaoming = ', xiaoming);
+
+                // 简单工厂模式--封装构造器的变与不变，解决多个对象的问题，封装创建对象的过程，实现变与不变的封装
+                function createSimpleFactory(name, age, sex, career) {
+                    let work = [];
+                    switch (career) {
+                        case 'worker':
+                            work = ['干活', '领工资'];
+                            break;
+                        case 'bose':
+                            work = ['监督', '发工资'];
+                            break;
+                        default:
+                            work = [];
+                            break;
+                    }
+                    return new CreateUser(name, age, sex, work, career);
+                }
+
+                // 抽象工厂模式--当出现多个类的时候，且类之间的关系存在等级、门派等交叉情况。
+                class MobilePhoneFactory {
+                    createOS() {
+                        console.log('抽象方法--创建系统');
+                    }
+                    createHardware() {
+                        console.log('抽象方法--创建硬件');
+                    }
+                }
+                // 具体工厂
+                class FakeMobileFactory extends MobilePhoneFactory {
+                    createOS() {
+                        console.log('具体工厂--实现系统');
+                        // 实现该方法时，依赖 具体产品--AndroidOS，针对该具体类，再进行共性抽离
+                        return new AndroidOS();
+                    }
+                    createHardware() {
+                        console.log('具体工厂--实现硬件');
+                        return new HighHardware();
+                    }
+                }
+
+                // 抽象产品类
+                class OS {
+                    controlOS() {
+                        console.log('抽象产品--系统');
+                    }
+                }
+                class Hardware {
+                    controlHardware() {
+                        console.log('抽象产品--硬件');
+                    }
+                }
+                // 具体产品类
+                class AndroidOS extends OS {
+                    controlOS() {
+                        console.log('具体产品--Android系统');
+                    }
+                }
+                class AppleOS extends OS {
+                    controlOS() {
+                        console.log('具体产品--IOS系统');
+                    }
+                }
+                class HighHardware extends Hardware {
+                    controlHardware() {
+                        console.log('具体产品--高质量硬件');
+                    }
+                }
+                class MiddleHardware extends Hardware {
+                    controlHardware() {
+                        console.log('具体产品--中等质量硬件');
+                    }
+                }
+
+                const myPhone = new FakeMobileFactory();
+                const myOS = myPhone.createOS();
+                const myHardware = myPhone.createHardware();
+                myOS.controlOS();
+                myHardware.controlHardware();
+            </script>
+        </head>
+        <body>
+            <div id="box"></div>
+        </body>
+    </html>

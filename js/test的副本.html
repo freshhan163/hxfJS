@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>测试数据</title>
+        <script>
+            let data = [
+                {
+                    "biz_date": "20191001",
+                    "exp_cnt": "100",
+                    "biz_hour": "01"
+                },
+                {
+                    "biz_date": "20191001",
+                    "exp_cnt": "100",
+                    "biz_hour": "10"
+                },
+                {
+                    "biz_date": "20191001",
+                    "exp_cnt": "100",
+                    "biz_hour": "20"
+                },
+                {
+                    "biz_date": "20191001",
+                    "exp_cnt": "100",
+                    "biz_hour": "00"
+                },
+
+                {
+                    "biz_date": "20190930",
+                    "exp_cnt": "122331",
+                    "biz_hour": "01"
+                },
+                {
+                    "biz_date": "20190930",
+                    "exp_cnt": "355092",
+                    "biz_hour": "10"
+                },
+                {
+                    "biz_date": "20190930",
+                    "exp_cnt": "354618",
+                    "biz_hour": "20"
+                },
+                {
+                    "biz_date": "20190930",
+                    "exp_cnt": "225046",
+                    "biz_hour": "00"
+                },
+
+                {
+                    "biz_date": "20190924",
+                    "exp_cnt": "122331",
+                    "biz_hour": "01"
+                },
+                {
+                    "biz_date": "20190924",
+                    "exp_cnt": "355092",
+                    "biz_hour": "10"
+                },
+                {
+                    "biz_date": "20190924",
+                    "exp_cnt": "354618",
+                    "biz_hour": "20"
+                },
+                {
+                    "biz_date": "20190924",
+                    "exp_cnt": "225046",
+                    "biz_hour": "00"
+                },
+            ];
+            let sortByType = (a,b) => {
+                return parseInt(a.biz_hour) - parseInt(b.biz_hour);
+            };
+            let mapData = (data) => {
+                data.sort(sortByType);
+
+                // 格式化日期
+                let formatDate = (date) => {
+                    let year = date.getFullYear();
+                    let month = date.getMonth() + 1;
+                    let day = date.getDate();
+                    if (month >= 1 && month <= 9) {
+                        month = `0${month}`;
+                    }
+                    if (day >= 1 && day <= 9) {
+                        day = `0${day}`;
+                    }
+                    return`${year}${month}${day}`;
+                };
+                // 当前时间
+                let current = new Date();
+                // 一天前
+                let before = new Date(current - 1000 * 60 * 60 * 24);
+                // 一周前
+                let beforeWeek = new Date(current - 1000 * 60 * 60 * 24 * 7);
+
+                let currentDate = formatDate(current);
+                let beforeDate = formatDate(before);
+                let beforeWeekDate = formatDate(beforeWeek);
+
+                // 按日期分组
+                let nowData = [];
+                let beforeData = [];
+                let beforeWeekData = [];
+
+                // 按日期分组计算 累计值
+                let nowTotal = 0;
+                let beforeTotal = 0;
+                let beforeWeekTotal = 0;
+                data.map(item => {
+                    switch (item.biz_date) {
+                        case currentDate:
+                            item.exp_cnt = nowTotal + parseInt(item.exp_cnt);
+                            nowTotal = item.exp_cnt;
+                            item.date_flag = '0';
+                            if (parseInt(item.biz_hour) <= new Date().getHours()) {
+                                nowData.push(item);
+                            }
+                            break;
+                        case beforeDate:
+                            item.exp_cnt = beforeTotal + parseInt(item.exp_cnt);
+                            beforeTotal = item.exp_cnt;
+                            item.date_flag = '1';
+                            beforeData.push(item);
+                            break;
+                        case beforeWeekDate:
+                            item.exp_cnt = beforeWeekTotal + parseInt(item.exp_cnt);
+                            beforeWeekTotal = item.exp_cnt;
+                            item.date_flag = '7';
+                            beforeWeekData.push(item);
+                            break;
+                        default:
+                            break;
+                    }
+                });
+                // 最终数据
+                let finalData = nowData.concat(beforeData, beforeWeekData);
+                return finalData;
+            }
+            let d = mapData(data);
+
+            console.log('data = ', d);
+        </script>
+    </head>
+</html>

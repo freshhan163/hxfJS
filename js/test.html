@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+            <meta charset="UTF-8">
+            <title></title>
+            <style type="text/css">
+            </style>
+            <script>
+                // 变量提升，var作用域
+                // (function() {
+                //     var a = b = 3; // b = 3; var a = b;
+                //     var c = 3;
+                // })();
+                // console.log('******引用类型，存储的都是地址*******');
+                // var a = {
+                //     key: 'a',
+                //     value: '1'
+                // };
+                // var b = {
+                //     key: 'a',
+                //     value: '1'
+                // };
+                // console.log('a == b', a == b);
+                // console.log('a === b', a === b);
+                // var array1 = [2, 3, 4, 5];
+                // var array2 = [2, 3, 4, 5];
+                // console.log('array1 == array2', array1 == array2);
+                // console.log('array1 === array2', array1 === array2);
+
+                // // typeof判断方法
+                // console.log('************* typeof **************');
+                // var n1 = 123;
+                // console.log('var n1 = 123', typeof n1);
+
+                // var u1;
+                // console.log('var u1;', typeof u1);
+                // console.log('u2', typeof u2);
+
+                // var null1 = null;
+                // console.log('var null1 = null', typeof null1);
+
+                // var array3 = [];
+                // console.log('var array3 = [];', typeof array3);
+
+                // var obj1 = {key: 1};
+                // var obj2 = {};
+                // console.log('var obj1 = {key: 1};', typeof obj1);
+                // console.log('var obj2 = {};', typeof obj2);
+
+                // var n2 = Number(123);
+                // console.log('var n2 = Number(123);', typeof n2);
+
+                // var s1 = String(123);
+                // console.log('var s1 = String(123);', typeof s1);
+
+                // typeof 和 instanceof 判断
+                console.log('************* typeof & instanceOf **************');
+                var person = {};//创建个控对象 --引用类型
+                person.name = 'jozo';
+                person.age = 22;
+                person.sayName = function() {console.log(person.name);}
+                person.sayName();// 'jozo'
+
+                delete person.name; // 删除person对象的name属性
+                person.sayName(); // 此时person.name不存在，输出undefined，
+                console.log(typeof person.sayName);
+                console.log(person.sayName instanceof Object); // 按原型链查找
+                console.log(person.sayName instanceof Function); // 按原型链查找
+
+                // console.log('************* var/let/const **************');
+                function f() {
+                    var a = 1;
+
+                    a = 2;
+                    var b = g();
+                    a = 3;
+
+                    return b;
+
+                    function g() {
+                        return a;
+                    }
+                }
+                console.log(f()); // returns 2;
+
+                // 闭包测试
+                console.log('************* 闭包测试 **************');
+                // var i = 0;
+                // for (; i < 10;) {
+                //     (function(i) {
+                //         console.log('function i');
+                //         setTimeout(function() { console.log(i); }, 100 * i);
+                //     })(i);
+                //     console.log('i++');
+                //     i++;
+                // }
+                // function i --> i++ 都输出以后，才输出i =  0，1，2，3，4，5，6，7，8，9
+            </script>
+        </head>
+        <body>
+            <div id="box"></div>
+        </body>
+    </html>

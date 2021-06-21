@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>测试addEvent事件</title>
+        </head>
+        <body>
+            <div id="id1">
+                <div id="id21">
+                    <div id="id3" onclick="testClick()">3333</div>
+                    <div id="id3" onclick="console.log(this)">3333</div>
+                </div>
+                <div id="id22">222</div>
+                <div id="id23">111</div>
+            </div>
+            <script type="text/javascript">
+                const dom1 = document.getElementById('id1');
+                const dom2 = document.getElementById('id21');
+                const dom3 = document.getElementById('id3');
+
+                dom1.addEventListener('click', function(e) {
+                    console.log('addEventListener  e =', e);
+                    console.log('addEventListener  this =', this);
+                    // e.stopImmediatePropagation();
+                });
+                dom1.addEventListener('click', function(e) {
+                    console.log('addEventListener2  e =', e);
+                    console.log('addEventListener2  this =', this);
+                });
+                dom1.onclick = function(e) {
+                    console.log('onclick e = ', e);
+                    console.log('onclick this = ', this);
+                };
+                dom1.onclick = function(e) {
+                    console.log('onclick2 e = ', e);
+                    console.log('onclick2 this = ', this);
+                };
+                function testClick() {
+                    console.log('this = ', this);
+                }
+            </script>
+        </body>
+    </html>

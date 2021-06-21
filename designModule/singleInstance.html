@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <title>单例模式--保证一个类只有一个实例对象</title>
+            <script>
+            // 问题1：什么是单例模式？答：一个类只有一个实例，多次创建实例，返回的还是同一个实例。且提供一个全局统一访问点
+            // 问题2：如何保证一个类只有一个实例？答：构造函数constructor、static静态方法、闭包
+            class Dog {
+                show() {
+                    console.log('我是一个单独的对象');
+                }
+            }
+            const s1 = new Dog();
+            const s2 = new Dog();
+            console.log('s1 === s2', s1 === s2); // false
+
+            // 改造singleDog为单例模式
+            class SingleDog {
+                // 静态static方法实现
+                // static getInstance() {
+                //     if (!SingleDog.instance) {
+                //         SingleDog.instance = new SingleDog();
+                //     }
+                //     return SingleDog.instance;
+                // }
+
+                // 构造函数实现
+                // 但是单例模式不要使用构造函数创建，因为每次重复new 的时候，并不是只执行构造函数，还有其他操作（链接到原型、绑定this、返回对象等）
+                // constructor() {
+                //     if (!SingleDog.instance) {
+                //         SingleDog.instance = this;
+                //     }
+                //     return SingleDog.instance;
+                // }
+
+                // 闭包实现
+                static getInstance = (function () {
+                    // const that = this;
+                    let instance = null;
+                    return function () {
+                        if (!instance) {
+                            instance = new SingleDog();
+                            // instance = that;
+                        }
+                        return instance;
+                    };
+                })();
+                show() {
+                    console.log('我是一个单独的对象');
+                }
+            }
+            const s11 = SingleDog.getInstance();
+            const s12 = SingleDog.getInstance();
+            console.log('s11 === s12', s11 === s12); // true
+
+            // 构造函数实现
+            // const s11 = new SingleDog();
+            // const s12 = new SingleDog();
+            // console.log('s11 === s12', s11 === s12); // true
+
+            // 实战：实现一个Storage，基于localStorage封装，实现方法setItem(key, value)、getItem(key)
+            class Storage {
+                static getStorage() {
+                    if (!Storage.instance) {
+                        Storage.instance = new Storage();
+                    }
+                    return Storage.instance;
+                }
+                getItem(key) {
+                    return localStorage.getItem(key);
+                }
+                setItem(key, value) {
+                    return localStorage.setItem(key, value);
+                }
+            }
+
+            const store1 = Storage.getStorage();
+            const store2 = Storage.getStorage();
+            store1.setItem('test', 'hanxiaofang');
+            console.log('store2 = ', store2.getItem('test'));
+
+            // 闭包实现：用闭包创建一个引用自由变量的构造函数
+            function StorageBase() {}
+            StorageBase.prototype.getItem = function (key) {
+                return localStorage.getItem(key);
+            };
+            StorageBase.prototype.setItem = function (key, value) {
+                return localStorage.setItem(key, value);
+            };
+
+            const StorageClosure = (function () {
+                let instance = null;
+                return function () {
+                    if (!instance) {
+                        instance = new StorageBase();
+                    }
+                    return instance;
+                };
+            })();
+            const str1 = new StorageClosure();
+            const str2 = new StorageClosure();
+            str1.setItem('test', '测试');
+            console.log('store2 = ', str2.getItem('test'));
+            </script>
+            <style>
+                #modal {
+                    position: absolute;
+                    top: 200px;
+                    left: 200px;
+                    width: 400px;
+                    height: 400px;
+                    background-color: darkseagreen;
+                    color: white;
+                }
+            </style>
+        </head>
+        <body>
+            <div id="box">
+                <button type="button" onclick="openModal()">打开Modal</button>
+                <button type="button" onclick="closeModal()">关闭Modal</button>
+            </div>
+            <script>
+
+            // 实现一个全局的模态框
+            function openModal() {
+                const modal = createModal();
+                modal.style.display = 'block';
+            }
+            function closeModal() {
+                const modal = document.getElementById('modal');
+                modal.style.display = 'none';
+            }
+            // 静态方法
+            // class SingleModal {
+            //     static getModal() {
+            //         // 唯一性判断
+            //         if (!SingleModal.modal) {
+            //             const body = document.getElementsByTagName('body')[0];
+
+            //             const modalWrapper = document.createElement('div');
+            //             modalWrapper.setAttribute('id', 'modal');
+            //             modalWrapper.setAttribute('class', 'modal-wrapper');
+
+            //             const modalContent = document.createElement('div');
+            //             modalContent.setAttribute('class', 'modal-content');
+            //             modalContent.innerHTML = '测试Modal';
+
+            //             modalWrapper.appendChild(modalContent);
+            //             body.appendChild(modalWrapper);
+            //             // 唯一性赋值
+            //             SingleModal.modal = modalWrapper;
+            //         }
+            //         return SingleModal.modal;
+            //     }
+            // }
+            function createModal() {
+                // 静态方法
+                // return SingleModal.getModal();
+                // 闭包实现
+                return new SingleModalClosure();
+            }
+
+            // 闭包实现
+            const SingleModalClosure = (function () {
+                let modal = null;
+                return function () {
+                    if (!modal) {
+                        const body = document.getElementsByTagName('body')[0];
+
+                        const modalWrapper = document.createElement('div');
+                        modalWrapper.setAttribute('id', 'modal');
+                        modalWrapper.setAttribute('class', 'modal-wrapper');
+
+                        const modalContent = document.createElement('div');
+                        modalContent.setAttribute('class', 'modal-content');
+                        modalContent.innerHTML = '测试Modal';
+
+                        modalWrapper.appendChild(modalContent);
+                        body.appendChild(modalWrapper);
+                        // 唯一性赋值
+                        modal = modalWrapper;
+                    }
+                    return modal;
+                };
+            })();
+
+
+            // 实现storage
+            // 闭包形式
+            function CreateStorageBase() {}
+            CreateStorageBase.prototype.getItem = function (key) {
+                return localStorage.getItem(key);
+            };
+            CreateStorageBase.prototype.setItem = function (key, value) {
+                return localStorage.setItem(key, value);
+            };
+            const CreateStorage = (function () {
+                console.log('this  = ', this); // 第二次就不会走到这里了，只会走return function里的内容
+                let instance = null;
+                console.log('instance  = ', instance);
+                return function () {
+                    console.log('this 2222 = ', this); // 空对象{}
+                    console.log('this instance = ', instance); // CreateStorageBase
+                    if (!instance) {
+                        instance = new CreateStorageBase();
+                    }
+                    return instance;
+                };
+            })();
+            const createStr1 = new CreateStorage();
+            const createStr2 = new CreateStorage();
+            createStr1.setItem('name', '测试数据--闭包');
+            console.log(createStr2.getItem('name'));
+
+            // 静态方法
+            class CreateStorageClass {
+                static getInstance() {
+                    if (!CreateStorageClass.instance) {
+                        CreateStorageClass.instance = new CreateStorage();
+                    }
+                    return CreateStorageClass.instance;
+                }
+                getItem = function (key) {
+                    return localStorage.getItem(key);
+                };
+                setItem = function (key, value) {
+                    return localStorage.setItem(key, value);
+                };
+            }
+            const strClass1 = CreateStorageClass.getInstance();
+            const strClass2 = CreateStorageClass.getInstance();
+            strClass1.setItem('111', '测试数据--静态方法');
+            console.log(strClass2.getItem('111'));
+
+            function StorageBase2() {}
+            StorageBase2.prototype.setItem = function() {};
+            StorageBase2.prototype.getItem = function() {};
+
+            const Storage = (function() {
+                let instance = null;
+                return function() {
+                    if (!instance) {
+                        instance = new StorageBase2();
+                    }
+                    return instance;
+                };
+            })();
+            </script>
+        </body>
+    </html>

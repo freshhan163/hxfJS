@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>react渲染机制</title>
+        <style type="text/css"></style>
+        <script type="text/javascript">
+            // 渲染setState
+            function mockSetState() {
+                let stateQueue = [];
+                let renderQueue = [];
+                var enqueueState = (state, component) => {
+                    console.log('进队列');
+                    if (stateQueue.length === 0) {
+                        // 将更新放在microTask中
+                        defer(flush);
+                    }
+                    stateQueue.push({
+                        state,
+                        component
+                    });
+                    // 要更新的组件，进入队列
+                    if (!renderQueue.some(item => item === component)) {
+                        renderQueue.push(component);
+                    }
+                };
+                var flush = () => {
+                    console.log('更新队列');
+                    let item;
+                    let component;
+                    // 将state更新到组件上
+                    while (item = stateQueue.shift()) {
+                        const {state, component} = item;
+                        console.log('item = ', item);
+                        if (!component.prevState) {
+                            component.prevState = Object.assign({}, component.state);
+                        }
+                        if (typeof state === 'function') {
+                            Object.assign(component.state, state(component.prevState, component.props));
+                        } else {
+                            Object.assign(component.state, state);
+                        }
+                        component.prevState = component.state;
+                    }
+                    // 渲染每一个组件
+                    while (component = renderQueue.shift()) {
+                        renderComponent(component);
+                    }
+                };
+                var defer = (fn) => {
+                    console.log('延迟渲染', stateQueue);
+                    return Promise.resolve().then(fn);
+                };
+                var renderComponent = () => {
+                    console.log('渲染render', renderQueue);
+                };
+
+                // 运行
+                let count = 0;
+                enqueueState(count++, {state: 1});
+                enqueueState(count++, {state: 1});
+                enqueueState(count++, {state: 1});
+            }
+            mockSetState();
+        </script>
+    </head>
+    <body>
+        <p>1.渲染setState</p>
+    </body>
+</html>
