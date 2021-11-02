@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8" >
+        <title>CSS系列——transition属性</title>
+        <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" >
+        <style>
+            html, body {
+                margin: 0;
+                padding: 0;
+                height: 100%;
+            }
+            div, span, button, input, p, ul, li {
+                box-sizing: border-box;
+                font-family: "Microsoft Yahei", PingFangSC-Regular, helvetica, arial;
+                margin: 0;
+                padding: 0;
+                font-size: 14px;
+            }
+            button:focus {
+                outline: none;
+            }
+            body {
+                background: #fff;
+            }
+            .install-wrap {
+                /* height: 100%; */
+                position: relative;
+            }
+            .install-footer {
+                margin: 40px 0 75px 0;
+            }
+            .footer-body {
+                width: 100%;
+                text-align: center;
+            }
+            .install-btn, .suc-btn {
+                background: #2F59FF;
+                font-size: 22px;
+                line-height: 30px;
+                color: #FFFFFF;
+                border-radius: 30px;
+                width: 250px;
+                height: 56px;
+                cursor: pointer;
+                border: none;
+                opacity: 0.85;
+            }
+            .install-btn:hover, .suc-btn:hover {
+                opacity: 1;
+            }
+            .suc-btn {
+                margin-top: 100px;
+            }
+            /* 进度条 */
+            .progress-bar {
+                background-color: #ebebeb;
+                border-radius: 2px;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+                height: 10px;
+                width: 70%;
+                max-width: 100%;
+                margin: 0 auto;
+                overflow: hidden;
+            }
+            .progress {
+                background-image: -webkit-linear-gradient(45deg, #2989d8 32%,#7db9e8 33%,#7db9e8 66%,#2989d8 67%);
+                background-image: linear-gradient(45deg, #2989d8 32%,#7db9e8 33%,#7db9e8 66%,#2989d8 67%);
+                background: #6088f2;
+                background-size: 60px 10px;
+                border-radius: 3px;
+                height: 10px;
+                width: 0;
+                transition: width 1s ease-in;
+                -moz-transition: width 1s ease-in; /* Firefox 4 */
+                -webkit-transition: width 1s ease-in; /* Safari and Chrome */
+                -o-transition: width 1s ease-in; /* Opera */
+            }
+            .multi-box {
+                display: block;
+                border: 1px solid #000;
+                width: 100px;
+                height: 100px;
+                background-color: #2989d8;
+                -webkit-transition: width 2s, height 4s, background-color 2s, -webkit-transform 2s;
+                transition: width 2s, height 4s, background-color 2s, transform 2s;
+            }
+            .multi-box:hover {
+                background-color: antiquewhite;
+                width: 200px;
+                height: 200px;
+                -webkit-transform: rotate(180deg);
+                transform: rotate(180deg);
+            }
+            .menuButton {
+                display: block;
+                margin-bottom: 10px;
+                height: 26px;
+                width: 100px;
+                text-align: center;
+                border: 1px solid black;
+                font-size: 20px;
+                text-decoration: none;
+                padding: 2px 4px;
+
+                /* 变化的属性：hover离开胡，恢复原来的状态动画 */
+                color: white;
+                background-color: grey;
+                transition: background-color 1s, color 1s;
+            }
+            .menuButton:hover {
+
+                /* 变化的属性：hover时的动画 */
+                color: black;
+                background-color: white;
+                border-color: red;
+                transition: background-color 1s, color 1s;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="install" class="install-wrap">
+            <div class="install-footer">
+                <div class="footer-body">
+                    <button class="install-btn" onclick="handleInstall()">立即安装</button>
+                </div>
+            </div>
+        </div>
+        <div class="multi-box"></div>
+        <div class="sidebar">
+            <p><a class="menuButton" href="home">Home</a></p>
+            <p><a class="menuButton" href="about">About</a></p>
+            <p><a class="menuButton" href="contact">Contact</a></p>
+            <p><a class="menuButton" href="links">Links</a></p>
+        </div>
+        <script>
+            let animationBtn = document.querySelectorAll('.menuButton');
+            animationBtn.forEach(item => {
+                item.addEventListener('webkitTransitionEnd', () => {
+                    console.log('动画已结束!', item);
+                }, true);
+            });
+            let footerDom = document.querySelector('.footer-body');
+            let barPercent = 0; // 全局百分比
+            let interval = null; // 轮询进度条
+
+            // 安装按钮
+            function handleInstall() {
+                footerDom.innerHTML = '';
+                let barDom = createProcessBar();
+                footerDom.appendChild(barDom);
+
+                fakeUpdateBarPercent();
+            }
+            // 创建进度条dom
+            function createProcessBar() {
+                let barFragment = document.createDocumentFragment();
+
+                let barWrap = document.createElement('div');
+                barWrap.setAttribute('class', 'progress-bar');
+                barWrap.setAttribute('id', 'processBar');
+
+                let bar = document.createElement('div');
+                bar.setAttribute('class', 'progress');
+                bar.setAttribute('id', 'process');
+
+                barWrap.appendChild(bar);
+                barFragment.appendChild(barWrap);
+                return barFragment;
+            }
+            // 正式解压前
+            function fakeUpdateBarPercent(){
+                let bar = document.querySelector('#process');
+                interval = setInterval(function () {
+                    barPercent += 20;
+                    bar.style.width = barPercent + '%';
+
+                    if (barPercent > 100) {
+                        // footerDom.innerHTML = '';
+                        let btnDom = createSucBtn();
+                        footerDom.appendChild(btnDom);
+                    }
+                }, 1000);
+            }
+            function clearTimer() {
+                interval && clearInterval(interval);
+            }
+            // 创建安装成功页面的按钮
+            function createSucBtn() {
+                clearTimer();
+                let sucFragment = document.createDocumentFragment();
+
+                let btn = document.createElement('button');
+                btn.setAttribute('class', 'suc-btn');
+                btn.setAttribute('id', 'sucBtn');
+                btn.innerHTML = '开始运行'
+                btn.setAttribute('onclick', 'openClient()');
+                sucFragment.appendChild(btn);
+                return sucFragment;
+            }
+        </script>
+    </body>
+</html>

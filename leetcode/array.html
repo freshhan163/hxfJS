@@ -543,25 +543,8 @@ var twoSum3 = function (nums, target) {
 // twoSum3([2,7,11,15], 9);
 
 
-// 求数组的全排列
-function solve(arr) {
-    let len = arr.length;
-    if (len <= 1) {
-        return 1;
-    }
-    if (len === 2) {
-        return 3;
-    }
-    let result  = 0;
+// 求数组的全排列？？？
 
-    // 分组，直到只有一个数，然后累计；递归
-    for (let i = 0; i < len - 1; i++) {
-        let newArr = arr.slice(i + 1);
-        result += solve(newArr);
-    }
-    console.log('result  = ', result + len);
-    return result + len;
-}
 // solve([1, 3, 5, 7]);
 
 // 合并两个有序数组（https://leetcode-cn.com/problems/merge-sorted-array/）
@@ -603,6 +586,61 @@ var merge = function (nums1, m, nums2, n) {
 };
 // merge([0], 0, [1], 1);
 
+// 普通的二分查找算法
+// 1.确定区间的定义，是不变量；即是 左闭右闭，还是左闭右开，始终保持区间不变；
+// 2.左闭右闭的情况，需要是 left <= high；左闭右开的情况，是 left < high;
+var search = function(nums, target) {
+    let len = nums.length;
+    if (len === 0) {
+        return -1;
+    }
+    let low = 0;
+    let high = len - 1;
+    while (low <= high) {
+        let mid = Math.floor((high - low) / 2) + low;
+        if (nums[mid] === target) {
+            return mid;
+        }
+        // 因为下面是 high = mid，所以这里要单独处理一下，但不推荐这种做法
+        if (low === high) {
+            return -1;
+        }
+        if (nums[mid] < target) {
+            low = mid + 1;
+        } else {
+            high = mid;
+        }
+    }
+    return -1;
+};
+
+var search2 = function(nums, target) {
+    let len = nums.length;
+    if (len === 0) {
+        return -1;
+    }
+    let low = 0;
+    let high = len - 1;
+    while (low <= high) {
+        let mid = Math.floor((high - low) / 2) + low;
+        if (nums[mid] === target) {
+            return mid;
+        }
+        // 去掉这里，
+        // if (low === high) {
+        //     return -1;
+        // }
+        if (nums[mid] < target) {
+            low = mid + 1;
+        } else {
+            // 修改这里
+            // high = mid;
+            high = mid - 1;
+        }
+    }
+    return -1;
+};
+
 // 二分查找
 function lookup(arr, target) {
     let len = arr.length;
@@ -621,7 +659,15 @@ function lookup(arr, target) {
         // console.log('mid = ', mid);
         if (arr[mid] === target) {
             console.log('result = ', mid);
+            // 注意6：要求返回第一个下标
+            while(mid !== 0 && arr[mid] === arr[mid - 1]) {
+                --mid;
+            }
             return mid;
+        }
+        // 注意5：这里一定要有个判断，否则不在范围内的，会死循环
+        if (low === high) {
+            return -1;
         }
         if (arr[mid] < target) {
             // 注意3：mid + 1;
@@ -640,6 +686,48 @@ lookup([3, 4, 7, 20, 44, 50], 7);
 lookup([3, 4, 7, 20, 44, 50], 20);
 lookup([3, 4, 7, 20, 44, 50], 44);
 lookup([3, 4, 7, 20, 44, 50], 50);
+lookup([3, 4, 7, 20, 44, 50], 1);
+lookup([3, 4, 7, 20, 44, 50], 70);
+lookup([1, 2, 2, 3, 4], 2);
+
+// 二分查找--递归算法
+function lookupSearch(arr, target) {
+    let len = arr.length;
+    if (len === 0) {
+        return -1;
+    }
+    return lookupRecurse(arr, target, 0, len - 1);
+}
+function lookupRecurse(arr, target, left, right) {
+    if (left > right) {
+        console.log('递归遍历 result = ', -1);
+        return -1;
+    }
+    // 注意1：最左侧的
+    if (arr[left] === target) {
+        console.log('递归遍历 left = ', left);
+        return left;
+    }
+    let mid = left + Math.floor((right - left) / 2);
+    if (arr[mid] < target) {
+        return lookupRecurse(arr, target, mid + 1, right);
+    } else if (arr[mid] > target) {
+        return lookupRecurse(arr, target, left, mid - 1);
+    } else {
+        // 注意2：相等时，要继续遍历递归
+        return lookupRecurse(arr, target, left, mid);
+    }
+}
+
+lookupSearch([3, 4, 7, 20, 44, 50], 3);
+lookupSearch([3, 4, 7, 20, 44, 50], 4);
+lookupSearch([3, 4, 7, 20, 44, 50], 7);
+lookupSearch([3, 4, 7, 20, 44, 50], 20);
+lookupSearch([3, 4, 7, 20, 44, 50], 44);
+lookupSearch([3, 4, 7, 20, 44, 50], 50);
+lookupSearch([3, 4, 7, 20, 44, 50], 1);
+lookupSearch([3, 4, 7, 20, 44, 50], 70);
+lookupSearch([1, 2, 2, 3, 4], 2);
 
 // 比如 18 = 2 * 3 *3；21 = 3 * 7; 找出给定值最小的拆解
 function mock(target) {
@@ -660,4 +748,69 @@ function mock(target) {
 mock(18);
 mock(21);
 mock(102);
+
+// 28.第一个错误的版本
+var solution = function(isBadVersion) {
+    /**
+     * @param {integer} n Total versions
+     * @return {integer} The first bad version
+     */
+    return function(n) {
+        let low = 1;
+        let high = n;
+        let ans = Number.MAX_SAFE_INTEGER;
+        while (low <= high) {
+            let mid = low + Math.floor((high - low) / 2);
+            if (isBadVersion(mid)) {
+                ans = Math.min(ans, mid);
+                high = mid - 1;
+            } else  {
+                low = mid + 1;
+            }
+        }
+        return ans;
+    }
+};
+console.log('***************搜索旋转排序数组*********************');
+// 33.搜索旋转排序数组
+var search = function(nums, target) {
+    // 1.找到最小值下标 2.找到分左边，还是右边；3.在对应的左侧\右侧开始二分查找
+    let len = nums.length;
+    if (len === 0) {
+        return -1;
+    }
+    let k = 0;
+    for (let i = 0; i < len - 1; i++) {
+        if (nums[i] > nums[i + 1]) {
+            k = i + 1;
+            break;
+        }
+    }
+    let low = 0;
+    let high = len - 1;
+    // 在左边
+    if (target <= nums[high]) {
+        low = k;
+    } else if (target >= nums[low]) {
+        high = k - 1;
+    }
+    console.log('k = ', k, 'low =', low, 'high =', high);
+    while (low <= high) {
+        let mid = low + Math.floor((high - low) / 2);
+        if (nums[mid] === target) {
+            console.log('result = ', mid);
+            return mid;
+        } else if (nums[mid] < target) {
+            low = mid + 1;
+        } else {
+            high = mid - 1;
+        }
+    }
+    return -1;
+};
+search([4,5,6,7,0,1,2], 0);
+search([4,5,6,7,0,1,2], 3);
+search([4,5,6,7,0,1,2], 4);
+search([4,5,6,7,0,1,2], 2);
+search([1], 1);
 </script>

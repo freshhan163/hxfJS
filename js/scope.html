@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>词法作用域</title>
+    <script>
+        // 参考链接：https://github.com/mqyqingfeng/Blog/issues/6
+        // 主要包括三部分：1.静态\动态作用域、2. 执行上下文栈、3.作用域链
+        // 执行一个函数的时候：先分析作用域链，然后分析进入函数上下文（栈）、分析执行函数（栈）
+        // 执行上下文，包括三部分：1.变量对象（VO）\ 活动对象（AO）、2.作用域链、3.this指向
+
+        // 两个一起分析：作用域链、执行上下文
+        // 1. 创建全局的执行上下文 --> 创建函数（函数的作用域链）--> 初始化函数（函数的执行上下文初始化）--> 执行函数（更新AO\VO，查找作用域链、弹出栈）
+
+        // 静态、动态作用域测试
+        (function() {
+            console.log('***********静态作用域和动态作用域****************');
+            let value = 1;
+
+            function test() {
+                console.log(value);
+            }
+
+            function test2() {
+                let value = 2;
+                test();
+            }
+
+            test2(); // 1；静态作用域是定义时确定的；动态作用域是运行时确定的，如果是动态，运行是 value = 2
+        })();
+
+        // 闭包函数 和 作用域相关
+        (function() {
+            console.log('***********闭包函数和作用域1****************');
+            // first
+            var scope = "global scope";
+            function checkscope(){
+                var scope = "local scope";
+                function f(){
+                    return scope;
+                }
+                return f();
+            }
+            console.log('checkscope() = ', checkscope());
+        })();
+        (function() {
+            console.log('***********闭包函数和作用域2****************');
+            // second
+            var scope = "global scope";
+            function checkscope(){
+                var scope = "local scope";
+                function f(){
+                    return scope;
+                }
+                return f;
+            }
+            console.log('checkscope()() = ', checkscope()());
+        })();
+
+        (function() {
+            console.log('***********执行上下文栈1****************');
+            // 函数表达式，不提升
+            var foo = function() {
+                console.log(1);
+            }
+            foo(); // 1
+
+            var foo = function() {
+                console.log(2);
+            }
+            foo(); // 2
+        })();
+        (function() {
+            console.log('***********执行上下文栈2****************');
+            // 函数表达式不提升；但函数声明会提升
+            // 以下相当于 foo3、foo4、var foo1、var foo2、foo1 = 1、foo2 = 2
+            var foo = function() {
+                console.log(1);
+            }
+            foo(); // 1
+            console.log('foo = ', foo);
+
+            var foo = function() {
+                console.log(2);
+            }
+            foo(); // 2
+
+            function foo() {
+                console.log(3);
+            }
+            foo(); // 2
+            console.log('foo = ', foo);
+
+            function foo() {
+                console.log(4);
+            }
+            foo(); // 2
+        })();
+        // JS中的执行上下文（Execution context stack，ECS）
+        // 全局上下文：globalContext
+        // 执行上下文：当JS执行一个函数的时候（执行的时候才会创建后，定义的时候不会），就会创建一个执行上下文，并压入执行上下文栈
+        // 执行上下文包括三个部分：变量对象（VO）、作用域链、this
+        // 变量对象包括三部分：全局变量、进入执行上下文（分析阶段）、代码执行（执行阶段）
+        // 进入执行上下文：会先处理函数声明，然后再处理变量声明，且如果变量名称跟已经声明的形式参数或函数相同，则变量声明不会干扰已经存在的这类属性。
+        // 进入执行
+
+        (function() {
+            console.log('************AO \ VO 变量对象--进入函数上下文****************');
+            console.log('a = ', a); // 这里返回函数，而不是undefined
+            function a() {}
+            var a; // 如果变量名称，和已经声明的函数形参 或 函数相同，则变量声明不会干扰已经存在的这类属性
+
+        })();
+
+        
+    </script>
+</head>
+<body>
+    <div id="root"></div>
+</body>
+</html>

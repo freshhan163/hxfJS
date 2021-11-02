@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>图片懒加载</title>
+    <style>
+        .img {
+            width: 100%;
+            height: 800px;
+            border: 1px solid #555;
+        }
+    </style>
+    <script>
+        function lazyload() {
+            const viewHeight = document.body.clientHeight;
+            let imgs = document.querySelectorAll('img[data-src]');
+            imgs.forEach(item => {
+                if (item.dataset.src === '') {
+                    return;
+                }
+                const rect = item.getBoundingClientRect();
+                console.log('rect = ', rect);
+                if (rect.bottom >= 0 && rect.top < viewHeight) {
+                    item.src = item.dataset.src;
+                    item.removeAttribute('data-src');
+                }
+            });
+        };
+        window.addEventListener('scroll', lazyload);
+    </script>
+</head>
+<body>
+    <img data-src="https://cdn.pixabay.com/photo/2021/08/01/12/58/beach-6514331_960_720.jpg" src="" class="img" />
+    <img data-src="https://cdn.pixabay.com/photo/2020/07/21/16/24/landscape-5426755_960_720.jpg" src="" class="img" />
+    <img data-src="https://cdn.pixabay.com/photo/2021/08/01/12/58/beach-6514331_960_720.jpg" src="" class="img" />
+    <img data-src="https://cdn.pixabay.com/photo/2020/07/21/16/24/landscape-5426755_960_720.jpg" src="" class="img" />
+    <img data-src="https://cdn.pixabay.com/photo/2021/08/01/12/58/beach-6514331_960_720.jpg" src="" class="img" />
+</body>
+</html>

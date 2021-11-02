@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>代码转换</title>
+    <script>
+        // normalize(‘abc’) —> {value: ‘abc’}
+        // normalize(‘[abc[bcd[def[ghi]]]]’) —> {value: ‘abc’, children: {value: ‘bcd’, children: {value: ‘def'}}
+        function normalize(str) {
+            let result = {};
+            const arr = str.split(/[\[\]]/g);
+            console.log('arr =  ', arr, arr.filter(Boolean));
+
+            arr.filter(item => item ? true : false).reduce((acc, cur, index, arr) => {
+                let temp = JSON.stringify(acc);
+                console.log('acc = ', temp, 'result = ', JSON.stringify(result));
+                acc.value = cur;
+                if (index !== arr.length - 1) {
+                    return acc.children = {};
+                }
+                console.log('result = ', JSON.stringify(result));
+            }, result);
+            console.log('result = ', result);
+            return result;
+        }
+        normalize('[abc[bcd[def[ghi]]]]');
+    </script>
+</head>
+<body>
+</body>
+</html>

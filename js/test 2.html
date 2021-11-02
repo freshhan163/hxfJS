@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>代码转换</title>
+</head>
+<body>
+    <div id="root"></div>
+    <select id="select">
+        <option value="first">否</option>
+        <option value="sec">是</option>
+        <option value="third">是</option>
+        <option value="fourth" selected>第四个</option>
+    </select>
+    <div id="form-wrap">
+        <form id="param-form"></form>
+    </div>
+    <script>
+        window.onload = () => {
+            console.log('重置了');
+            const formDom = document.getElementById('param-form');
+            const domList = document.createDocumentFragment();
+            // 创建select--包含关系
+            const includeSelect = document.createElement('select');
+            includeSelect.options.add(new Option('请选择', '请选择', false, false)); // 兼容IE\firefox
+            includeSelect.options.add(new Option('这是第一个选项', '这是第一个选项', false, false)); // 兼容IE\firefox
+            includeSelect.options.add(new Option('第二个选项', '第二个选项', true, false)); // 兼容IE\firefox
+            includeSelect.setAttribute('id', `param-item-include-select`);
+            includeSelect.setAttribute('name', 'find');
+            includeSelect.setAttribute('class', 'form-item-select');
+            includeSelect.selectedIndex = 2;
+
+            // 创建input
+            const itemInput = document.createElement('input');
+            itemInput.setAttribute('type', 'text');
+            itemInput.setAttribute('id', `param-item-if-input`);
+            itemInput.setAttribute('name', 'value');
+            itemInput.setAttribute('defaultValue', '12345');
+            itemInput.setAttribute('class', 'form-item-input');
+
+            // 创建checkbox
+            const itemCheckbox = document.createElement('input');
+            itemCheckbox.setAttribute('type', 'checkbox');
+            itemCheckbox.setAttribute('class', 'form-item-checkbox');
+            itemCheckbox.setAttribute('checked', 'true');
+            itemCheckbox.setAttribute('defaultValue', 'false');
+            itemCheckbox.onclick = () => {
+                // if (itemCheckbox.getAttribute('checked') !== 'true') {
+                //     itemCheckbox.setAttribute('checked', 'true');
+                // } else {
+                //     itemCheckbox.removeAttribute('checked');
+                // }
+            }
+
+            //创建Button
+            const buttonDiv = document.createElement('div');
+            // 取消按钮
+            const cancelBtn =document.createElement("button");
+            cancelBtn.setAttribute('class', 'cancel-btn');
+            cancelBtn.innerHTML = '重置';
+            cancelBtn.onclick = (e) => {
+                e.preventDefault();
+                console.log('重置');
+                // const form = document.getElementById('param-form');
+                // form.reset();
+                const selectForm = document.querySelector('.form-item-select');
+                const inputForm = document.querySelector('.form-item-input');
+                const checkboxForm = document.querySelector('.form-item-checkbox');
+                console.log('selectedForm = ', selectForm.getAttribute('selected'));
+                console.log('inputForm = ', inputForm.getAttribute('defaultValue'));
+                console.log('checkboxForm = ', checkboxForm.getAttribute('defaultValue'));
+                inputForm.value = inputForm.getAttribute('defaultValue');
+                console.log('checked = ', checkboxForm.checked);
+                checkboxForm.checked = false;
+                // if(checkboxForm.getAttribute('defaultValue') === 'true') {
+                //     checkboxForm.setAttribute('checked', 'true');
+                // } else {
+                //     checkboxForm.removeAttribute('checked');
+                // }
+            };
+            //确定按钮
+            const submitBtn = document.createElement("button");
+            submitBtn.setAttribute('class', 'sure-btn');
+            submitBtn.innerHTML = '确定';
+            submitBtn.onclick = () => {
+                console.log('确定');
+                // const form = document.getElementById('param-form');
+                // form.reset();
+            };
+            buttonDiv.appendChild(cancelBtn);
+            buttonDiv.appendChild(submitBtn);
+
+            domList.appendChild(includeSelect);
+            domList.appendChild(itemInput);
+            domList.appendChild(itemCheckbox);
+            domList.appendChild(buttonDiv);
+            formDom.appendChild(domList);
+        };
+        function handleDeleteFetch(current, pageSize, total) {
+            console.log('current = ', current, 'pageSize = ', pageSize, 'total = ', total);
+            let totalPage = Math.ceil(total / pageSize);
+            let currentTotal = total - 1;
+            let currentPage = 1;
+
+            if (current < totalPage) {
+                // 不是最后一页
+                currentPage = current <= 0 ? 1 : current;
+                console.log('currentPage = ', currentPage);
+                return currentPage;
+            }
+            // 是最后一页，是否是最后一条数据
+            if (currentTotal % pageSize === 0) {
+                currentPage = current - 1;
+            } else {
+                currentPage = current <= 0 ? 1 : current;
+            }
+            console.log('currentPage = ', currentPage);
+            return currentPage;
+        }
+        // handleDeleteFetch(1, 10, 23);
+        // handleDeleteFetch(2, 10, 21);
+        handleDeleteFetch(1, 10, 12);
+
+    </script>
+</body>
+</html>

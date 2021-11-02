@@ -11,6 +11,11 @@
                     pid: 0,
                 },
                 {
+                    id: 9,
+                    name: '2-2',
+                    pid: 1
+                },
+                {
                     id: 2,
                     name: '1-1',
                     pid: 1,
@@ -46,22 +51,50 @@
                 var treeArr = [];
                 const len = arr.length;
                 for (let i = 0; i < len; i++) {
+                    console.log('arr[i] =', arr[i]);
                     if (arr[i].pid === parentId) {
                         const newNode = {
                             ...arr[i],
                             children: arrToTree(arr.slice(i), arr[i].id)
                         };
+                        console.log('newNode = ', newNode);
                         treeArr.push(newNode);
-                        if (i === len - 1) {
-                            const end = (new Date()).getTime();
-                            console.log('gap = ', end - start, 'start = ', start, 'end = ', end);
-                        }
                     }
                 }
                 return treeArr;
             }
             console.log('~~~~~~~~~数组转换为树结构~~~~~~~~~~~');
             console.log(arrToTree(arr));
+
+            console.log('~~~~~~~~~数组转换为树结构~~~~~~~~~~~');
+            function toTree(data) {
+                let result = []
+                if(!Array.isArray(data)) {
+                    return result
+                }
+                data.forEach(item => {
+                    delete item.children;
+                });
+                let map = {};
+                data.forEach(item => {
+                    map[item.id] = item;
+                });
+                console.log('map =', map);
+                data.forEach(item => {
+                    let parent = map[item.pid];
+                    if(parent) {
+                        (parent.children || (parent.children = [])).push(item);
+                        console.log('parent = ', parent);
+                    } else {
+                        console.log('item =', item);
+                        result.push(item);
+                    }
+                    // console.log('result = ', JSON.stringify(result));
+                });
+                console.log('result = ', result);
+                return result;
+            }
+            toTree(arr);
         </script>
     </head>
     <body>

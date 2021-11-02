@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>canvas系统学习</title>
+    <style>
+        .first {
+            /* width: 600px; */
+            /* height: 800px; */
+            background: #DEDEDE;
+        }
+    </style>
+    <script>
+        let context = null;
+        window.onload = function() {
+            draw();
+            function draw() {
+                const canvas = document.querySelector('canvas');
+                canvas.width = 600;
+                canvas.height = 600;
+                context = canvas.getContext('2d');
+            }
+
+            function testStroke() {
+                context.rect(10, 10, 100, 100);
+                context.stroke();
+            }
+            // testStroke();
+
+            function testTrianlge() {
+                context.clearRect(0, 0, 600, 600);
+
+                context.beginPath();
+                context.moveTo(250, 300);
+                context.lineTo(350, 250);
+                context.lineTo(350, 350);
+                context.fill();
+            }
+            // setTimeout(() => {
+            //     testTrianlge();
+            // }, 1000);
+
+            // function testArc() {
+            //     context.clearRect(0, 0, 600, 600);
+            //     context.beginPath();
+            //     context.arc(40, 40, 20, 0, Math.PI / 2);
+            //     context.stroke();
+            // }
+            // testArc();
+
+            function testComplexArc() {
+                context.clearRect(0, 0, 600, 600);
+                
+                context.beginPath();
+                context.arc(20, 20, 20, 0, Math.PI, false);
+                context.stroke();
+
+                context.beginPath();
+                context.moveTo(60, 40);
+                context.arc(80, 20, 20, 0, Math.PI * 1.5, false);
+                context.stroke();
+            }
+            // testComplexArc();
+
+            function drawCurve() {
+                context.beginPath();
+                context.moveTo(75, 25);
+                context.quadraticCurveTo(25, 25, 25, 75);
+                context.stroke();
+            }
+            // drawCurve();
+
+            function drawRoundRect(x, y, height, width, radius) {
+                context.beginPath();
+                context.moveTo(x, y + radius);
+
+                context.lineTo(x, y + height - radius);
+                context.quadraticCurveTo(x, y + height, x + radius, y + height);
+
+                context.lineTo(x + width - radius, y + height);
+                context.quadraticCurveTo(x + width, y + height, x + width, y + height - radius);
+
+                context.lineTo(x + width, y + radius);
+                context.quadraticCurveTo(x + width, y, x + width - radius, y);
+
+                context.lineTo(x + radius, y);
+                context.quadraticCurveTo(x, y, x, y + radius);
+
+                context.stroke();
+            }
+            drawRoundRect(100, 100, 200, 200, 50);
+
+            function testFill() {
+                context.beginPath();
+                context.arc(50, 50, 30, 0, Math.PI*2, true);
+                context.arc(50, 50, 15, 0, Math.PI*2, true);
+                context.fill('evenodd');
+            }
+            testFill();
+
+            // TODO:1.动画绘制 2.文字绘制 3.颜色绘制
+            // 
+        };
+    </script>
+  </head>
+  <body>
+    <h2>canvas绘制雷达图</h2>
+    <canvas id="canvas" class="first"></canvas>
+  </body>
+</html>

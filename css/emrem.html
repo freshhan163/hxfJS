@@ -23,6 +23,112 @@
             font-size: 2em;
         }
     </style>
+    <script>
+        // 错误类型
+        function referenceErrorFunc() {
+            console.log(testVar);
+        }
+        // function syntaxErrorFunc() {
+        //     let err,
+        // }
+        function typeErrorFunc() {
+            const a = '111'; 
+            a = 222;
+        }
+
+        function settimeoutErrorFunc() {
+            setTimeout(function() {
+                throw new Error('setTimeout错误');
+            }, 1000);
+        }
+
+        function promiseErrorFunc() {
+            Promise.reject('拒绝');
+        }
+
+        async function asyncErrorFunc() {
+            JSON.parse(getJSON());
+            // throw new Error('异步错误');
+        }
+
+        // try..catch捕捉
+        // 可以捕捉到引用错误
+        try {
+            referenceErrorFunc();
+        } catch (e) {
+            console.log('e =', e);
+        }
+
+        // 无法捕捉语法错误 SyntaxError
+        // try {
+        //     const err, // 语法错误
+        // } catch (e) {
+        //     console.log('e =', e);
+        // }
+
+        // 可以捕捉到类型错误 TypeError
+        try {
+            typeErrorFunc()
+        } catch (e) {
+            console.log('e =', e);
+        }
+
+        // 无法捕捉 settiemout错误\promise错误\async错误
+        try {
+            settimeoutErrorFunc();
+        } catch (e) {
+            console.log('e =', e);
+        }
+
+        try {
+            promiseErrorFunc();
+        } catch (e) {
+            console.log('e =', e);
+        }
+
+        // try {
+        //     await asyncErrorFunc();
+        // } catch (e) {
+        //     console.log('in try catch asnyc error =', e);
+        // }
+
+        asyncErrorFunc();
+        // window.onerror，可以捕捉到 settimeout错误，但仍然会抛出settimeout报错
+        window.onerror = function(message, url, line, column, error) {
+            console.log('window.onerror e =', message, url, line, column, error);
+        }
+        // 可以捕获资源加载错误，但不能捕获new Image()类型的错误 和 fetch错误
+        window.addEventListener('error', (error) => {
+            console.log(' window.addEventListener error 捕获到异常：', error);
+        }, true);
+
+        // promise\async报错，无法捕获资源报错
+        window.addEventListener('unhandledrejection', error => {
+            console.log('最后 unhandledrejection error =', error);
+        });
+        // 异步处理
+        (function(w) {
+            w._error_storage_ = [];
+            function errorhandler(){
+                // 用于记录当前的错误            
+                w._error_storage_&&w._error_storage_.push([].slice.call(arguments));
+            } 
+            w.addEventListener && w.addEventListener("error", errorhandler, true);
+            var times = 3,
+            appendScript = function appendScript() {
+                var sc = document.createElement("script");
+                sc.async = !0,
+                sc.src = './build/skyeye.js',  // 取决于你存放的位置
+                sc.crossOrigin = "anonymous",
+                sc.onerror = function() {
+                    times--;
+                    times > 0 && setTimeout(appendScript, 1500);
+                },
+                document.head && document.head.appendChild(sc);
+            };
+            setTimeout(appendScript, 1500);
+        })(window);
+    </script>
 </head>
     <body>
         <h2>em和rem元素适配</h2>
@@ -30,5 +136,8 @@
             <div class="child1">我有font-size</div>
             <div class="child2">我没有font-size</div>
         </div>
+        <img src="https://yun.tuia.cn/image/kkk.png">
+        <script src="https://yun.tuia.cn/foundnull.js"></script>
+        <link href="https://yun.tuia.cn/foundnull.css" rel="stylesheet"/>
     </body>
 </html>

@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>简单的多边形</title>
+</head>
+<body>
+
+<canvas id="canvas"></canvas>
+<p>试试选择不同的边数</p>
+<label for="sidesSelects">多边形边数</label>
+<select id="sidesSelects">
+    <option selected value="3">3</option>
+    <option value="4">4</option>
+    <option value="5">5</option>
+    <option value="6">6</option>
+    <option value="7">7</option>
+    <option value="8">8</option>
+    <option value="9">9</option>
+</select>
+</body>
+<script>
+    'use strict';
+
+    let canvas = document.getElementById('canvas'),
+        context = canvas.getContext('2d'),
+
+        sidesSelect = document.getElementById('sidesSelects'),
+
+
+
+        Point = function (x, y) {
+            this.x = x;
+            this.y = y;
+        };
+        canvas.width = 500;
+        canvas.height = 600;
+
+    //Function……
+    /**
+     * 获得多边形的所有外接圆顶点
+     * @param centerX
+     * @param centerY
+     * @param radius
+     * @param sides
+     * @param startAngle
+     */
+    function getPolygonPoints(centerX,centerY,radius,sides,startAngle) {
+        let points = [],
+            //这里的angle是基于钟表0点的位置开始计算，0点位置为0度，3点位置为π/2度
+            angle = startAngle||0;
+
+        for (let i=0;i<sides;++i){
+            points.push(new Point(centerX+radius*Math.sin(angle),centerY+radius*Math.cos(angle)));
+            angle += 2*Math.PI/sides;
+        }
+
+        return points;
+    }
+
+    /**
+     * 根据每个顶点的位置，创建多边形的路径
+     * @param centerX
+     * @param centerY
+     * @param radius
+     * @param sides
+     * @param startAngle
+     */
+    function createPolygonPath(centerX,centerY,radius,sides,startAngle) {
+        let points = getPolygonPoints(centerX,centerY,radius,sides,startAngle);
+
+        context.beginPath();
+        context.moveTo(points[0].x,points[0].y);
+
+        for (let i=0;i<sides;++i){
+            context.lineTo(points[i].x,points[i].y);
+        }
+        context.closePath();
+    }
+
+    /**
+     * 绘制多边形
+     */
+    function drawRubberbandShape() {
+        createPolygonPath(canvas.width/2,canvas.height/2,canvas.width/4,parseInt(sidesSelect.value),0);
+        context.stroke();
+    }
+
+    // drawRubberbandShape();
+
+    //event
+    sidesSelect.onchange=function () {
+        context.clearRect(0,0,canvas.width,canvas.height);
+        const d = new DrawPolygon(context, canvas.width/2,canvas.height/2,canvas.width/4,parseInt(sidesSelect.value));
+        // d.startAnimate();
+        d.drawPolygonCircle(3);
+        d.drawRegion([
+            {
+                text: '韩晓芳',
+                value: 80
+            },
+            {
+                text: '韩晓芳',
+                value: 100
+            },
+            {
+                text: '韩晓芳',
+                value: 100
+            },
+            {
+                text: '韩晓芳',
+                value: 100
+            },
+            {
+                text: '韩晓芳',
+                value: 50
+            },
+            {
+                text: '韩晓芳',
+                value: 50
+            },
+            {
+                text: '韩晓芳',
+                value: 20
+            }
+        ], 'rgba(141, 141, 141, 0.5)');
+
+        d.drawRegion([
+            {
+                text: '韩晓芳',
+                value: 10
+            },
+            {
+                text: '韩晓芳',
+                value: 50
+            },
+            {
+                text: '韩晓芳',
+                value: 70
+            },
+            {
+                text: '韩晓芳',
+                value: 100
+            },
+            {
+                text: '韩晓芳',
+                value: 100
+            },
+            {
+                text: '韩晓芳',
+                value: 50
+            },
+            {
+                text: '韩晓芳',
+                value: 20
+            }
+        ], 'rgba(233, 186, 186, 0.5)');
+        // drawRubberbandShape();
+    }
+
+    class DrawPolygon {
+        constructor(ctx, centerX = 20, centerY = 20, radius = 10, sides = 3, level = 1, regionData = [], fillColor = 'rgba(233, 186, 186, 0.5)') {
+            this.ctx = ctx;
+            this.centerX = centerX;
+            this.centerY = centerY;
+            this.radius = radius;
+            this.sides = sides; // 边数
+            this.angle = Math.PI * 2 / sides;
+            this.level = level; // 绘制几层
+            this.regionData = regionData; // 区域数据
+            this.wait = 0;
+            if (this.level > 1) {
+                this.drawPolygonCircle(this.level);
+            }
+            if (this.regionData.length > 0) {
+                this.drawRegion(this.regionData, fillColor);
+            }
+        }
+        cnt = 0;
+
+        /**
+         * 根据每个顶点的位置，创建多边形的路径
+         * @param centerX
+         * @param centerY
+         * @param radius
+         * @param sides
+         * @param startAngle
+         */
+         drawPolygon(radius, startAngle = 0) {
+            let points = this.getPolygonPoints(radius || this.radius, startAngle);
+
+            this.ctx.beginPath();
+            this.ctx.moveTo(points[0].x, points[0].y);
+
+            for (let i = 0; i < this.sides; ++i){
+                this.ctx.lineTo(points[i].x, points[i].y);
+            }
+            this.ctx.closePath();
+            this.ctx.stroke();
+        }
+
+        drawPolygonCircle(level = 1, startAngle = 0) {
+            this.ctx.save();
+
+            // 将半径等分为level份
+            for (let i = 0; i < level; i++) {
+                const curRadius = Math.ceil(this.radius / level) * (i + 1);
+                this.drawPolygon(curRadius, startAngle);
+            }
+            this.drawLines();
+            this.ctx.restore();
+        }
+
+        /**
+         * 获得多边形的所有外接圆顶点
+         * @param centerX
+         * @param centerY
+         * @param radius
+         * @param sides
+         * @param startAngle
+         */
+        getPolygonPoints(radius, startAngle) {
+            let points = [],
+                //这里的angle是基于钟表0点的位置开始计算，0点位置为0度，3点位置为π/2度
+                angle = startAngle || 0;
+
+            for (let i = 0; i < this.sides; ++i) {
+                points.push({
+                    x: this.centerX + radius * Math.sin(angle),
+                    y: this.centerY + radius * Math.cos(angle)
+                });
+                angle += 2 * Math.PI / this.sides;
+            }
+
+            return points;
+        }
+
+        //顶点连线
+        drawLines(){
+            this.ctx.save();
+
+            this.ctx.beginPath();
+            // this.ctx.strokeStyle = linesColor;
+
+            const angle = Math.PI * 2 / this.sides;
+            for(let i = 0; i < this.sides; i ++) {
+                const x = this.centerX + this.radius * Math.sin(angle * i);
+                const y = this.centerY + this.radius * Math.cos(angle * i);
+
+                this.ctx.moveTo(this.centerX, this.centerY);
+                this.ctx.lineTo(x, y);
+            }
+
+            this.ctx.stroke();
+
+            this.ctx.restore();
+        }
+
+        drawRegion(regionData, fillColor) {
+            let timer = null;
+            let startTime;
+
+            const handler = timestamp => {
+                if (startTime === undefined) {
+                    startTime = timestamp;
+                }
+
+                this.ctx.save();
+                this.ctx.translate(this.centerX, this.centerY); // 需要先save，再translate
+
+                this.ctx.beginPath();
+
+                const gap = timestamp - startTime;
+                const scale = this.scale / 
+                this.ctx.scale(cnt * 0.001, cnt * 0.001);
+
+                for(let i = 0; i < this.sides; i ++) {
+                    const x = this.radius * Math.sin(this.angle * i) * regionData[i].value / 100;
+                    const y = this.radius * Math.cos(this.angle * i) * regionData[i].value / 100;
+
+                    this.ctx.lineTo(x, y);
+                }
+                this.ctx.closePath();
+                this.ctx.fillStyle = fillColor;
+                this.ctx.fill();
+
+                this.ctx.restore();
+
+                if (gap <= this.wait) { // 1s后停止动画
+                    timer = window.requestAnimationFrame(handler);
+                }
+            };
+            window.requestAnimationFrame(handler);
+            // handler();
+        }
+
+        // cnt = 0;
+        animate() {
+
+        }
+        startAnimate() {
+            let handler = () => {
+                this.ctx.clearRect(0, 0, this.ctx.width, this.ctx.height);
+
+                this.ctx.save();
+
+                if (cnt <= 1000) {
+                    this.ctx.scale(cnt * 0.001, cnt * 0.001);
+                }
+
+                this.ctx.restore();
+                window.requestAnimationFrame(handler);
+            };
+            window.requestAnimationFrame(handler);
+        }
+    }
+
+    // 动画演示
+    function canvasAnimate() {
+        var sun = new Image();
+        var moon = new Image();
+        var earth = new Image();
+        function init(){
+            sun.src = 'https://mdn.mozillademos.org/files/1456/Canvas_sun.png';
+            moon.src = 'https://mdn.mozillademos.org/files/1443/Canvas_moon.png';
+            earth.src = 'https://mdn.mozillademos.org/files/1429/Canvas_earth.png';
+            window.requestAnimationFrame(draw);
+        }
+
+        function draw() {
+            var ctx = document.getElementById('canvas').getContext('2d');
+
+            ctx.globalCompositeOperation = 'destination-over';
+            ctx.clearRect(0,0,300,300); // clear canvas
+
+            // ctx.fillStyle = 'rgba(0,0,0,0.4)';
+            // ctx.strokeStyle = 'rgba(0,153,255,0.4)';
+            ctx.save();
+            ctx.translate(150,150);
+
+            // Earth
+            var time = new Date();
+            ctx.rotate( ((2*Math.PI)/60)*time.getSeconds() + ((2*Math.PI)/60000)*time.getMilliseconds() );
+            ctx.translate(105,0);
+            // ctx.fillRect(0,-12,50,24); // Shadow
+            ctx.drawImage(earth,-12,-12);
+
+            // Moon
+            // ctx.save();
+            // ctx.rotate( ((2*Math.PI)/6)*time.getSeconds() + ((2*Math.PI)/6000)*time.getMilliseconds() );
+            // ctx.translate(0,28.5);
+            // ctx.drawImage(moon,-3.5,-3.5);
+            // ctx.restore();
+
+            ctx.restore();
+
+            // ctx.beginPath();
+            // ctx.arc(150,150,105,0,Math.PI*2,false); // Earth orbit
+            // ctx.stroke();
+
+            // ctx.drawImage(sun,0,0,300,300);
+
+            window.requestAnimationFrame(draw);
+        }
+        init();
+    }
+    // canvasAnimate();
+
+    let cnt = 0;
+    function testAnimate() {
+        context.clearRect(0, 0, 500, 600);
+
+        context.save();
+        context.translate(200, 200); // 需要先save，再translate
+
+        context.beginPath();
+
+        var time = new Date();
+        // context.rotate(((2*Math.PI)/60)*time.getSeconds());
+        // context.rotate(((2*Math.PI)/60)*time.getSeconds() + ((2*Math.PI)/60000)*time.getMilliseconds());
+        // context.translate(105, 0);
+        if (cnt <= 1000) {
+            context.scale(cnt * 0.001, cnt * 0.001);
+            ++cnt;
+        }
+
+        // 需要先旋转画布，然后再绘制图案
+        context.fillStyle = 'orange';
+        context.strokeStyle = 'green';
+        context.arc(20, 20, 100, 0, Math.PI * 2);
+        context.fill();
+
+        context.restore();
+        
+        window.requestAnimationFrame(testAnimate);
+    }
+    // window.requestAnimationFrame(testAnimate);
+
+
+    // 测试save和restore；save是保存上次的画布状态；restore后，会用保存的画布继续绘制
+    function testSave() {
+        var ctx = document.getElementById('canvas').getContext('2d');
+
+        ctx.fillRect(0,0,150,150);   // 使用默认设置绘制一个矩形
+        ctx.save();                  // 保存默认状态
+
+        ctx.fillStyle = '#09F'       // 在原有配置基础上对颜色做改变
+        ctx.fillRect(15,15,120,120); // 使用新的设置绘制一个矩形
+
+        ctx.save();                  // 保存当前状态
+        ctx.fillStyle = '#FFF'       // 再次改变颜色配置
+        ctx.globalAlpha = 0.5;
+        ctx.fillRect(30,30,90,90);   // 使用新的配置绘制一个矩形
+
+        ctx.restore();               // 重新加载之前的颜色状态
+        ctx.fillRect(45,45,60,60);   // 使用上一次的配置绘制一个矩形
+
+        ctx.restore();               // 加载默认颜色配置
+        ctx.fillRect(60,60,30,30);   // 使用加载的配置绘制一个矩形
+    }
+    // testSave();
+</script>
+</html>

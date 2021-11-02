@@ -112,6 +112,15 @@
             x = x * 2
         });
         console.log('map1 = ', map1, 'map2 = ', map2);
+
+        (function() {
+            var a1 = b1 = 3;
+            var c1 = 2;
+        })();
+        console.log('typeof a1 = ', typeof a1); // referenceError
+        // console.log('a1 = ', a1); // referenceError
+        console.log('b1 = ', b1);
+        // console.log('c1 = ', c1); // referenceError
     </script>
 </head>
 <body>

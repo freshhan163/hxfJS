@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>ES6--装饰器原理解析</title>
+    <script>
+        @testable
+        @testable1
+        @testable2
+        class Person {
+            constructor(name: string = '', age: number = 0) {
+                (this as any).name = name;
+                (this as any).age = age;
+            }
+            score: number = 100; // 会挂载在实例上
+            static testStatic = 1; // 挂载在类上
+            // name() {
+            //     return 'hanxiaofang';
+            // }
+
+            // log装饰器
+            @decoratorLog
+            add(a: number, b: number) {
+                return a + b;
+            }
+        }
+
+        function testable(target: any, name: any) {
+            console.log('执行 testable target =', target);
+            target.score = 200; // 在类上，不在实例上
+        }
+
+        function testable1(target: any) {
+            console.log('执行 testable111 target =', target);
+            target.score = 11111; // 在类上，不在实例上
+        }
+
+        function testable2(target: any) {
+            console.log('执行 testable22222 target =', target);
+            target.score = 22222; // 在类上，不在实例上
+        }
+
+        const hxf: any = new Person('hxf', 20);
+        console.log('类本身 = ', (Person as any).name, (Person as any).age, (Person as any).score, (Person as any).testStatic);
+        console.log('类的原型 = ', (Person.prototype as any).name, (Person.prototype as any).age, (Person.prototype as any).score, (Person.prototype as any).testStatic);
+        console.log('类的实例 = ', hxf.name, hxf.age, hxf.score, hxf.testStatic);
+
+        // 作用执行之前，输出一次console
+        function decoratorLog(target: any, name: string, descriptor: any) {
+            console.log('target = ', target);
+            console.log('name = ', name);
+            console.log('descriptor = ', descriptor);
+
+            let oldValue = descriptor.value;
+
+            descriptor.value = function() {
+                console.log('arguments = ', arguments);
+                return oldValue.apply(this, arguments);
+            };
+            return descriptor;
+        }
+
+        hxf.add(10, 20);
+
+        // 改写一个函数常用的方法
+        function modifyFunc(arg1: any, arg2: any) {
+            // 1.声明一个函数，后面将要执行的
+            const channel = function (arg1: any, arg2: any) {};
+
+            // 2.返回一个函数
+            return function(target, name, descriptor: any) {
+                // 3.获取原函数
+                const fn = descriptor.value;
+
+                // 4.改写原函数
+                descriptor.value = function() {
+                    let value = fn.apply(this, arguments);
+
+                    // 5.用新函数，包裹原来函数
+                    channel(value, 'test');
+                };
+            };
+        }
+    </script>
+  </head>
+  <body>
+    <h2>ES6--装饰器原理解析</h2>
+    <!-- built files will be auto injected -->
+  </body>
+</html>

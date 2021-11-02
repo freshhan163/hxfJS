@@ -516,4 +516,75 @@ var countSubstrings3 = function (s) {
     return cnt;
 };
 countSubstrings3('abc'); // 3
+
+console.log('*************反转字符串中的每个单词********************');
+
+var reverseWords = function(s) {
+    let len = s.length;
+    if (len <= 1) {
+        return s;
+    }
+    // 1. 分割为数组，然后在数组中，用双指针，一个个处理单词的逆转
+    // 2. 第一层for循环遍历，确定low、high
+    // for (let i = 0; i < len;) {
+    //     let low = i;
+
+    //     // 计算high、i
+    //     let spaceIndex = low + s.slice(low).indexOf(' ');
+    //     i = spaceIndex + 1;
+    //     let high = spaceIndex - 1;
+    //     if (spaceIndex === low - 1) {
+    //         high = len - 1;
+    //         i = len;
+    //     }
+
+    //     while (low < high) {
+    //         console.log('low = ', low, 'high =', high);
+    //         let temp = s[low];
+    //         // s[low] = s[high];
+    //         // s[high] = temp;
+    //         s[high] = 'p';
+    //         s[low] = 'p';
+    //         // console.log('temp = ', temp, 's[high] =', s[high]);
+    //         ++low;
+    //         --high;
+    //     }
+    //     console.log('s = ', s);
+    // }
+    for (let i = 0; i < len; i++) {
+        s[i] = '1';
+    }
+    console.log('s = ', s);
+    return s;
+};
+reverseWords('abcdefg');
+
+// 567. 字符串的排列
+var checkInclusion = function(s1, s2) {
+    const n = s1.length, m = s2.length;
+    if (n > m) {
+        return false;
+    }
+    const cnt1 = new Array(26).fill(0);
+    const cnt2 = new Array(26).fill(0);
+    // 统计s1中 字符的个数
+    for (let i = 0; i < n; ++i) {
+        ++cnt1[s1[i].charCodeAt() - 'a'.charCodeAt()];
+        ++cnt2[s2[i].charCodeAt() - 'a'.charCodeAt()]; // 统计从0-n个 s2的序列
+    }
+    console.log('cnt1 =', JSON.stringify(cnt1), 'cnt2 = ', JSON.stringify(cnt2));
+    if (cnt1.toString() === cnt2.toString()) {
+        return true;
+    }
+    for (let i = n; i < m; ++i) {
+        ++cnt2[s2[i].charCodeAt() - 'a'.charCodeAt()];
+        --cnt2[s2[i - n].charCodeAt() - 'a'.charCodeAt()];
+        if (cnt1.toString() === cnt2.toString()) {
+            return true;
+        }
+        console.log('cnt1 =', cnt1, 'cnt2 = ', cnt2);
+    }
+    return false;
+};
+checkInclusion('abb', 'eidbaooo');
 </script>
