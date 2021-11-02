@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1; user-calable=no;" >
+    <title>移动端适配--em和rem</title>
+    <script>
+    </script>
+    <style>
+        html,
+        body,
+        p {
+            font-size: 12px;
+        }
+        div,
+        p {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 40px;
+        }
+
+        .content {
+            width: 400px;
+            height: 110px;
+            border: 1px solid #d6d4d4;
+            margin-bottom: 40px;
+        }
+
+        .single-row p {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .two-row p {
+            display: -webkit-box;
+            display: -moz-box;
+            display: box;
+            -webkit-box-orient: vertical;
+            -moz-box-orient: vertical;
+            box-orient: vertical;           /* As specified */
+            -webkit-line-clamp: 2;
+            -moz-line-clamp: 2;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .three-row p {
+            display: -webkit-box;
+            display: -moz-box;
+            display: box;
+            -moz-box-orient: vertical;
+            -webkit-box-orient: vertical;
+            box-orient: vertical;
+            -webkit-line-clamp: 3; /* 相比2行，只需修改 line-clamp即可 */
+            overflow: hidden;
+        }
+
+        .custom-row {
+            display: flex;
+            overflow: hidden;
+            flex-direction: column;
+        }
+        .custom-row p{
+            flex: 1;
+            overflow: hidden;
+        }
+        .text::before {
+            /* 设置省略号 */
+            content: '...';
+            float: right;
+
+            /* 将省略号高度撑开，居下对齐 */
+            height: 100%;
+            display: flex;
+            align-items: flex-end;
+
+            /* 用css shapes布局实现环绕效果 */
+            shape-outside: inset(calc(100% - 10px) 0 0);
+        }
+        /* 针对不足一行、不足两行时，遮住其省略号：一个页面只能用一次的遮盖 */
+        /* .text::after {
+            content: '';
+            position: absolute;
+            width: 999vh;
+            height: 999vh;
+            background-color: #fff;
+
+            box-shadow: -2em 2em #fff;
+        } */
+
+        /* 针对不足一行、不足两行时，遮住其省略号：推荐该方法 */
+        .text {
+            position: relative;
+        }
+        .text::after {
+            content: '';
+            position: absolute;
+            /* right: 0; */
+            /* bottom: 0; */
+            width: 10px;
+            height: 20px;
+            background-color: #fff;
+
+            box-shadow: -2em 2em #fff;
+        }
+
+        /* 中间省略号 */
+        .container {
+            background-color: pink;
+            width: 116px; /* 一定要有宽度的限制 */
+            white-space: nowrap;
+        }
+        .container > span {
+            width: 50%;
+            display: inline-block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .container > span + span {
+            direction: rtl;
+        }
+
+        .firefox {
+            text-overflow: "" !important
+        }
+
+        .clip {
+            text-overflow: clip !important
+        }
+    </style>
+</head>
+    <body>
+        <h1>CSS常见省略号样式</h1>
+        <h2>单行省略号</h2>
+        <div class="single-row content">
+            <p>这是单行省略号这是单行省略号这是单行省略号这是单行省略号这是单行省略号这是单行省略号这是单行省略号</p>
+        </div>
+        <h2>两行省略号</h2>
+        <div class="two-row content">
+            <p>两行省略号两行省略号两行省略号两行省略号两行省略号两行省略号两行省略号两行省略号两行省略号两行省略号两行省略号两行省略号两行省略号两行省略号两行省略号两行省略号</p>
+        </div>
+        <h2>三行省略号</h2>
+        <div class="three-row content">
+            <p>三行省略号三行省略号三行省略号三行省略号三行省略号三行省略号三行省略号三行省略号三行省略号三行省略号三行省略号三行省略号三行省略号三行省略号三行省略号三行省略号三行省略号三行省略号三行省略号三行省略号三行省略号三行省略号三行省略号三行省略号三行省略号三行省略号三行省略号三行省略号三行省略号三行省略号</p>
+        </div>
+        <h2>不定行省略号</h2>
+        <div class="custom-row content">
+            <h4>不定行省略号：不足一行</h4>
+            <p class="text">不定行省略号不定行省略号不定行省略号</p>
+        </div>
+        <div class="custom-row content">
+            <h4>不定行省略号：不足两行</h4>
+            <p class="text">不定行省略号不定行省略号不定行省略号不定行省略号不定行省略号不定行省略号不定行省略号不定行省略号</p>
+        </div>
+        <div class="custom-row content">
+            <h4>不定行省略号：多行</h4>
+            <p class="text">不定行省略号不定行省略号不定行省略号不定行省略号不定行省略号不定行省略号不定行省略号不定行省略号不定行省略号不定行省略号不定行省略号不定行省略号不定行省略号不定行省略号不定行省略号不定行省略号</p>
+        </div>
+        <h2>中间省略号</h2>
+        <h3>参考网址：https://playground.shockwave.me/css-magics/ellipsis-middle/</h3>
+        <div class="container">
+            <span>qwertyuiopasdfghjkl</span>
+            <span>qwertyuiopasdfghjkl</span>
+        </div>
+        <h4>Better, work only in Firefox for now</h4>
+        <div class="container">
+            <span>所有内容哦！所有内容哦！所有内容哦！</span>
+            <span class="firefox">所有内容哦！所有内容哦！所有内容哦！</span>
+        </div>
+        <h4>Or, let it be clip</h4>
+        <div class="container">
+            <span>所有内容哦！所有内容哦！所有内容哦！</span>
+            <span class="clip">所有内容哦！所有内容哦！所有内容哦！</span>
+        </div>
+    </body>
+</html>
