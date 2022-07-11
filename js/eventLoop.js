@@ -1,10 +1,10 @@
 
 // nextTick执行完成后，才会执行 promise
-// Promise.resolve().then(() => console.log(1));
-// new Promise((resolve, reject) => {
-//     console.log(2);
-//     resolve();
-// }).then(() => console.log(3));
+Promise.resolve().then(() => console.log(1));
+new Promise((resolve, reject) => {
+    console.log(2);
+    resolve();
+}).then(() => console.log(3));
 // process.nextTick(() => console.log(4));
 // process.nextTick(() => console.log(5));
 

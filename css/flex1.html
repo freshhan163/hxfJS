@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1; user-calable=no;" >
+        <title>flex布局</title>
+        <script>
+        </script>
+        <style>
+            /* 测试当子children的width，超过父元素时，如何处理 */
+            .parent {
+                display: flex;
+                flex-direction: row;
+                justify-content: flex-start;
+                width: 500px;
+                height: 500px;
+                border: 2px solid blue;
+                flex-wrap: wrap;
+                align-content: space-around;
+            }
+            .child {
+                width: 200px;
+                height: 100px;
+                background-color: pink;
+                border: 2px solid red;
+                flex-shrink: 0;
+            }
+            /* 测试等比tab布局  */
+            .box {
+                display: flex;
+                align-items: center;
+                padding: 40px 20px;
+                color: white;
+                background-color: black;
+            }
+            .item {
+                flex-grow: 1;
+                width: 60px; /* 测试没有width时，没有flex-grow时的属性 */
+                height: 60px;
+                line-height: 60px;
+                text-align: center;
+                border: 1px solid white;
+                background-color: palevioletred;
+            }
+
+            .main {
+                display: flex;
+            }
+            .logo {
+                width: 100px;
+                height: 100px;
+                margin: 10px;
+            }
+            .content {
+                flex: 1;
+            }
+            .notice {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .flex-test {
+                display: flex;
+                justify-content: stretch;
+            }
+            .left,
+            .right {
+                background-color: pink;
+            }
+            .middle {
+                flex: 1;
+                background-color: rgb(175, 175, 207);
+            }
+        </style>
+        <script>
+        </script>
+    </head>
+    <body>
+        <h2>flex布局</h2>
+        <div class="flex-test">
+            <div class="left">左边</div>
+            <div class="middle">中间</div>
+            <div class="right">右边</div>
+        </div>
+    </body>
+</html>

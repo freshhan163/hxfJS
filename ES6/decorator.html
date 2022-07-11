@@ -8,11 +8,13 @@
         @testable
         @testable1
         @testable2
+        @testable3(3333)
         class Person {
             constructor(name: string = '', age: number = 0) {
                 (this as any).name = name;
                 (this as any).age = age;
             }
+
             score: number = 100; // 会挂载在实例上
             static testStatic = 1; // 挂载在类上
             // name() {
@@ -41,6 +43,15 @@
             target.score = 22222; // 在类上，不在实例上
         }
 
+        function testable3(val) {
+            console.log('进入testable3');
+            return function(target) {
+                console.log('执行 testable3 target =', target);
+                target.score = val;
+            }
+        }
+        console.log('****************** 输出 ***************************');
+
         const hxf: any = new Person('hxf', 20);
         console.log('类本身 = ', (Person as any).name, (Person as any).age, (Person as any).score, (Person as any).testStatic);
         console.log('类的原型 = ', (Person.prototype as any).name, (Person.prototype as any).age, (Person.prototype as any).score, (Person.prototype as any).testStatic);
@@ -61,8 +72,10 @@
             return descriptor;
         }
 
+        console.log('****************** 装饰器：装饰类中的函数 ***************************');
         hxf.add(10, 20);
 
+        console.log('****************** 用装饰器修改函数 ***************************');
         // 改写一个函数常用的方法
         function modifyFunc(arg1: any, arg2: any) {
             // 1.声明一个函数，后面将要执行的

@@ -130,6 +130,33 @@
 
 .classB { color:red;}
 
+/* zIndex 和 0 的区别 */
+.auto-zero-container {
+    background-color: pink;
+    height: 300px;
+    position: relative;
+}
+
+.auto-zero-container .zero {
+    background-color: #009900;
+    width: 200px;
+    height: 100px;
+    color: #fff;
+    font-size: 30px;
+
+    position: absolute;
+    z-index: 0;
+}
+
+.auto-zero-container .auto {
+    background-color: rgb(56, 56, 194);
+    width: 200px;
+    height: 100px;
+    color: #fff;
+    font-size: 30px;
+    position: absolute;
+    z-index: auto;
+}
 
 </style>
 </head>
@@ -178,12 +205,17 @@
         <div class="child13">child13 z-index=5</div>
     </div>
     <div class="main">
-            <div alt="" class="logo">11</div>
-            <div class="content">
-                <h4 class="name">a name</h4>
-                <p class="info">a info</p>
-                <p class="notice">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-            </div>
+        <div alt="" class="logo">11</div>
+        <div class="content">
+            <h4 class="name">a name</h4>
+            <p class="info">a info</p>
+            <p class="notice">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
         </div>
+    </div>
+    <div class="auto-zero-container">
+        <h2>auto和0的区别：z-index为auto的元素不产生堆叠上下文,因此其子元素依然通过其自身z-index进行比较</h2>
+        <div class="zero">z-index: 0;</div>
+        <div class="auto">z-index: auto;</div>
+    </div>
 </body>
 </html>

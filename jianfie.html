@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" >
+        <title>减肥热量表</title>
+        <style>
+            * {
+                box-sizing: border-box;
+            }
+            [type="checkbox"],
+            [type="radio"] {
+                box-sizing: border-box; /* 1 */
+                padding: 0; /* 2 */
+            }
+            [type="number"]::-webkit-inner-spin-button,
+            [type="number"]::-webkit-outer-spin-button {
+                height: auto;
+            }
+
+            /* form表单样式 */
+            .form {
+
+            }
+            .form-item {
+                display: flex;
+                padding: 20px 16px;
+                cursor: pointer;
+            }
+            .form-item-label {
+                margin-right: 10px;
+            }
+
+            /* radio选项 */
+            .form-item-radio-group {
+                display: flex;
+            }
+            .form-item-radio {
+                margin-right: 10px;
+            }
+            .form-item-radio > label {
+                padding: 6px 12px;
+                border-radius: 5px;
+                cursor: pointer;
+                opacity: 0.7;
+                color: #999;
+            }
+            .form-item-radio > .radio-woman {
+                border: 1px solid pink;
+                color: pink;
+            }
+            .form-item-radio > .radio-man {
+                color: blue;
+                border: 1px solid blue;
+            }
+            input[type="radio"]:checked + .radio-woman {
+                background-color: pink;
+                color: #fff;
+            }
+            input[type="radio"]:checked + .radio-man {
+                background-color: blue;
+                color: #fff;
+            }
+
+            table,tr,th,td{ border:1px solid #ccc;}
+            table{
+                width: 800px;
+                border-collapse: collapse;
+                font-size:14px;
+                color: #333;
+                table-layout:fixed;
+            }
+            th,td{ padding:6px 12px; text-align: center;}
+
+            tbody > tr:nth-child(odd){
+                background: aliceblue;
+            }
+            thead tr {
+                background-color: #abc8e2;
+            }
+            tr:hover{background: lightpink;}
+            tr{transition: background 1s;}
+        </style>
+    </head>
+    <body>
+        <h2>减肥热量计算表</h2>
+        <div class="form">
+            <div class="form-item">
+                <label class="form-item-label">我是</label>
+                <div class="form-item-radio-group">
+                    <div class="form-item-radio">
+                        <input type="radio" id="woman" name="sex" value="woman" checked hidden>
+                        <label for="woman" class="radio-woman">女生</label>
+                    </div>
+                    <div class="form-item-radio">
+                        <input type="radio" id="man" name="sex" value="man" hidden>
+                        <label for="man" class="radio-man">男生</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-item">
+                <label class="form-item-label" for="age">年龄</label>
+                <input id="age" type="number" name="age" value="27" step="1" placeholder="请输入年龄">
+                <span class="unit">岁</span>
+            </div>
+            <div class="form-item">
+                <label class="form-item-label" for="height">身高</label>
+                <input id="height" type="number" name="height" value="165" step="1" placeholder="请输入身高">
+                <span class="unit">CM</span>
+            </div>
+            <div class="form-item">
+                <label class="form-item-label" for="weight">体重</label>
+                <input id="weight" type="number" name="weight" value="54" step="0.1" placeholder="请输入体重">
+                <span class="unit">KG</span>
+            </div>
+            <div class="form-item">
+                <button onclick="calculateRecipes()">定制我的热量表</button>
+            </div>
+        </div>
+        <div class="kol-total">
+            <p class="card-content__desc">基础热量消耗：<span id="base-kcal"></span><span>大卡</span></p>
+            <p class="card-content__desc">每天热量消耗：<span id="total-kcal"></span><span>大卡</span></p>
+        </div>
+        <div class="kol-table">
+            <table class="card-content__table">
+                <thead>
+                    <tr>
+                        <th class="col-1"></th>
+                        <th class="col-2">蛋白质/g</th>
+                        <th class="col-3">脂肪/g</th>
+                        <th class="col-4">碳水/g</th>
+                        <th class="col-5">热量总计</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        <script>
+            const SEX_MAN = 'man';
+            const SEX_WOMAN = 'woman';
+            // 1.计算成年人基础代谢的热量
+            function getBaseKcal(sex, height, weight, age) {
+                let kcal = 0;
+                if (sex === SEX_MAN) {
+                    kcal = 67 + 13.73 * weight + 5 * height - 6.9 * age;
+                } else if (sex === SEX_WOMAN) {
+                    kcal = 667 + 9.6 * weight + 1.72 * height - 4.7 * age;
+                }
+                return Math.floor(kcal);
+            }
+            // 1.1 计算成年人一天的热量：除非一天躺着不动，否则肯定会有额外的热量消耗
+            function getTotalKcal(baseKcal) {
+                return baseKcal + 450;
+            }
+            // 4.需要的蛋白g：1.5g/kg
+            function getAllProtein(weight) {
+                return Math.floor(weight * 1.5);
+            }
+            // 7.需要的碳水g：采用正常低碳水高脂肪的饮食。碳水摄入大卡要小于基础代谢的30%。1g碳水4大卡
+            function getAllCarbs(kcal) {
+                return Math.floor(kcal * 0.3 / 4);
+            }
+            // 8. 需要的脂肪g：每50g肉会含有10g蛋白、7g脂肪，120g蛋白就会有84g脂肪。另外剩下的热量用脂肪补充
+            function getAllFat(weight, totalKcal) {
+                // 计算每天吃的肉中带有的脂肪
+                const protein = getAllProtein(weight);
+                const fatWithProtein = protein * 0.7;
+
+                // 剩下需要用脂肪补充的热量，1g蛋白4大卡，1g碳水4大卡，1g脂肪9大卡
+                const carbs = getAllCarbs(totalKcal);
+                return Math.floor((totalKcal - protein * 4 - fatWithProtein * 9) / 9);
+            }
+
+            // 3.按照3：4：3的热量分配
+            // 6.大卡怎么计算，1g蛋白4大卡，1g脂肪9大卡
+            // 9.预估方法：一个乒乓球大小的肉，约有蛋白10g、脂肪7g
+
+            // 获取form表单的内容
+            function getFormValue() {
+                const sexNodeList = document.querySelectorAll('[name^=sex]');
+                let sex = 'woman';
+                sexNodeList.forEach(item => {
+                    if(item.checked) {
+                        sex = item.value;
+                    }
+                });
+                const age = document.querySelector('#age');
+                const height = document.querySelector('#height');
+                const weight = document.querySelector('#weight');
+
+                return {
+                    weight: weight.value,
+                    height: height.value,
+                    age: age.value,
+                    sex
+                };
+            }
+
+            function calculateRecipes() {
+                const { sex, height, weight, age } = getFormValue();
+
+                const baseKcal = getBaseKcal(sex, height, weight, age);
+                const baseKcalText = document.querySelector('#base-kcal');
+                baseKcalText.innerHTML = baseKcal;
+
+                const totalKcal = getTotalKcal(baseKcal);
+                const totalKcalText = document.querySelector('#total-kcal');
+                totalKcalText.innerHTML = totalKcal;
+
+                console.log('totalKcal =', totalKcal);
+                const protein = getAllProtein(weight);
+                const carbs = getAllCarbs(totalKcal);
+                console.log('carbs =', carbs);
+                const fat = getAllFat(weight, totalKcal);
+
+                let breakfastOrDinner = {
+                    protein: 0,
+                    fat: 0,
+                    carbs: 0
+                };
+                breakfastOrDinner.protein = Math.floor(protein * 0.3);
+                breakfastOrDinner.carbs = Math.floor(carbs * 0.3);
+                breakfastOrDinner.fat = Math.floor(fat * 0.3);
+                console.log('breakfastOrDinner =', breakfastOrDinner, Object.values(breakfastOrDinner));
+
+                let launch = {
+                    protein: 0,
+                    fat: 0,
+                    carbs: 0
+                };
+                launch.protein = Math.floor(protein * 0.4);
+                launch.carbs = Math.floor(carbs * 0.4);
+                launch.fat = Math.floor(fat * 0.4);
+
+                const breakfastRow = createTableRow(['早餐', ...Object.values(breakfastOrDinner), 0]);
+                const launchRow = createTableRow(['午餐', ...Object.values(launch), 0]);
+                const dinnerRow = createTableRow(['晚餐', ...Object.values(breakfastOrDinner), 0]);
+
+                const tbody = document.querySelector('tbody');
+                const fragment = document.createDocumentFragment();
+                fragment.appendChild(breakfastRow);
+                fragment.appendChild(launchRow);
+                fragment.appendChild(dinnerRow);
+                tbody.innerHTML = '';
+                tbody.appendChild(fragment);
+            }
+
+            function createTableRow(rowData) {
+                const trow = document.createElement('tr');
+                trow.setAttribute('class', 'card-content__table-row');
+
+                const tdlist = [];
+                rowData.forEach((item, index) => {
+                    const td = document.createElement('td');
+
+                    td.setAttribute('id', `col-${index + 1}`);
+
+                    // 最后一列计算总热量
+                    if (index === 4) {
+                        td.innerHTML = `${rowData[1] * 4 + rowData[2] * 9 + rowData[3] * 4}大卡`;
+                    } else {
+                        td.innerHTML = rowData[index];
+                    }
+
+                    tdlist.push(td);
+                });
+
+                tdlist.forEach(item => trow.appendChild(item));
+                return trow;
+            }
+        </script>
+    </body>
+</html>

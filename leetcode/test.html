@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>服务器开小差了-快手直播</title>
+    <meta name="google-site-verification" content="P4821QdMM0N_H__bcxyKDyC2zk0N2_9FTN2ZXoY2DIs">
+    <meta name="yandex-verification" content="f456b6eaf175edf5">
+    <link rel="shortcut icon" href="//static.yximgs.com/udata/pkg/WEB-LIVE/kwai_icon.8f6787d8.ico" type="image/x-icon"/>
+    <meta httpequiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit">
+    <meta name="referrer" content="always">
+    <meta http-equiv="Content-Security-Policy" content="worker-src 'self' blob:;">
+    <link rel="search" type="application/opensearchdescription+xml" href="/i/opensearch.xml" title="快手直播">
+    <style>
+        html {
+            background-color: #101118;
+        }
+        body {
+            font-family: fontsc, "PingFang SC", "Helvetica Neue For Number", -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+            font-size: 12px;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+        }
+        #app {
+            box-sizing: border-box;
+            height: 100vh;
+            padding: 250px 0;
+            text-align: center;
+            margin: 250px 0;
+        }
+        .default-icon {
+            width: 200px;
+            height: 200px;
+            margin: auto;
+            background-size: 100%;
+        }
+        .return-wrapper {
+            margin-top: 20px
+        }
+        .btn-return {
+            height: 40px;
+            width: 112px;
+            border-radius: 20px;
+            outline: none;
+            border: none;
+            font-weight: 500;
+            font-size: 14px;
+            line-height: 20px;
+            text-align: center;
+            color: #fff;
+            background: #fe3566;
+            cursor: pointer;
+        }
+    </style>
+    <script>
+        function returnHome() {
+            console.log('点击按钮');
+            window.location.href = '/';
+        }
+    </script>
+</head>
+
+<body>
+    <div id="app">
+        <div class="default-icon icon-"></div>
+        <div class="return-wrapper">
+            <button class="btn-return" onclick="returnHome()">
+                返回首页
+            </button>
+        </div>
+    </div>
+</body>
+</html>

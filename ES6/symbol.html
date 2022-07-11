@@ -1,0 +1,218 @@
+<htm>
+    <head>
+        <title>ES6 Symbol</title>
+        <script>
+            // 定义
+            const s = Symbol();
+            console.log('typeof s = ', typeof s, s);
+
+            Number.prototype.toString = function() {
+                return 'number toString'
+            };
+            Boolean.prototype.toString = function() {
+                return 'boolean toString'
+            };
+
+            Object.prototype.toString = function() {
+                return 'null';
+            };
+            Array.prototype.toString = function() {
+                return 'array toString'
+            };
+
+            const s1 = Symbol('111');
+            const s2 = Symbol(111);
+            console.log(s1);
+            console.log(s2);
+
+            const s3 = Symbol(false);
+            console.log(s3);
+
+            const s4 = Symbol(['11', '22']);
+            console.log(s4);
+
+            console.log('Symbol.for(\'111\')', Symbol.for('111') === s1);
+
+            const obj = {
+                toString() {
+                    return 'abc';
+                },
+                test: 111
+            };
+            console.log('obj', Symbol(obj));
+
+            // Symbol和 Symbol.for的区别
+            console.log('**************Symbol和 Symbol.for的区别*******************');
+            const s11 = Symbol('111');
+            const s12 = Symbol('111');
+            console.log('s11 === s12', s11 === s12);
+
+            const sf1 = Symbol.for('222');
+            const sf2 = Symbol.for('222');
+            const sf3 = Symbol.for('222');
+            const sf4 = Symbol.for('222');
+
+            console.log('', Symbol.for('222'));
+            console.log('sf1 === sf2', sf1 === sf2, sf1 === sf3, sf1 === sf4, sf2 === sf3, sf2 === sf4);
+            // const sf2 = Symbol.for('222');
+
+            console.log('keyfor =', Symbol.keyFor(s11));
+            console.log('keyfor =', Symbol.keyFor(sf1));
+
+            // getOwnPropertySymbols
+            console.log('**************getOwnPropertySymbols*******************');
+            const os1 = Symbol.for('os1111');
+            const ownObj = {
+                a: 'aaa',
+                b: 'bbb',
+                1: 1,
+                [os1]: 'Symbol1'
+            };
+            const os2 = Symbol.for('os2222');
+            const os3 = Symbol.for('os3333');
+            ownObj[os2] = 'Symbol2';
+            ownObj[os3] = 'Symbol3';
+
+
+            console.log('Object.keys(ownObj)', Object.keys(ownObj));
+            console.log('Reflect.ownKeys(ownObj)', Reflect.ownKeys(ownObj));
+            console.log('Object.getOwnPropertySymbols(obj)', Object.getOwnPropertySymbols(ownObj));
+
+            console.log('**************内置API*******************');
+            class ArrayClass {
+                [Symbol.hasInstance](foo) {
+                    return foo instanceof Array;
+                }
+            }
+            const a = new ArrayClass();
+            console.log(a instanceof ArrayClass); // true
+
+            const b = [1, 2, 3];
+            console.log(b instanceof ArrayClass); // false
+            console.log(b instanceof a); // true
+
+            const c = 'string';
+            console.log(c instanceof ArrayClass); // false
+            console.log(c instanceof a); // false
+
+            // [1, 2, 3] instanceof new MyClass() // true
+
+            console.log('**************内置API Symbol.match *******************');
+            // String.prototype.match(regexp);
+            // 等同于
+            // regexp[Symbol.match](this)
+
+            class MyMatcher {
+                [Symbol.match](string) {
+                    return 'match';
+                }
+                [Symbol.replace](string) {
+                    return 'replace';
+                }
+                [Symbol.search](string) {
+                    return 'search';
+                }
+                [Symbol.split](string) {
+                    return 'split';
+                }
+            }
+
+            String.prototype[Symbol.match] = function() {
+                return 'string111';
+            };
+
+            Array.prototype[Symbol.split] = function() {
+
+            };
+
+            Object.prototype[Symbol.match] = function() {
+                return 'object symbol.match';
+            };
+
+            console.log('hxf'.match('h'));
+            console.log('hxf'.match({name: 'hxf'}));
+            console.log('match = ', 'e'.match(new MyMatcher())) // 1
+            console.log('replace = ', 'e'.replace(new MyMatcher())) // 1
+            console.log('search = ', 'e'.search(new MyMatcher())) // 1
+            console.log('split =', 'e'.split(new MyMatcher())) // 1
+
+            console.log('**************内置API Symbol.toPrimitive *******************');
+            let objP = { name: 'hxf' };
+            console.log('objP + 3', objP + 3);
+            console.log('objP === true', objP === true);
+            console.log('String(objP)', String(objP));
+
+
+            let objP1 = {
+                [Symbol.toPrimitive](hint) {
+                    switch (hint) {
+                        case 'number':
+                            return 123;
+                        case 'string':
+                            return 'str';
+                        case 'default':
+                            console.log('default111 hint = ', hint);
+                            return 'default';
+                        default:
+                            throw new Error();
+                    }
+                }
+            };
+
+            console.log('2 * objP1', 2 * objP1) // 246
+            console.log('3 + objP1', 3 + objP1) // '3default'
+            console.log('objP1 == \'default\'', objP1 == 'default') // true
+            console.log('objP1 === \'default\'', objP1 === 'default') // false，恒等式应该不会进行隐式类型转换
+            console.log('String(obj)', String(objP1)) // 'str'
+
+
+
+            console.log('**************应用场景*******************');
+            const applyObj = {
+                '1': 1,
+                '1': 2
+            };
+            console.log('applyObj =', applyObj);
+
+            const applyObj1 = {
+                [Symbol('1')]: 1,
+                [Symbol('1')]: 2,
+            };
+            console.log('applyObj1 =', applyObj1);
+
+            const applyObj2 = {
+                [Symbol.for('1')]: 1,
+                [Symbol.for('1')]: 2,
+            };
+            console.log('applyObj1 =', applyObj2);
+
+            console.log('**************重点难点*******************');
+            // const sym1 = new Symbol(); // Uncaught TypeError: Symbol is not a constructor
+
+            const sym2 = Symbol('sym2');
+            const sym2str = String(sym2);
+            console.log('sym2 =', sym2, typeof sym2); // Symbol(sym2) Symbol
+            console.log('sym2str =', sym2str, typeof sym2str); // 'Symbol(sym2)' string
+
+            const sym3 = {
+                name: 'hxf',
+                age: 20,
+                [Symbol.for('company')]: 'kuaishou'
+            };
+
+            console.log('company = ', sym3[Symbol.for('company')]); // kuaishou
+            // console.log('company = ', sym3.Symbol.for('company')); // 报错
+
+            for (let key in sym3) {
+                console.log('for..in key =', key);
+            }
+
+            console.log('Object.keys(sym3)', Object.keys(sym3));
+            console.log('Reflect.ownKeys(sym3)', Reflect.ownKeys(sym3));
+            console.log('Object.getOwnPropertySymbols(sym3)', Object.getOwnPropertySymbols(sym3));
+        </script>
+    </head>
+    <body>
+
+    </body>
+</htm>

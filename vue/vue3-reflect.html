@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" >
+        <title>vue3高阶指南--reflect</title>
+        <script>
+            var myObject = {
+                name: 'hxf',
+                age: 27,
+                set bar(value) {
+                    return this.name = value;
+                }
+            };
+            console.log('myObject.name =', myObject.name);
+
+            Reflect.set(myObject, 'name', '测试');
+            console.log('myObject.name =', myObject.name);
+
+            // Proxy和 Reflect联合使用，Proxy：拦截赋值操作，Reflect：完成赋值的默认行为；
+            // Reflect.set()传入receiver，就会触发 Proxy.defineProperty操作
+
+            // Proxy + Reflect 实现观察者模式
+            const queueObservers = new Set();
+
+            const observe = fn => queueObservers.add(fn);
+            const observable = obj => new Proxy(obj, {
+                get: function (target, key) {
+                    console.log('get = ', get);
+                    return Reflect.get(target, key);
+                },
+                set: function (target, key, value, receiver) {
+                    console.log('set');
+                    const result = Reflect.set(target, key, value, receiver);
+                    queueObservers.forEach(observer => observer()); // 依次执行 观察者函数
+                    return result;
+                }
+            });
+
+            const person = {
+                name: '张三',
+                age: 20,
+            };
+
+            function print() {
+                console.log(`${person.name}, ${person.age}`)
+            }
+
+            observe(print); // 添加print方法
+
+            const p1 = observable(person);
+
+            console.log('p1 = ', p1);
+            p1.name = '测试';
+
+        </script>
+    </head>
+    <body>
+
+    </body>
+</html>

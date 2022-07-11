@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1; user-calable=no;" >
+    <title>Animation画一个灯笼</title>
+    <style>
+        div {
+            box-sizing: border-box;
+        }
+        .lantern-con {
+            position: fixed;
+            left: 160px;
+        }
+        /* 中间红色区域 */
+        .lantern-light {
+            position: relative;
+            width: 120px;
+            height: 90px;
+            background-color: red;
+            margin: 30px;
+            border-radius: 50%;
+            box-shadow: -5px 5px 50px 4px #fa6c00;
+            /* 动画效果 */
+            transform-origin: top center;
+            animation: swing 3s infinite ease-in-out;
+        }
+
+        /* 灯笼顶部和底部 */
+        .lantern-light::before,
+        .lantern-light::after {
+            display: block;
+            content: ' ';
+            position: absolute;
+            z-index: 2;
+            border: 1px solid #dc8f03;
+            width: 60px;
+            height: 12px;
+            left: 30px;
+            background: linear-gradient(
+                to right,
+                #dc8f03,
+                #ffa500,
+                #dc8f03,
+                #ffa500,
+                #dc8f03
+            );
+        }
+
+        .lantern-light::before {
+            top: -7px;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+        }
+
+        .lantern-light::after {
+            bottom: -7px;
+            border-bottom-left-radius: 5px;
+            border-bottom-right-radius: 5px;
+        }
+
+        /* 灯笼的动画效果 */
+        @keyframes swing {
+            0% {
+                transform: rotate(-10deg);
+            }
+            50% {
+                transform: rotate(10deg);
+            }
+            100% {
+                transform: rotate(-10deg);
+            }
+        }
+
+        /* 提着灯笼的线 */
+        .lantern-line {
+            width: 2px;
+            height: 50px;
+            background-color: #dc8f03;
+            position: absolute;
+            left: 88px;
+        }
+
+        /* 灯笼内部的线条和文字 */
+        .lantern-circle,
+        .lantern-rect {
+            height: 90px;
+            border-radius: 50%;
+            border: 2px solid #dc8f03;
+            background-color: rgba(216, 0, 15, 0.1);
+        }
+
+        .lantern-circle {
+            width: 100px;
+            position: absolute;
+            left: 10px;
+        }
+
+        .lantern-rect {
+            width: 50px;
+            position: absolute;
+            left: 25px;
+        }
+        
+        .lantern-text {
+            font-size: 16px;
+            font-weight: bold;
+            color: #dc8f03;
+            writing-mode: vertical-lr;
+            margin: 8px auto;
+        }
+
+        /* 灯穗 */
+        .lantern-tassel-top {
+            width: 5px;
+            height: 20px;
+            background-color: #ffa500;
+            border-radius: 0 0 5px 5px;
+            position: relative;
+            top: 90px;
+            margin: -5px 0 0 59px;
+            /* 让灯穗也有一个动画效果 */
+            animation: swing 3s infinite ease-in-out;
+        }
+
+        .lantern-tassel-middle,
+        .lantern-tassel-bottom {
+            position: absolute;
+            width: 10px;
+            left: -2px;
+        }
+
+        .lantern-tassel-middle {
+            border-radius: 50%;
+            top: 14px;
+            height: 10px;
+            background-color: #dc8f03;
+            z-index: 2;
+        }
+
+        .lantern-tassel-bottom {
+            background-color: #ffa500;
+            border-bottom-left-radius: 5px;
+            height: 35px;
+            top: 18px;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="lantern-con">
+        <div class="lantern-line"></div>
+        <div class="lantern-light">
+            <div class="lantern-circle">
+                <div class="lantern-rect">
+                    <div class="lantern-text">万事如意</div>
+                </div>
+            </div>
+            <!-- 灯笼穗 -->
+            <div class="lantern-tassel-top">
+                <div class="lantern-tassel-middle"></div>
+                <div class="lantern-tassel-bottom"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // 数组扁平化
+        let arr = [
+            {id: 1, name: '部门1', pid: 0},
+            {id: 2, name: '部门2', pid: 1},
+            {id: 3, name: '部门3', pid: 1},
+            {id: 4, name: '部门4', pid: 3},
+            {id: 5, name: '部门5', pid: 4},
+        ];
+        
+    </script>
+</body>
+</html>

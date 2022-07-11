@@ -1,0 +1,27 @@
+<html>
+    <head>
+        <title>reduce函数</title>
+        <script>
+            const modelList = ['legacy', 'modern'];
+            const devBuildMap = modelList.reduce((map, mode) => {
+                console.log('map =', map);
+                console.log('mode =', mode);
+                map[mode] = {
+                    clientConfig: null,
+                    serverConfig: null,
+                    clientCompiler: null,
+                    serverCompiler: null,
+                    webpackDevMiddleware: null,
+                    webpackHotMiddleware: null,
+                    serverBundle: null,
+                    clientManifest: null,
+                    serverRenderer: null,
+                    ssrTemplate: null,
+                    csrTemplate: null,
+                };
+                return map;
+            }, {});
+            console.log('devBuildMap =', devBuildMap);
+        </script>
+    </head>
+</html>

@@ -139,8 +139,69 @@
 
             evt.emit('test', 333);
             evt.emit('test', 2222);
-            </script>
-        </head>
-        <body>
-        </body>
-    </html>
+
+            console.log('*************观察者模式****************');
+            // 观察者模式
+            class Subject {
+                constructor() {
+                    this.prdState = null;
+                    this.observers = [];
+                }
+                add(observer) {
+                    this.observers.push(observer);
+                }
+                remove(observer) {
+                    const index = this.observers.findIndex(item => item === observer);
+                    if (index > -1) {
+                        this.observers.splice(index, 1);
+                    }
+                }
+                notify() {
+                    this.observers.forEach(observer => observer.update(this));
+                }
+                getState() {
+                    return this.prdState;
+                }
+                setState(state) {
+                    this.prdState = state;
+                    this.notify();
+                }
+            }
+
+            class Observer {
+                constructor() {
+                    this.prdState = {};
+                }
+
+                update(subject) {
+                    console.log('update');
+                    this.prdState = subject.getState();
+                    this.work();
+                }
+                work() {
+                    const prd = this.prdState;
+                    console.log('开始工作 prdState =', prd);
+                }
+            }
+
+            const s1 = new Subject();
+
+            const o1 = new Observer();
+            const o2 = new Observer();
+            const o3 = new Observer();
+
+            // 添加观察者
+            s1.add(o1);
+            s1.add(o2);
+            s1.add(o3);
+
+            // 更新state，
+            s1.setState({ name: 'hxf' });
+
+            s1.setState({ name: '测试1' });
+
+        </script>
+    </head>
+    <body>
+    </body>
+</html>

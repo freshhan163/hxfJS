@@ -6,10 +6,9 @@
     <title>ES6--Map和Set</title>
     <script>
         // Set：两个对象总是不相等的
-        let s1 = new Set();
+        let s1 = new Set([1, 2, 1, 2, 1, 2, 3]);
         s1.add({});
         s1.add({});
-        s1.add('测试');
         console.log('s.size = ', s1.size, s1);
 
         // 遍历需要用key | values | entries
@@ -31,15 +30,68 @@
         console.log('************** weakSet 和 set *****************');
         const a = [[1, 2], [3, 4]];
         const ws = new WeakSet(a); // WeakSet {[1, 2], [3, 4]}
-        const s2 = new Set(a);
-        console.log('ws = ', ws, 's = ', s2);
+        console.log('ws = ', ws);
+
+        // for (let key of ws) {
+        //   console.log('key =', key); // Uncaught TypeError: ws is not iterable
+        // }
+
+        const a1 = [1, 2];
+        // const ws1 = new WeakSet(a1); // 报错
+
+        const ws1 = new WeakSet([{a: 1}, {b: 2}]);
+        console.log('ws1 = ', ws1);
+
+        window.onload = function() {
+          const ws2 = new WeakSet();
+          const bodyDom = document.querySelector('body');
+          ws2.add(bodyDom);
+          console.log('ws2 =', ws2); // WeakSet {body}
+        };
+
+        console.log('************** 应用场景 *****************');
+        let sa = 'abcabcdefdefgh';
+        console.log('去重后的 s = ', [...new Set(sa)].join(''));
+
+        let sa1 = [1, 2, 3, 1, 2, 3, 1, 2, 4];
+        console.log('去重后的数组 s1 = ', [...new Set(sa1)], Array.from(new Set(sa1)));
+
+        let sa2 = [1, 2, 2, 5, 5, 6];
+
+        const sb1 = new Set(sa1);
+        const sb2 = new Set(sa2);
+        console.log('数组并集 ', new Set([...sb1, ...sb2]));
+        console.log('数组交集 ', new Set([...sb1].filter(v => sb2.has(v))));
+        console.log('数组差集 ', new Set([...sb1].filter(v => !sb2.has(v))));
+
+        let mapSb1 = [...sb1].map(item => item * 2); // 返回的是Array
+        let mapSb2 = new Set([...sb1].map(item => item * 2)) // 返回 Set
+
+        console.log('************** 重点难点 *****************');
+        let sd1 = new Set([1, 2, 'hxf', 7.1, -2, '_', 'a1', 'b1']);
+
+        sd1.add('y1');
+        sd1.add('22');
+        sd1.add('h1');
+        console.log('sd1 =', sd1);
+
+        console.log('sd1.keys(sd1)', sd1.keys());
+        console.log('sd1.values(sd1)', sd1.values());
+        console.log('sd1.entries(sd1)', sd1.entries());
 
 
-        const b = [1, 2, 3, 4];
-        // const ws1 = new WeakSet(b);
-        const s3 = new Set(b);
-        console.log('ws = ', ws, 's = ', s3);
+        let sd2 = new Set([1, 2, 'hxf', 1, 2, 3]);
+        const nan = 1 % 0; // NaN
+        sd2.add(nan);
+        sd2.add(nan);
+        console.log('sd2 = ', sd2); // {1, 2, 'hxf', 3, NaN}
 
+        let sd3 = new Set([2]);
+        sd3.add('2');
+        console.log('sd3 = ', sd3); // {2, '2'}
+
+
+        console.log('************** Map *****************');
         // Map的顺序
         const map = new Map([
             ['F', 'no'],
@@ -50,7 +102,6 @@
         for (let key of map.keys()) {
             console.log(key);
         }
-
     </script>
   </head>
   <body>

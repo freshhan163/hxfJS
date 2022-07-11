@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>JS 中的正则匹配</title>
+    <script>
+        // string类型的正则匹配
+        // string.match
+        let a  = '/css/feeds.123.css';
+        let b = 'feeds';
+        // const reg = new RegExp('[/\W/]*/feeds\\.', 'g');
+        // const reg = new RegExp(/\.css$/, 'i');
+        const reg1 = new RegExp('.*\/feeds\\..*\\.css$', 'i');
+        console.log(reg1.test('/css/static/feeds.1dfs23.css'));
+    </script>
+</head>
+<body>
+</body>
+</html>
