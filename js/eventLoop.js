@@ -1,12 +1,27 @@
 
-// nextTick执行完成后，才会执行 promise
+// nextTick执行完成后（包括内部的process.nextTick），才会执行 promise
 Promise.resolve().then(() => console.log(1));
 new Promise((resolve, reject) => {
     console.log(2);
     resolve();
-}).then(() => console.log(3));
-// process.nextTick(() => console.log(4));
-// process.nextTick(() => console.log(5));
+    console.log(3);
+}).then(() => console.log(4));
+// process.nextTick会先执行同级别的
+process.nextTick(() => console.log(5));
+process.nextTick(() => {
+    console.log(6);
+    process.nextTick(() => console.log(7));
+    console.log(8);
+});
+process.nextTick(() => console.log(9));
+// settimeout会最后执行
+setTimeout(() => {
+    console.log(10);
+    Promise.resolve().then(function() {
+        console.log(11);
+    });
+}, 0);
+console.log(12);
 
 // 事件循环示例
 // const fs = require('fs');
