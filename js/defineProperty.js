@@ -60,12 +60,12 @@ delete obj.age;
 // 删除以后再赋值，也不会触发set了
 obj.age = 33;
 
+console.log('\n ********数组操作*********** \n');
 // 问题4：通过索引修改数组属性，会有什么问题
 // 总结：Object.defineProperty API是可以检测到修改的 ，没问什么问题
 const arr = [1, 2, 3, 4, [5, [6, 7]]];
 
 for (let key in arr) {
-    console.log('key =', key);
     Object.defineProperty(arr, key, {
         configurable: true,
         enumerable: true,
@@ -82,18 +82,41 @@ for (let key in arr) {
 // 第一层get和set都会触发对应函数
 console.log('访问数组 arr[0] =', arr[0]);
 arr[1] = 222;
+console.log('*********\n');
 
-// 第二层，也会触发对应的get | set
+// 第二层，会触发第一层的get，但不会触发set
 console.log('访问数组 arr[4][0] =', arr[4][0]);
 arr[4][0] = 555;
+console.log('*********\n');
 
-// 第三层，也会触发对应的get | set
-console.log('访问数组 arr[4][1][0] =', arr[4][1][0]);
+// 第二层，会触发第一层的get，但不会触发set
+console.log('访问数组 arr[4][1][0] =', arr[4][1]);
 arr[4][1][0] = 666;
+console.log('*********\n');
 
 // 问题5：是否可以监听到数组的添加
 // 总结：不会，下面函数不会触发set函数
 arr[5] = 7;
+
+// 问题6： push | pop | shift | unshift操作，能监听到吗
+// 总结: push操作监听不到，因为属于新赋值，pop操作如果是被监听过的，会触发get；shift | unshift操作会触发多次get | set; 
+console.log('\n ********数组push操作*********** \n');
+arr.push(8); // 没有响应
+arr.push(9);
+
+
+console.log('\n ********数组pop操作*********** \n');
+arr.pop();
+arr.pop();
+arr.pop();
+arr.pop();
+
+console.log('\n ********数组shift操作*********** \n');
+arr.shift();
+
+console.log('\n ********数组unshift操作*********** \n');
+arr.unshift(0);
+arr.unshift(1);
 
 // 问题6：vue2为什么要重写数组的操作方法，Object.defineProperty有什么问题
 // 总结：1.Object.defineProperty无法监听length长度的变化，没办法监听数组的新增 2.尤大大认为监听数组索引改变数组操作消耗的性能与用户体验不成正比

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html data-theme="theme1">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1; user-calable=no;" >
+        <title>flex布局</title>
+        <script>
+            function changeTheme() {
+                const doc = document.documentElement;
+                const oldTheme = doc.getAttribute('data-theme');
+                console.log('oldTheme =', oldTheme);
+                const newTheme = oldTheme === 'theme1' ? 'theme2' : 'theme1';
+                // 设置页面根元素的 dataset
+                doc.dataset.theme = newTheme;
+            }
+        </script>
+        <style id="theme-var">
+            :root {
+                --font-color: brown;
+                --button-color: yellow;
+            }
+            :root[data-theme=theme2] {
+                --font-color: blue;
+                --button-color: green;
+            } 
+        </style>
+        <style>
+            h2 {
+                color: var(--font-color, black)
+            }
+            button {
+                background-color: var(--button-color, gray);
+            }
+        </style>
+    </head>
+    <body>
+        <div>
+            <button onclick="changeTheme()">切换主题</button>
+        </div>
+    </body>
+</html>

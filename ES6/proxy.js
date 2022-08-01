@@ -191,8 +191,38 @@ proxyArr.unshift(0); // 会触发多次get | set和deleteProperty
 
 console.log('\n**************this指针********************\n');
 // 4. proxy的this问题
-// 总结：目标对象中的this，会指向proxy代理；proxy的handler中的this，会指向 handler本身
+// 总结：proxy代理不是透明的代理，它代理的目标对象中的this，会指向proxy代理；proxy的handler中的this，会指向 handler本身
 // 导致的问题：即使Proxy什么都不修改，也会导致通过proxy访问到的属性，和原对象的操作不一致
+const parent = {
+    get value() {
+        return '19Qingfeng';
+    },
+};
+
+const handler3 = {
+    get(target, key, receiver) {
+        console.log(this === handler3); // log: true，this指向handler
+        console.log(receiver === proxy); // log: false, receiver指向的是调用它的对象
+        console.log(receiver === obj); // log: true
+        return target[key];
+    },
+};
+
+const proxy = new Proxy(parent, handler3);
+
+const obj = {
+    name: 'wang.haoyu',
+};
+
+// 设置obj继承与parent的代理对象proxy
+Object.setPrototypeOf(obj, proxy);
+
+// log: false
+obj.value // 调用的是 obj
+proxy.value // 调用的是 proxy
+
+
+// 5. proxy中get(target, name, receiver)属性的receiver参数，由于proxy存在this问题，所以通过receiver传递正确的调用者指向（正确的传递上下文）
 
 let proxyObjHxf;
 class Person {
@@ -200,8 +230,9 @@ class Person {
         this.name = name;
     }
     sayName() {
-        console.log('对象中的this = proxyObjHxf ', proxyObjHxf ? this === proxyObjHxf : this);
+        console.log('\n*********\n');
         console.log('对象中的this = ', this);
+        console.log('对象中的this = proxyObjHxf ', proxyObjHxf ? this === proxyObjHxf : this);
         console.log('this.name = ', this.name);
     }
 }
@@ -215,6 +246,8 @@ proxyObjHxf.sayName(); // this指向proxyObjHxf, 而不是target
 // 测试handler中的this
 const handler = {
     get(target, prop) {
+        console.log('\n *********\n');
+        console.log('this = ', this);
         console.log('this = handler', this === handler);
 
         // 解决proxy中的this指向问题
@@ -225,15 +258,24 @@ const handler = {
 const proxyObjThis = new Proxy(hxf, handler);
 proxyObjThis.name;
 
-// 4.proxy为什么要搭配reflect使用
-// 两个方面：对象层面--完善对象的操作（3个方面），proxy方面--解决proxy中指向的问题（由于用proxy代理的对象，改变了其内部的this指向，因此需要使用Reflect）
-
 // 5.proxy和reflect常见面试题
 // 5.1 谈谈你对proxy的理解
 // 总结：3个方面--1)proxy定义、要解决什么问题 2）常用的API 3）应用场景（实现观察者模式、拦截对对象的访问、声明对象的私有属性）
+
 // 5.2 proxy和reflect
 // proxy里面为什么要用reflect?（https://www.zhihu.com/question/460133198）
-// 解决proxy中this指向错误的问题 | 传递正确的???
+// 解决proxy中this指向错误的问题 | 提供默认的语义行为，简化代码
+// 原因1：proxy方面--解决proxy中指向的问题（由于用proxy代理的对象，改变了其内部的this指向，因此需要使用Reflect）
+// 原因2：reflect的API和proxy的API一一对应，为proxy API提供了默认行为，简化操作
 
 // 6.谈谈Reflect
-// reflect: https://fe.ecool.fun/topic-answer/18682a73-0c4e-4859-96fd-2a6fde7587b7
+// 定义：提供了拦截JS操作的方法，API和proxy的API一一对应；
+// 要解决什么问题：2个方面
+// 1：对象层面--完善对象的操作（3个方面）：将属于语言内部的方法从Object上移除，比如DefineProperty；修改一些操作的异常返回，比如defineProperty; 将非函数转换为函数，比如deleteProperty
+// 2：proxy层面——为proxy操作提供默认行为，不管proxy怎么修改默认行为，reflect都能获取默认行为
+
+// Reflect中的receiver？？？: Refelect.set(target, prop, value, receiver)
+
+// 7.proxy对比defineProperty
+// defineProperty：不能监听到删除操作；对象新增属性也无法监听到；对数组长度的修改也无法监听到
+// 数组的
