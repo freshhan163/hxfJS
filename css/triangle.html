@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>三角形绘制</title>
+    <style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+
+    /* 测试1 */
+    .rect-test1 {
+        width: 50px;
+        height: 50px;
+        border-top: 50px solid green;
+        border-bottom: 50px solid red;
+        border-left: 50px solid black;
+        border-right: 50px solid blanchedalmond;
+    }
+    /* 测试2, 这里将 width\height 修改为0 */
+    .rect-test2 {
+        width: 0;
+        height: 0;
+        border-top: 50px solid green;
+        border-bottom: 50px solid red;
+        border-left: 50px solid black;
+        border-right: 50px solid blanchedalmond;
+    }
+    
+    /* 只设置上和右，设置了width和height，发现会有一个正方形的空缺 */
+    .rect-test3 {
+        width: 50px;
+        height: 50px;
+        border-top: 50px solid green;
+        border-right: 50px solid red;
+    }
+
+    /* 只设置上和右，可以生成一个正方形 */
+    .top-right-test {
+        width: 0;
+        height: 0;
+        border-top: 50px solid green;
+        border-right: 50px solid red;
+    }
+
+    .bottom-triangle {
+        width: 0;
+        height: 0;
+        border-top: 50px solid green;
+        border-left: 50px solid transparent;
+        border-right: 50px solid transparent;
+        border-bottom: 1px solid pink;
+    }
+
+    .top-triangle {
+        width: 0;
+        height: 0;
+        border: 50px solid transparent;
+        border-bottom: 50px solid red;
+    }
+
+    .left-triangle {
+        width: 0;
+        height: 0;
+        border: 50px solid transparent;
+        border-right: 50px solid red;
+    }
+
+    .right-triangle {
+        width: 0;
+        height: 0;
+        border: 50px solid transparent;
+        border-left: 50px solid red;
+    }
+
+    .right-angle-left-bottom-triangle {
+        width: 0;
+        height: 0;
+        border: 50px solid transparent;
+        border-left: 50px solid red;
+        border-bottom: 50px solid green;
+    }
+
+    .demo {
+        margin-top: 20px;
+        width: 200px;
+        line-height: 100px;
+        background-color: #fff;
+        position: relative;
+        border: 1px solid #5BBF5A;
+        text-align: center;
+    }
+
+    /* 两个三角形叠在一起，before的三角形宽度11px, after三角形宽度10px */
+    .demo:after,
+    .demo:before {
+        content: ' ';
+        width: 0;
+        height: 0;
+        position: absolute;
+        border: solid transparent;
+    }
+
+    .demo:after {
+        border-width: 10px;
+        border-top-color: #fff;
+        top: 100px;
+        left: 150px;
+    }
+
+    .demo:before {
+        border-width: 11px;
+        border-top-color: #5BBF5A;
+        top: 100px;
+        left: 149px;
+    }
+    </style>
+</head>
+
+<body>
+    <div class="rect-test1"></div>
+    <div class="rect-test2"></div>
+    <div class="rect-test3"></div>
+    <!-- 测试 -->
+    <div class="top-right-test"></div>
+    <!-- 尖向下的三角形 -->
+    <div class="bottom-triangle"></div>
+    <div class="top-triangle"></div>
+    <div class="left-triangle"></div>
+    <div class="right-triangle"></div>
+    <!-- 直角三角形，直角在左下角 -->
+    <div class="right-angle-left-bottom-triangle"></div>
+
+    <!-- 应用：对话框 -->
+    <div class="demo">Hello, world!</div>
+</body>
+</html>

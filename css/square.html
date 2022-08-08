@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>正方形绘制</title>
+    <style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    html,
+    body {
+        height: 100%;
+    }
+
+    /* 采用统一单位：vh 或 vw */
+    .part1-square1 {
+        display: inline-block;
+        width: 10vh;
+        height: 10vh;
+        background-color: pink;
+    }
+
+    /* 采用vw，不能用百分比，因为百分比在 width和height上，长度不一致 */
+    .part1-square2 {
+        display: inline-block;
+        width: 10vw;
+        height: 10vw;
+        background-color: pink;
+    }
+
+    /* 采用垂直方向的padding-top 或 padding-bottom */  
+    .part2-square1 {
+        display: inline-block;
+        width: 10%;
+        padding-top: 10%;
+        background-color: green;
+    }
+
+    .part2-square2 {
+        display: inline-block;
+        /* 添加height: 0，文字会出框 */
+        height: 0;
+        width: 10%;
+        padding-top: 10%;
+        background-color: green;
+    }
+
+    .part2-square3 {
+        display: inline-block;
+        width: 10%;
+        padding-bottom: 10%;
+        background-color: pink;
+    }
+
+    .part2-square4 {
+        display: inline-block;
+        width: 10%;
+        height: 0;
+        padding-bottom: 10%;
+        background-color: red;
+    }
+
+    /* 利用伪元素，垂直方向的padding撑开父元素 */
+    .part3-square1 {
+        display: inline-block;
+        width: 10%;
+        max-width: 200px;
+        overflow: hidden;
+        background-color: pink;
+    }
+
+    .part3-square1::after {
+        content: ' ';
+        display: block;
+        padding-top: 100%;
+    }
+
+    .part3-square2 {
+        overflow: hidden;
+        display: inline-block;
+        width: 10%;
+        background-color: red;
+    }
+
+    .part3-square2::after {
+        content: ' ';
+        display: block;
+        margin-bottom: 100%;
+    }
+
+    </style>
+</head>
+
+<body>
+    <!-- 采用vh 或 vw -->
+    <div class="part1">
+        <div class="part1-square1"></div>
+        <div class="part1-square2"></div>
+    </div>
+    <!-- 采用padding-bottom -->
+    <p>padding-top 和 padding-bottom，如果设置为百分比，则都是相对于父元素的width</p>
+    <div class="part2">
+        <div class="part2-square1"></div>
+        <div class="part2-square2">padding-top加入文字，文字不在正方形框内，所以不可用</div>
+        <div class="part2-square3">padding-bottom加入文字，高度超出设置</div>
+        <div class="part2-square4">设置height:0; 解决高度问题；缺点：max-width会失效，max-height会不收缩</div>
+    </div>
+    <!-- 采用伪元素 -->
+    <p>伪元素的padding和 margin是相对于父元素；</p>
+    <p>如果是margin的话，一定要添加 oveflow: hidden; 因为margin可能会触发外边距合并，通过overflow: hidden，触发BFC就不会合并了</p>
+    <div class="part3">
+        <div class="part3-square1"></div>
+        <div class="part3-square1">加入文字，导致正方形被撑开了，加入height: 0 也不生效</div>
+        <div class="part3-square2"></div>
+        <div class="part3-square2">margin需要加入overflow:hidden,防止外边距合并</div>
+    </div>
+</body>
+</html>
