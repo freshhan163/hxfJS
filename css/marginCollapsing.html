@@ -20,7 +20,7 @@
         }
 
         .b {
-            border: 1px solid red;
+            border: 1px solid green;
             padding: 20px;
             width: 300px;
             height: 100px;
@@ -28,29 +28,45 @@
             background-color: greenyellow;
         }
 
-        #parent {
+        #parent1 {
             width:300px;
             height:150px;
             margin-top: 20px;
             background:teal;
         }
         #box1 {
+            width: 100px;
+            height: 100px;
+            background:aqua;
+            margin: 100px 0;
+            border: 1px solid red;
+        }
+        #parent2 {
+            width:300px;
+            height:150px;
+            margin-top: 100px;
+            background:teal;
+        }
+        #box2 {
             width:100px;
             height:100px;
-            background:aqua;
-            margin:100px 0;
+            background: pink;
+            margin-top: 20px;
         }
     </style>
 </head>
     <body>
         <h2>Margin折叠</h2>
-        <p>同层级Margin折叠</p>
+        <p>同层级Margin折叠，加了border，仍然会发生Margin Collapse</p>
         <div class="a">margin:10px</div>
         <div class="b">margin:10px;</div>
-        <p>父子层级Margin折叠</p>
-        <div id="parent">
-            <div id="box1">我是box1</div>
-            我是
+        <p>父子层级Margin折叠，如果子级的margin > 父级margin，子级margin会覆盖父级margin</p>
+        <div id="parent1">
+            <div id="box1">我是box1，属于paren</div>
+        </div>
+        <p>父子层级Margin折叠，如果子级的margin 小于 父级margin，父级margin为最大值</p>
+        <div id="parent2">
+            <div id="box2">我是box2，属于parent2</div>
         </div>
     </body>
 </html>
