@@ -119,6 +119,29 @@ let isValidBST2 = function (root) {
     return isValidBST2(root.right);
 };
 
+var isValidBST21 = function(root) {
+    if (!root) {
+        return true;
+    }
+    let pre = Number.MIN_SAFE_INTEGER;
+    const traverseTree = (node) => {
+        if (!node) {
+            return true;
+        }
+        if (!traverseTree(node.left)) {
+            return false;
+        }
+        if (node.val <= pre) {
+            return false;
+        }
+        pre = node.val;
+        return traverseTree(node.right);
+    };
+    const val = traverseTree(root);
+    console.log('val = ', val);
+    return val;
+};
+
 // 方法3：迭代法--不用递归的中序遍历，在遍历过程中就判断是不是二叉搜索树
 let isValidBST3 = function (root) {
     let result = [];
@@ -226,7 +249,7 @@ var isSymmetric2 = function (root) {
     return isTraverseSymmetricTree2(root, root);
 };
 
-// 获取二叉树的最大深度
+// 获取二叉树的最大深度（https://leetcode.cn/problems/maximum-depth-of-binary-tree/）
 let getMaxDepth = function (root) {
     if (root === null) {
         return 0;
@@ -236,7 +259,7 @@ let getMaxDepth = function (root) {
     return Math.max(leftDepth, rightDepth);
 };
 
-// 获取二叉树的最小深度
+// 获取二叉树的最小深度（https://leetcode.cn/problems/minimum-depth-of-binary-tree/）
 let getMinDepth = function (root) {
     if (root === null) {
         return 0;
@@ -458,6 +481,11 @@ var deleteNode = function (root, key) {
     }
     return root;
 };
+
+// 二叉树的前序遍历（https://leetcode.cn/problems/binary-tree-preorder-traversal/）
+// 二叉树的中序遍历（https://leetcode.cn/problems/binary-tree-inorder-traversal/）
+// 二叉树的后续遍历（https://leetcode.cn/problems/binary-tree-postorder-traversal/）
+// N叉树的前序遍历（https://leetcode.cn/problems/n-ary-tree-preorder-traversal/）
 
 // Array.prototype.map = function(cb) {
 //     // 执行函数，函数的参数？？？

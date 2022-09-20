@@ -39,23 +39,24 @@ const cityData = [{
     ]
 }];
 
+
 const fn = (data) => {
     const len = data.length;
     if (len === 0) {
         return [];
     }
     let result = [];
-    for (const val of data) {
-        if (val.children?.length > 0) {
-            result.push(val.id);
-            // 遍历children 关键点！！！是result.concat
-            result = result.concat(fn(val.children));
+    for (let i = 0; i < len; i++) {
+        const temp = arr[i];
+        result.push(temp.id);
+        if (temp.children) {
+            result = result.concat(getObjIdList(temp.children));
         }
     }
     return result;
 }
 
-console.log('执行结果 result = ', fn(cityData));
+// console.log('执行结果 result = ', fn(cityData));
 
 /**
  * @desc 实现扁平数据结构--数组和树之间的转换
@@ -133,30 +134,8 @@ const data = [
     }
 ];
 
-
 // 将树结构，扁平化处理
-let list = [];
-
 function reconstruct(data) {
-    data.forEach(a => {
-        list.push({
-            'pid': a.pid ? a.pid : '0',
-            'id': a.id,
-            'label': a.label,
-            'type': a.type,
-            'value': a.value
-        })
-        if (a.children) {
-            var arr = a.children;
-            reconstruct(arr);
-        }
-    });
-}
-reconstruct(data);
-console.log('list = ', list);
-
-
-function reconstruct2(data) {
     let list = [];
     data.forEach(a => {
         list.push({
@@ -167,14 +146,15 @@ function reconstruct2(data) {
             'value': a.value
         });
         if (a.children?.length > 0) {
-            list = list.concat(reconstruct2(a.children));
+            // 循环遍历
+            list = list.concat(reconstruct(a.children));
         }
     });
     return list;
 }
 
-const arr = reconstruct2(data);
-console.log('reconstruct2 = ', arr);
+const arr = reconstruct(data);
+console.log('reconstruct = ', arr);
 
 /**
  * @desc 将扁平数组，转换为树结构
@@ -197,7 +177,7 @@ function getChildren(arr, result, pid) {
             result.push(newItem);
             // 第二个参数！！
             // 第三个参数！！ 寻找以子节点为pid的节点
-            getChildren(arr, newItem.children, item.id);
+            getChildren(arr, newItem.children, newItem.id);
         }
     }
 }
@@ -211,9 +191,9 @@ function arrToTree(arr, pid) {
     getChildren(arr, result, pid);
     return result;
 }
-
-// const tree = arrToTree(arr1, 0);
-// console.log('tree = ', tree[0]);
+console.log('*******扁平数组转换为对象，递归算法1**********');
+const tree = arrToTree(arr1, 0);
+console.log('tree = ', tree);
 
 // 方法2：用map遍历，不用递归，两次for遍历
 function arrToTree2(arr) {
@@ -247,8 +227,9 @@ function arrToTree2(arr) {
     return result;
 }
 
-const tree2 = arrToTree2(arr1);
-console.log('tree2 = ', JSON.stringify(tree2));
+console.log('*******扁平数组转换为对象，遍历算法1**********');
+// const tree2 = arrToTree2(arr1);
+// console.log('tree2 = ', JSON.stringify(tree2));
 
 // 方法3：对方法2的优化，一次for遍历即可
 function arrToTree3(arr) {
@@ -280,5 +261,6 @@ function arrToTree3(arr) {
     return result;
 }
 
+console.log('*******扁平数组转换为对象，遍历算法2**********');
 // const tree3 = arrToTree3(arr1);
 // console.log('tree3 = ', JSON.stringify(tree3) === JSON.stringify(tree2));

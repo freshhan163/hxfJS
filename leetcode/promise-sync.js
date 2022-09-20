@@ -42,6 +42,11 @@ class Queue2 {
         return this;
     }
     async start() {
+        // 不可以用forEach | map！！！，forEach会并发执行，并不会因为await阻塞下一个
+        // this.taskList.forEach(async fn => {
+        //     console.log('1111');
+        //     await fn();
+        // });
         for(const cb of this.taskList) {
             await cb();
         }
