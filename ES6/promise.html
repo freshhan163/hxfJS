@@ -1,59 +1,55 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <title>ES6--Promise&Async函数</title>
     <script>
-        function printText(url) {
-            return new Promise((resolve, reject) => {
-                console.log('url = ', url);
-                resolve();
-            });
-        }
-        function logInOrder(urls) {
-            // 远程读取所有url
-            const textPromises = urls.map((url, index) => {
-                return printText(url).then(res => `第${index}个url = ${url}`);
-            });
-            textPromises.reduce((chain, textPromise) => {
-                return chain.then(() => textPromise)
-                    .then(text => console.log(text));
-            }, Promise.resolve());
-        }
-        // async函数
-        async function logInOrder(urls) {
-            for (const url of urls) {
-                const res = await printText(url);
-                console.log(await res.text());
+        (function() {
+            function printText(url) {
+                return new Promise((resolve, reject) => {
+                    console.log('url = ', url);
+                    resolve();
+                });
             }
-        }
-        // 并发请求
-        async function  logIn(urls) {
-            // 并发读取远程url
-            const textPromises = urls.map(async url => {
-                const res = await printText(url);
-                return res;
-            });
-            // 以上代码等价于
-            // const textPromises = urls.map(url => {
-            //     printText(url).then((res => res));
-            // })
-            for (const textPromise of textPromises) {
-                console.log(await textPromises);
+            function logInOrder(urls) {
+                // 远程读取所有url
+                const textPromises = urls.map((url, index) => {
+                    return printText(url).then(res => `第${index}个url = ${url}`);
+                });
+                textPromises.reduce((chain, textPromise) => {
+                    return chain.then(() => textPromise)
+                        .then(text => console.log(text));
+                }, Promise.resolve());
             }
-        }
-        logIn(['study.baidu.com', 'ddd', 'taobao.com']);
+            // async函数
+            async function logInOrder(urls) {
+                for (const url of urls) {
+                    const res = await printText(url);
+                    console.log(await res.text());
+                }
+            }
+            logInOrder(['study.baidu.com', 'ddd', 'taobao.com']);
 
-        function fetchUrl (url) {
-            return new Promise((resolve, reject) => {
-                resolve(url);
-            }).then(res => {
-                console.log('请求成功');
-            }, err => {
-                console.log('请求失败！');
-            });
-        }
+            // 并发请求
+            async function  logIn(urls) {
+                // 并发读取远程url
+                const textPromises = urls.map(async url => {
+                    const res = await printText(url);
+                    return res;
+                });
+                // 以上代码等价于
+                // const textPromises = urls.map(url => {
+                //     printText(url).then((res => res));
+                // })
+                for (const textPromise of textPromises) {
+                    console.log(await textPromises);
+                }
+            }
+            logIn(['study.baidu.com', 'ddd', 'taobao.com']);
+        });
+
+
         // promise解决回调函数嵌套问题 ？？
         // Promise实例、运行顺序
         let promise = new Promise(function(resolve, reject) {
@@ -77,9 +73,13 @@
             setTimeout(() => resolve(p1), 1000);
         });
         p2
-            .then(result => {console.log(result)})
-            .catch(error => {console.log(error)});
+            .then(result => {console.log('p2 result = ', result)})
+            .catch(error => {console.log('error = ', error)});
+
+
         // 测试promise.all和promise.race
+        // promise.all：所有的都结束且都为真 | 有任意一个是假，
+        // promise.race：最先返回的决定最终结果
         let pr1 = new Promise(function (resolve, reject) {
             return setTimeout(function () {
                 console.log('pr1');
@@ -101,52 +101,106 @@
         Promise.all([pr3, pr2, pr1]).then((data) => {
             console.log('promise.all = ', data);
         });
-
-        // Promise.all变形题
-        function mockPromiseAll(list, n) {
-            return new Promise((resolve, reject) => {
-                // 控制最大并发数n
-                for (let i = 0; i < n; i++) {
-                    addFn();
-                }
-
-                function addFn() {
-                    let index = 0;
-                    let result = []; // 最终结果
-                    let len = list.length;
-
-                    // 控制最终执行条件
-                    if (index >= len) {
-                        return;
-                    }
-                    // 立即执行
-                    const p = Promise.resolve(list[index]());
-                    index++;
-
-                    p.then(
-                        res => {
-                            // 下标index
-                            result[index] = res;
-                            if (result.length >= len) {
-                                resolve(result);
-                            } else {
-                                // 执行完成后，再塞入
-                                addFn();
-                            }
-                        },
-                        err => {
-                            reject(err);
-                        },
-                    );
-                }
-            });
-        }
     </script>
-  </head>
-  <body>
+</head>
+<body>
     <div class="app">
         按照顺序完成异步操作
     </div>
     <!-- built files will be auto injected -->
-  </body>
+    <script>
+        console.log('***************** promsie的手写题 *********************');
+        // 手写promise.all：所有的任务都完成后，所有的resolved，才是resolve，否则就是reject
+        async function promiseAll(promises) {
+            return new Promise((resolve, reject) => {
+                if (!Array.isArray(promises)) {
+                    reject(new TypeError('参数错误'));
+                }
+                let result = [];
+                let len = promises.length;
+                let successCnt = 0;
+                promises.forEach((p, index) => {
+                    Promise.resolve(p).then(res => {
+                        ++successCnt;
+                        result[index] = res;
+                        if (successCnt === len) {
+                            resolve(result);
+                        }
+                    }, err => reject(err));
+                });
+            });
+        }
+        // 手写promise.race
+        function promiseRace(promises) {
+            return new Promise((resolve, reject) => {
+                if (!Array.isArray(promises)) {
+                    reject(new TypeError('参数错误'));
+                }
+                promises.forEach(p => {
+                    p.then(res => resolve(res), err => reject(err));
+                });
+            });
+        }
+        // 手写promise.any：任意一个为fullfilled，则resolve，否则等所有的都reject后，才是reject.
+        function promiseAny(promises) {
+            return new Promise((resolve, reject) => {
+                if (!Array.isArray(promises)) {
+                    reject(new TypeError('参数错误'));
+                }
+                let len = promises.length;
+                let rejectCnt = 0;
+                promises.forEach(p => {
+                    p.then(res => {
+                        resolve(res);
+                    }, err => {
+                        ++rejectCnt;
+                        if (rejectCnt === len) {
+                            reject('all promises are rejected');
+                        }
+                    });
+                })
+            });
+        }
+        // 手写promise.allSettled
+        function promiseAllSettled(promises) {
+            return new Promise((resolve, reject) => {
+                if (!Array.isArray(promises)) {
+                    reject(new TypeError('参数错误'));
+                }
+                let len = promises.length;
+                let result = [];
+                let cnt = 0;
+                promises.forEach((p, index) => {
+                    Promise.resolve(p).then(res => {
+                        ++cnt;
+                        result[index] = {
+                            status: 'fullfilled',
+                            value: res
+                        };
+                        if (cnt === len) {
+                            resolve(result);
+                        }
+                    }, err => {
+                        ++cnt;
+                        result[index] = {
+                            status: 'rejected', // rejected时，是reason属性
+                            reason: err
+                        };
+                        if (cnt === len) {
+                            resolve(result);
+                        }
+                    });
+                })
+            });
+        }
+
+        // Promise.resolve(p)测试，如果p是reject状态，仍然会被reject
+        let testP1 = Promise.reject('出错了');
+        console.log('testP1 =', testP1);
+
+        console.log('resolve包装  ', Promise.resolve(testP1).then(res => console.log('成功了 res = ', res), err => {
+            console.log('失败了res  =', err);
+        }));
+    </script>
+</body>
 </html>

@@ -201,6 +201,9 @@
         }
         // 实例方法和原型方法都可以被继承
         let b = new B('B的实例');
+        console.log('b = ', b);
+        console.log('B = ', B.prototype);
+        console.log('B.prototype.constructor = ', B.prototype.constructor === B);
         b.innerSay();
         b.outerSay();
 
@@ -218,7 +221,7 @@
 
         console.log('n1 = ', n1); // {}
         console.log('n1.__proto__ = ', n1.__proto__); // undefined
-        console.log('n1.__proto__ === null', n1.__proto__ === null); // false
+        console.log('n1.__proto__ === null', n1.__proto__ === null, n1.__proto__ === undefined); // false true
 
         // Object.create的源码：使用现有对象--参数，提供新创建对象的__proto__
         // Object.prototype.create = function (o) {
@@ -307,6 +310,7 @@
             Foo.prototype.a = 6;
             Foo.prototype.b = 7;
             Foo.prototype.c = 8;
+            Foo.prototype.d = 8;
             Object.prototype.c = 9;
 
             var o = new Foo();
@@ -315,6 +319,7 @@
             console.log('o.a = ', o.a); // 4
             console.log('o.b = ', o.b); // 5
             console.log('o.c = ', o.c); // 9
+            console.log('o.d = ', o.d); // undefined
         })();
         // 原型链相关
         (function() {
@@ -376,5 +381,28 @@
 <body>
     <h1>原型链与对象</h1>
     <h2><a href="https://www.cnblogs.com/gwf93/p/10384352.html">多种继承类型</a></h2>
+    <script>
+        // 1.ES5继承
+        (function() {
+            function Person(name, age) {
+                this.name = name;
+                this.age = age;
+            }
+            Student.prototype.sayName = function() {
+                console.log('name =', this.name, 'age is ', this.age);
+            }
+
+            function Student(name, age, score) {
+                Person.call(name, age);
+                this.score = score;
+            }
+
+            // 修改原型链
+            Student.prototype = new Person();
+            Student.prototype.constructor = Student;
+        })();
+        // 2.new一个对象都做了什么
+        // 3.ES5的继承 和 ES6的class有什么不同
+    </script>
 </body>
 </html>

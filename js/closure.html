@@ -103,6 +103,20 @@
         }
         thisB()();
 
+        (function() {
+            console.log('**************** 变量和函数同名时的变量提升 ***************************');
+            var b = 2;
+            var b = function b () {};
+            console.log('b = ', b); // 谁在后面，输出的值是谁
+
+            var c = 2;
+            function c() {};
+            console.log('c = ', c); // 2
+
+            function d() {};
+            var d;
+            console.log('d = ', d); // 返回函数d
+        })();
 
         (function() {
             console.log('**************** 函数中的全局变量 ***************************');
@@ -121,6 +135,7 @@
                 console.log('1 = ', 1);
                 return 1;
             };
+            console.log('Foo函数中的 this = ', this);
             return this;
         }
 
@@ -141,19 +156,22 @@
             console.log('5 = ', 5);
             return 5;
         }
-        console.log('window = ', this);
+        console.log('this = ', this);
         console.log('Foo.getName() = ', Foo.getName());
         console.log('Foo().getName() =', Foo().getName());
         console.log('getName() =', getName());
-        console.log('window = ', this);
         let f1 = new Foo();
         console.log('f1 =', f1);
+        console.log('f1.geName =', f1.getName());
         console.log('new Foo.getName() =', new Foo.getName());
         // 执行后，重新赋值了
         Foo();
         console.log('getName() =', getName());
         // 查找原型链
-        console.log('new Foo().getName() = ', new Foo().getName());
+        console.log('new Foo().getName() = ', new Foo().getName()); // 此处执行相当于 (new Foo()).getName()
+        console.log('new Foo().getName() = ', (new Foo()).getName());
+        console.log('new Foo().getName() = ', new (Foo().getName())); // 报错，closure.html:173 Uncaught TypeError: Foo(...).getName(...) is not a constructor
+
     </script>
 </head>
 <body>
