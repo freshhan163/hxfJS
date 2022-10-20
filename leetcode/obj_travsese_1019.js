@@ -74,5 +74,35 @@ function getItemChildren(arr, result, pid) {
     }
 }
 
-const res3 = program3(res2, 0);
-console.log('res3 = ', res3[0].children[0]);
+// const res3 = program3(res2, 0);
+// console.log('res3 = ', res3[0].children[0]);
+
+// 算法3：优化，不用递归，新增Map（空间换时间），改为双层for循环
+function arrToTree(arr) {
+    let len = data.length;
+    if (len <= 1) {
+        return data;
+    }
+    let arrMap = new Map();
+    for (let val of arr) {
+        arrMap.set(val.id, { ...val, children: [] });
+    }
+    
+    let result = [];
+    for (let item of arr) {
+        const treeItem = arrMap.get(item.id);
+
+        if (item.pid === 0) {
+            result.push(treeItem);
+        } else {
+            if (!arrMap.has(item.pid)) {
+                arrMap.set(item.pid, { children: [] });
+            }
+            arrMap.get(item.pid).children.push(treeItem);
+        }
+    }
+    return result;
+}
+
+const res4 = arrToTree(res2);
+console.log('res4 = ', res4);
